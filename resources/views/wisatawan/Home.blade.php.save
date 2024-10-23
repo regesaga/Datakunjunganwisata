@@ -1,0 +1,156 @@
+@extends('layouts.author.wisatawan')
+
+@section('content')
+    <div class="account-bdy p-3">
+        <section class="author-company-info">
+            <div class="row">
+                @php
+                                // Create a DateTime object with the desired timezone
+                                $timezone = new DateTimeZone('Asia/Jakarta'); // Adjust this to your desired timezone
+                                $datetime = new DateTime('now', $timezone);
+                            
+                                // Get the current hour
+                                $hour = $datetime->format('H');
+                            
+                                // Determine the greeting
+                                $greetings = $hour >= 18 ? 'Malam' : ($hour >= 15 ? 'Sore' : ($hour >= 12 ? 'Siang' : 'Pagi'));
+                            @endphp
+                            <h3 class="card-title">Selamat {{ $greetings }},&nbsp;
+                                <b>{{ Auth::guard('wisatawans')->user()->name }}</b>&nbsp;!
+                            </h3>
+                <div class="col-sm-12 col-md-12">
+                    <div class="card">
+                        <a href="{{ route('wisatawan.pesanan') }}">
+
+                        <div class="card-body">
+                                     <h4>Riwayat Tiket Wisata</h4>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Belum Dibayar</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_belumdibayar }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Selesai</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_dipakai }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Belum Dipakai</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_belumdipakai }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Kadaluarsa</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_kadaluarsa }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                       
+                        </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="card">
+                        <a href="">
+
+                        <div class="card-body">
+                                     <h4>Riwayat Pesanan Kuliner</h4>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Belum Dibayar</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_kulinerbelumdibayar }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Selesai</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_selesai }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Kadaluarsa</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_kulinerkadaluarsa }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                       
+                        </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="card">
+                        <a href="">
+
+                        <div class="card-body">
+                                     <h4>Riwayat reservasi Akomodasi</h4>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Belum Dibayar</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_kulinerbelumdibayar }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Selesai</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_selesai }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card text-center">
+                                                        <div class="card-body">
+                                                            <h3>Kadaluarsa</h3>
+                                                            <hr>
+                                                            <p>{{ $jumlah_kulinerkadaluarsa }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                       
+                        </div>
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+    </div>
+@endSection
+y
+

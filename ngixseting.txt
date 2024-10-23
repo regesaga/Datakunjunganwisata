@@ -1,0 +1,143 @@
+# Server block untuk HTTPS dengan domain dan phpMyAdmin
+server {
+    listen 443 ssl;
+    server_name kuninganbeu.kuningankab.go.id;
+
+    root /home/kuninganbeu/public_html/public;
+    index index.php index.html index.htm;
+
+    ssl_certificate /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/privkey.pem; # managed by Certbot
+
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    # Logging akses
+    access_log /var/log/nginx/kuninganbeu_access.log;
+    error_log /var/log/nginx/kuninganbeu_error.log;
+
+    # Lokasi root untuk website utama
+    location / {
+        # Blokir permintaan mencurigakan yang mengandung < atau >
+        if ($request_uri ~* "<|>") {
+            return 403;
+        }
+
+        # Meningkatkan pemblokiran argumen yang mencurigakan
+        if ($query_string ~* "class\.module\.classLoader|require|exec|eval|child_process") {
+            return 403;  # Mengembalikan 403 Forbidden untuk permintaan berbahaya
+        }
+
+        if ($request_uri ~* "exec|cmd|system|base64|\/etc\/passwd") {
+            return 403;  # Block requests attempting to execute commands or access sensitive files
+        }
+
+        # Blokir parameter URL yang mengandung pola tertentu
+        if ($arg_url ~* "<|>|img|src|http|unix%3A|cs6lq9coeu1c50q6dp10") {
+            return 403;  # Mengembalikan 403 Forbidden
+        }
+
+        if ($arg_data ~* "exec|system|shell|cmd") {
+            return 403;  # Mengembalikan 403 Forbidden jika ditemukan pola mencurigakan
+        }
+
+        # Blokir user-agent yang mencurigakan
+        if ($http_user_agent ~* "jndi:|<|>") {
+            return 403;  # Mengembalikan 403 Forbidden
+        }
+
+        # Blokir akses ke direktori yang sensitif
+        location ~* ^/(etc|proc|bin|dev|sys|var|lib|tmp|run|usr|boot) {
+            deny all;  # Menolak akses ke direktori ini
+        }
+
+        try_files $uri $uri/ /index.php?$query_string;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;  # Pastikan menggunakan socket yang sesuai
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # Konfigurasi untuk phpMyAdmin
+    location ^~ /pma112-303 {
+        auth_basic "Admin Login";
+        auth_basic_user_file /etc/nginx/pma_pass;
+        alias /var/www/html/pma112-303/;
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME $request_filename;
+            include fastcgi_params;
+        }
+    }
+
+    # Konfigurasi untuk Zabbix
+    location /zabbix {
+        alias /usr/share/zabbix;  # Pastikan ini adalah path yang benar untuk Zabbix frontend
+        index index.php index.html index.htm;
+
+        location /zabbix/ {
+            try_files $uri $uri/ /zabbix/index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;  # Menggunakan PHP 8.1
+            fastcgi_param SCRIPT_FILENAME $request_filename;
+            include fastcgi_params;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+
+    # Mengamankan akses ke file .ht
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+# Server block untuk IP, mengarahkan ke domain pada HTTPS
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name 116.193.190.104;
+
+    ssl_certificate /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/privkey.pem; # managed by Certbot
+
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+    location / {
+        return 301 https://kuninganbeu.kuningankab.go.id$request_uri;
+    }
+}
+
+# Server block default untuk menangani domain yang tidak dikenal (HTTP)
+server {
+    listen 80 default_server;
+    server_name _; # menangkap semua domain yang tidak terdaftar
+
+    return 444; # memutus koneksi tanpa respons
+}
+
+# Server block default untuk menangani domain yang tidak terdaftar (HTTPS)
+server {
+    listen 443 ssl default_server;
+    server_name _; # menangkap semua domain yang tidak terdaftar
+
+    ssl_certificate /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/kuninganbeu.kuningankab.go.id-0001/privkey.pem; # managed by Certbot
+
+    return 444; # memutus koneksi tanpa respons
+}

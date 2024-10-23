@@ -1,0 +1,273 @@
+
+.font-mono {
+    font-family: code-saver,monospace !important;
+}
+
+.font-sans{
+    font-family: Inter,system-ui!important;
+}
+
+.font-nanum {
+    font-family: 'Nanum Pen Script' !important;
+}
+
+.bg-splatter-x {
+ background-size: 50%;
+}
+
+.header-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;/* Menyesuaikan tinggi div dengan tinggi viewport */
+}
+
+.shadow-card {
+    box-shadow: 9px 9px 0px rgba(0, 0, 0, 0.9);
+    transition: transform 0.3s ease;
+}
+
+.shadow-card:hover {
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.9);
+    transform: translate(1px,6px);
+}
+
+.owl-carousel .owl-nav {
+    overflow: hidden;
+    height: 0px;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+    background: #5110e9;
+}
+
+.owl-carousel .item {
+    text-align: center;
+}
+
+.owl-carousel .nav-button {
+    height: 50px;
+    width: 35px;
+    cursor: pointer;
+    position: absolute;
+    top: 200px !important;
+}
+
+.owl-carousel .owl-prev.disabled,
+.owl-carousel .owl-next.disabled {
+    pointer-events: none;
+    opacity: 0.25;
+}
+
+.owl-carousel .owl-prev {
+    left: -55px;
+}
+
+.owl-carousel .owl-next {
+    right: -55px;
+}
+
+.owl-theme .owl-nav {
+    color: #000000;
+    font-size: 60px;
+    border-radius: 3px;
+
+}
+
+.owl-carousel .prev-carousel:hover {
+    background-position: 0px -53px;
+}
+
+.owl-carousel .next-carousel:hover {
+    background-position: -24px -53px;
+}
+.owl-dots {
+    text-align: center;
+    padding-top: 15px;
+  }
+  .owl-dots button.owl-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    background: #ccc;
+    margin: 0 3px;
+  }
+  .owl-dots button.owl-dot.active {
+    background-color: #000;
+  }
+  .owl-dots button.owl-dot:focus {
+    outline: none;
+  }
+
+
+/* nav 2 owl */
+.owl-carousel .owl-nav2 {
+    overflow: hidden;
+    height: 0px;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+    background: #5110e9;
+}
+
+.owl-carousel .item {
+    text-align: center;
+}
+
+.owl-carousel .nav-button2 {
+    height: 50px;
+    width: 35px;
+    cursor: pointer;
+    position: absolute;
+    top: 250px !important;
+}
+
+.owl-carousel .owl-prev.disabled,
+.owl-carousel .owl-next.disabled {
+    pointer-events: none;
+    opacity: 0.25;
+}
+
+.owl-carousel .owl-prev2 {
+    left: -5px;
+}
+
+.owl-carousel .owl-next2 {
+    right: 8px;
+}
+
+.owl-theme .owl-nav2 {
+    color: #000;
+    font-size: 40px;
+    border-radius: 3px;
+
+}
+
+.owl-carousel .prev-carousel:hover {
+    background-position: 0px -53px;
+}
+
+.owl-carousel .next-carousel:hover {
+    background-position: -24px -53px;
+}
+
+
+
+.five-lines {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+    /* Atur lebar scrollbar */
+}
+
+/* Untuk menghilangkan ikon di samping scrollbar di browser WebKit */
+::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    /* Warna latar belakang area scrollbar */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #fff;
+    /* Warna latar belakang area scrollbar saat dihover */
+}
+
+.modal-body.box-load {
+    align-items: center;
+    justify-content: center;
+    background-color: #3498db;
+}
+
+.skeleton-image-wrapper {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    /* Membuat gambar menjadi persegi (lebar = tinggi) */
+    position: relative;
+}
+
+.skeleton-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-text {
+    width: 100%;
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+    overflow: hidden;
+    height: auto;
+}
+
+.skeleton-line {
+    height: 20px;
+    /* Sesuaikan tinggi setiap baris shimmer dengan kebutuhan Anda */
+    margin: 10px 0;
+    /* Sesuaikan jarak antara setiap baris shimmer dengan kebutuhan Anda */
+    background: #f0f0f0;
+    /* Warna latar belakang baris shimmer */
+}
+
+@keyframes shimmer {
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+
+/* Feel free to change duration  */ 
+.animated  {
+    -webkit-animation-duration : 1000 ms  ;
+    animation-duration : 1000 ms  ;
+    -webkit-animation-fill-mode : both  ;
+    animation-fill-mode : both  ;
+  }  
+  /* .owl-animated-out - only for current item */ 
+  /* This is very important class. Use z-index if you want move Out item above In item */ 
+  .owl-animated-out {
+    z-index : 1 
+     }
+  /* .owl-animated-in - only for upcoming item
+  /* This is very important class. Use z-index if you want move In item above Out item */ 
+  .owl-animated-in {
+    z-index : 0 
+     }
+  /* .fadeOut is style taken from Animation.css and this is how it looks in owl.carousel.css:  */ 
+  .fadeOut  {
+    -webkit-animation-name : fadeOut  ;
+    animation-name : fadeOut  ;
+  }  
+  @-webkit-keyframes  fadeOut  {
+    0% {
+      opacity : 1   ;
+    }  
+    100% {
+      opacity : 0   ;
+    }  
+  }
+  @keyframes  fadeOut  {
+    0% {
+      opacity : 1   ;
+    }  
+    100% {
+      opacity : 0   ;
+    }  
+  }
