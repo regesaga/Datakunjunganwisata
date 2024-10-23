@@ -1,6 +1,4 @@
 <?php
-use App\Http\Controllers\InstagramController;
-use App\Http\Controllers\YoutubeController;
 use App\Http\Controllers\CallbackPaymentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DestinasiController;
@@ -55,8 +53,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialiteController;
 
 //public routes
-Route::get('/instagram', [InstagramController::class, 'index']);
-Route::post('/detail/media/{id}', [InstagramController::class, 'detailMedia']);
 Route::post('/log-location', [LocationController::class, 'logLocation']);
 //youtube
 Route::get('/wth/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
@@ -696,110 +692,7 @@ Route::middleware(['auth', 'akomodasi'])->prefix('akomodasi')->group(function ()
 });
 
 
-Route::middleware(['auth', 'guide'])->prefix('guide')->group(function () {
-  // tambahkan rute lain untuk admin di sini0
-  Route::get('getwisatawan', [GuideAuthorController::class, 'getwisatawan'])->name('account.guide.getwisatawan');;
 
-  Route::get('logout', [GuideAuthorController::class, 'logout'])->name('account.guide.logout');
-  Route::get('/dashboard', [GuideAuthorController::class, 'index'])->name('account.guide.user-guide');
-  Route::get('ganti-password', [GuideAuthorController::class, 'changePasswordView'])->name('account.guide.changePassword');
-  Route::delete('delete', [GuideAuthorController::class, 'deleteAccount'])->name('account.guide.delete');
-  Route::put('ganti-password', [GuideAuthorController::class, 'changePassword'])->name('account.guide.changePassword');
-
-  Route::get('company/create', [GuideAuthorController::class, 'create'])->name('account.guide.company.create');
-  Route::put('company/{id}', [GuideAuthorController::class, 'update'])->name('account.guide.company.update');
-  Route::post('company', [GuideAuthorController::class, 'store'])->name('account.guide.company.store');
-  Route::get('company/edit', [GuideAuthorController::class, 'edit'])->name('account.guide.company.edit');
-  Route::delete('company', [GuideAuthorController::class, 'destroy'])->name('account.guide.company.destroy');
-
-  Route::get('getAllBanerPromo', [GuideAuthorController::class, 'GetBanerpromo'])->name('account.guide.banerpromo.index');
-  Route::get('showbanerpromo/show/{banerpromo}', [GuideAuthorController::class, 'showBanerpromo'])->name('account.guide.banerpromo.show');
-  Route::get('editbanerpromo/edit/{banerpromo}', [GuideAuthorController::class, 'editBanerpromo'])->name('account.guide.banerpromo.edit');
-  Route::put('banerpromoupdate/{banerpromo}', [GuideAuthorController::class, 'updateBanerpromo'])->name('account.guide.banerpromo.update');
-  Route::get('create_banerpromo', [GuideAuthorController::class, 'createBanerpromo'])->name('account.guide.banerpromo.create');
-  Route::post('banerpromotore', [GuideAuthorController::class, 'storeBanerpromo'])->name('account.guide.banerpromo.store');
-  Route::delete('banerpromo/{banerpromo}', [GuideAuthorController::class, 'destroyBanerpromo'])->name('account.guide.banerpromo.destroy');
-  Route::delete('banerpromo/destroy', [GuideAuthorController::class, 'massDestroyBanerpromo'])->name('account.guide.banerpromo.massDestroyBanerpromo');
-
-
-
-
-  Route::get('create_guide', [GuideAuthorController::class, 'createGuide'])->name('account.guide.guide.create');
-  Route::post('storeGuide', [GuideAuthorController::class, 'storeGuide'])->name('account.guide.guide.storeGuide');
-  Route::get('showguide/show/{guide}', [GuideAuthorController::class, 'showguide'])->name('account.guide.guide.show');
-  Route::get('editguide/edit', [GuideAuthorController::class, 'editguide'])->name('account.guide.guide.edit');
-  Route::put('guideupdate/{id}', [GuideAuthorController::class, 'guideupdate'])->name('account.guide.guide.update');
-  Route::post('guide/media', [GuideAuthorController::class, 'storeMedia'])->name('account.guide.guide.storeMedia');
-  Route::delete('guide/{guide}', [GuideAuthorController::class, 'destroyguide'])->name('account.guide.guide.destroyguide');
-
-  Route::get('getTag', [GuideAuthorController::class, 'getTag'])->name('account.guide.tag.index');
-  Route::get('showtag/show/{tag}', [GuideAuthorController::class, 'showTag'])->name('account.guide.tag.show');
-  Route::get('edittag/edit/{tag}', [GuideAuthorController::class, 'editTag'])->name('account.guide.tag.edit');
-  Route::put('updatetag/{tag}', [GuideAuthorController::class, 'updateTag'])->name('account.guide.tag.update');
-  Route::get('create_tag', [GuideAuthorController::class, 'createTag'])->name('account.guide.tag.create');
-  Route::post('tagstore', [GuideAuthorController::class, 'storeTag'])->name('account.guide.tag.store');
-  Route::delete('tag/{tag}', [GuideAuthorController::class, 'destroyTag'])->name('account.guide.tag.destroy');
-
-  Route::get('getAllArticle', [GuideAuthorController::class, 'getAllArticle'])->name('account.guide.article.index');
-  Route::get('showarticle/show/{article}', [GuideAuthorController::class, 'showarticle'])->name('account.guide.article.show');
-  Route::get('editarticle/edit/{article}', [GuideAuthorController::class, 'editarticle'])->name('account.guide.article.edit');
-  Route::put('articleupdate/{article}', [GuideAuthorController::class, 'updatearticle'])->name('account.guide.article.update');
-  Route::get('create_article', [GuideAuthorController::class, 'createarticle'])->name('account.guide.article.create');
-  Route::post('articlestore', [GuideAuthorController::class, 'storearticle'])->name('account.guide.article.store');
-  Route::delete('article/{article}', [GuideAuthorController::class, 'destroyarticle'])->name('account.guide.article.destroy');
-});
-
-Route::middleware(['auth', 'ekraf'])->prefix('ekraf')->group(function () {
-  // tambahkan rute lain untuk admin di sini0
-  Route::get('getwisatawan', [EkrafAuthorController::class, 'getwisatawan'])->name('account.ekraf.getwisatawan');;
-
-  Route::get('logout', [EkrafAuthorController::class, 'logout'])->name('account.ekraf.logout');
-  Route::get('/dashboard', [EkrafAuthorController::class, 'index'])->name('account.ekraf.user-ekraf');
-  Route::get('ganti-password', [EkrafAuthorController::class, 'changePasswordView'])->name('account.ekraf.changePassword');
-  Route::delete('delete', [EkrafAuthorController::class, 'deleteAccount'])->name('account.delete');
-  Route::put('ganti-password', [EkrafAuthorController::class, 'changePassword'])->name('account.ekraf.changePassword');
-
-  Route::get('company/create', [EkrafAuthorController::class, 'create'])->name('account.ekraf.company.create');
-  Route::put('company/{id}', [EkrafAuthorController::class, 'update'])->name('account.ekraf.company.update');
-  Route::post('company', [EkrafAuthorController::class, 'store'])->name('account.ekraf.company.store');
-  Route::get('company/edit', [EkrafAuthorController::class, 'edit'])->name('account.ekraf.company.edit');
-  Route::delete('company', [EkrafAuthorController::class, 'destroy'])->name('account.ekraf.company.destroy');
-
-
-
-
-  Route::get('create_ekraf', [EkrafAuthorController::class, 'createEkraf'])->name('account.ekraf.ekraf.create');
-  Route::post('storeEkraf', [EkrafAuthorController::class, 'storeEkraf'])->name('account.ekraf.ekraf.storeEkraf');
-  Route::get('showekraf/show/{ekraf}', [EkrafAuthorController::class, 'showekraf'])->name('account.ekraf.ekraf.show');
-  Route::get('editekraf/edit', [EkrafAuthorController::class, 'editekraf'])->name('account.ekraf.ekraf.edit');
-  Route::put('ekrafupdate/{id}', [EkrafAuthorController::class, 'ekrafupdate'])->name('account.ekraf.ekraf.update');
-  Route::post('ekraf/media', [EkrafAuthorController::class, 'storeMedia'])->name('account.ekraf.ekraf.storeMedia');
-
-  Route::get('getTag', [EkrafAuthorController::class, 'getTag'])->name('account.ekraf.tag.index');
-  Route::get('showtag/show/{tag}', [EkrafAuthorController::class, 'showTag'])->name('account.ekraf.tag.show');
-  Route::get('edittag/edit/{tag}', [EkrafAuthorController::class, 'editTag'])->name('account.ekraf.tag.edit');
-  Route::put('updatetag/{tag}', [EkrafAuthorController::class, 'updateTag'])->name('account.ekraf.tag.update');
-  Route::get('create_tag', [EkrafAuthorController::class, 'createTag'])->name('account.ekraf.tag.create');
-  Route::post('tagstore', [EkrafAuthorController::class, 'storeTag'])->name('account.ekraf.tag.store');
-  Route::delete('tag/{tag}', [EkrafAuthorController::class, 'destroyTag'])->name('account.ekraf.tag.destroy');
-
-  Route::get('getAllArticle', [EkrafAuthorController::class, 'getAllArticle'])->name('account.ekraf.article.index');
-  Route::get('showarticle/show/{article}', [EkrafAuthorController::class, 'showarticle'])->name('account.ekraf.article.show');
-  Route::get('editarticle/edit/{article}', [EkrafAuthorController::class, 'editarticle'])->name('account.ekraf.article.edit');
-  Route::put('articleupdate/{article}', [EkrafAuthorController::class, 'updatearticle'])->name('account.ekraf.article.update');
-  Route::get('create_article', [EkrafAuthorController::class, 'createarticle'])->name('account.ekraf.article.create');
-  Route::post('articlestore', [EkrafAuthorController::class, 'storearticle'])->name('account.ekraf.article.store');
-  Route::delete('article/{article}', [EkrafAuthorController::class, 'destroyarticle'])->name('account.ekraf.article.destroy');
-
-  Route::get('getAllBanerPromo', [EkrafAuthorController::class, 'GetBanerpromo'])->name('account.ekraf.banerpromo.index');
-  Route::get('showbanerpromo/show/{banerpromo}', [EkrafAuthorController::class, 'showBanerpromo'])->name('account.ekraf.banerpromo.show');
-  Route::get('editbanerpromo/edit/{banerpromo}', [EkrafAuthorController::class, 'editBanerpromo'])->name('account.ekraf.banerpromo.edit');
-  Route::put('banerpromoupdate/{banerpromo}', [EkrafAuthorController::class, 'updateBanerpromo'])->name('account.ekraf.banerpromo.update');
-  Route::get('create_banerpromo', [EkrafAuthorController::class, 'createBanerpromo'])->name('account.ekraf.banerpromo.create');
-  Route::post('banerpromotore', [EkrafAuthorController::class, 'storeBanerpromo'])->name('account.ekraf.banerpromo.store');
-  Route::delete('banerpromo/{banerpromo}', [EkrafAuthorController::class, 'destroyBanerpromo'])->name('account.ekraf.banerpromo.destroy');
-  Route::delete('banerpromo/destroy', [EkrafAuthorController::class, 'massDestroyBanerpromo'])->name('account.ekraf.banerpromo.massDestroyBanerpromo');
-});
 
 // Route::get('wisatawan/login', function () {
 //   dd('asd');
