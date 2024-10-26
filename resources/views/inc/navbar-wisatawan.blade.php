@@ -37,7 +37,7 @@
                                     class="fas fa-user fa-sm "></i> Profile </a>
 
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ route('wisatawan.logout') }}">
+                        <a class="dropdown-item" href="{{route('account.wisata.logout')}}">
                             <i class="fas fa-sign-out-alt"></i>
                             Keluar
                         </a>

@@ -134,6 +134,129 @@ public function wisataguide()
 }
 
    
+//-----datakunjungan //
+public function indexkunjunganwisata()
+{
+    $wisatas = Wisata::all(); // Mengambil semua data wisata untuk form
+    return view('account.wisata.datakunjunganwisata.index', compact('wisatas'));
+}
+public function createkunjunganwisata()
+{
+    $company_id = auth()->user()->company->id;
+    $wisata = Wisata::where('company_id', $company_id)->first();
+    return view('account.wisata.datakunjunganwisata.create', compact('wisata'));
+}
+
+/**
+ * Menyimpan data kunjunganwisata baru.
+ */
+public function storekunjunganwisata(Request $request)
+{
+    // Memulai transaksi database
+    DB::beginTransaction();
+
+    try {
+        // Mengambil ID wisata dari pengguna yang terautentikasi
+        $wisataId = Auth::user()->company->wisata->id;
+
+        // Validasi data dari request
+        $validatedData = $request->validate([
+            'wisata_id' => 'required|exists:wisata,id', // Pastikan wisata_id valid
+            'tanggal_kunjunganwisata' => 'required|date',
+            'wisnu_umum_laki' => 'required|integer|min:0',
+            'wisnu_umum_perempuan' => 'required|integer|min:0',
+            'wisnu_pelajar_laki' => 'required|integer|min:0',
+            'wisnu_pelajar_perempuan' => 'required|integer|min:0',
+            'wisnu_instansi_laki' => 'required|integer|min:0',
+            'wisnu_instansi_perempuan' => 'required|integer|min:0',
+            'jml_wisnu_perempuan' => 'required|integer|min:0',
+            'jml_wisnu_laki' => 'required|integer|min:0',
+            'total_wisnu' => 'required|integer|min:0',
+            'jml_wisman_laki' => 'required|integer|min:0',
+            'jml_wisman_perempuan' => 'required|integer|min:0',
+            'total_wisman' => 'required|integer|min:0',
+            'wisman_negara' => 'array',
+            'wisman_laki' => 'array',
+            'wisman_perempuan' => 'array',
+        ]);
+
+        // Menyimpan data kunjungan wisata
+        KunjunganWisata::create(array_merge($validatedData, ['wisata_id' => $wisataId]));
+
+        // Commit transaksi jika berhasil
+        DB::commit();
+
+        return redirect()->route('account.wisata.datakunjunganwisata.index')
+                         ->with('success', 'Data kunjungan wisata berhasil ditambahkan.');
+
+    } catch (\Throwable $th) {
+        // Rollback transaksi database jika terjadi kesalahan
+        DB::rollback();
+        Log::error('Gagal menyimpan data ke database: ' . $th->getMessage(), [
+            'error' => $th->getMessage(),
+            'request_data' => $request->all(),
+        ]);
+
+        return redirect()->route('account.wisata.datakunjunganwisata.createkunjunganwisata')
+                         ->with('error', 'Terjadi kesalahan saat menyimpan kunjungan wisata. Silakan coba lagi nanti.');
+    }
+}
+/**
+ * Menampilkan halaman edit kunjunganwisata.
+ */
+
+
+
+public function editkunjunganwisata($kunjunganwisata)
+{
+    $hash=new Hashids();
+    
+    $kunjunganwisata = KunjunganWisata::find($hash->decodeHex($kunjunganwisata));
+    $wisatas = Wisata::all(); // Mengambil data wisata untuk ditampilkan di form edit
+    return view('kunjunganwisata.edit', compact('kunjunganwisata', 'wisatas'))->with([
+        'kunjunganwisata' => $kunjunganwisata,
+        'hash' => $hash
+    ]);
+}
+
+/**
+ * Mengupdate data kunjunganwisata.
+ */
+public function updatekunjunganwisata(Request $request, $id)
+{
+    $request->validate([
+        'wisata_id' => 'required|exists:wisatas,id',
+        'tanggal_kunjunganwisata' => 'required|date',
+        'wisnu_umum_laki' => 'required|integer',
+        'wisnu_umum_perempuan' => 'required|integer',
+        'wisnu_pelajar_laki' => 'required|integer',
+        'wisnu_pelajar_perempuan' => 'required|integer',
+        'wisnu_instansi_laki' => 'required|integer',
+        'wisnu_instansi_perempuan' => 'required|integer',
+        'wisman_negara' => 'nullable|string',
+        'wisman_laki' => 'required|integer',
+        'wisman_perempuan' => 'required|integer',
+    ]);
+
+    $kunjunganwisata = KunjunganWisata::findOrFail($id);
+    $kunjunganwisata->update($request->all());
+
+    return redirect()->route('kunjunganwisata.index')->with('success', 'Data kunjunganwisata berhasil diupdate.');
+}
+
+/**
+ * Menghapus data kunjunganwisata.
+ */
+public function destroykunjunganwisata($id)
+{
+    $kunjunganwisata = KunjunganWisata::findOrFail($id);
+    $kunjunganwisata->delete();
+
+    return redirect()->route('kunjunganwisata.index')->with('success', 'Data kunjunganwisata berhasil dihapus.');
+}
+
+
+//-----datakunjungan //
 
     
 

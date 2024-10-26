@@ -15,6 +15,8 @@ use App\Http\Controllers\Author\WisataAuthorController;
 use App\Http\Controllers\Author\KulinerAuthorController;
 use App\Http\Controllers\Author\EkrafAuthorController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\KelompokKunjunganController;
+use App\Http\Controllers\Admin\KunjunganWisataController;
 use App\Http\Controllers\Admin\BanerPromoController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\BanerController;
@@ -422,7 +424,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   // tambahkan rute lain untuk admin di sini0
-    Route::get('getwisatawan', [WisataAuthorController::class, 'getwisatawan'])->name('account.wisata.getwisatawan');;
+// --- data kunjungan wisata ------
+  Route::get('indexkunjunganwisata', [WisataAuthorController::class, 'indexkunjunganwisata'])->name('account.wisata.datakunjunganwisata.index');
+  Route::get('createkunjunganwisata', [WisataAuthorController::class, 'createkunjunganwisata'])->name('account.wisata.datakunjunganwisata.createkunjunganwisata');
+  Route::post('/wisata/storekunjunganwisata', [WisataAuthorController::class, 'storekunjunganwisata'])->name('account.wisata.datakunjunganwisata.storekunjunganwisata');
+  
+  Route::get('/wisata/kunjungan', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
+  Route::get('/wisata/create', [KunjunganWisataController::class, 'createwisnu'])->name('account.wisata.kunjunganwisata.createwisnu');
+  Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');
+
+  Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('account.wisata.kelompokkunjungan.index');
+  Route::get('create_kelompokkunjungan', [KelompokKunjunganController::class, 'createkelompokKunjungan'])->name('account.wisata.kelompokkunjungan.create');
+  Route::post('storekelompokkunjungan', [KelompokKunjunganController::class, 'storekelompokKunjungan'])->name('account.wisata.kelompokkunjungan.storekelompokkunjungan');
+  Route::get('showkelompokkunjungan/show/{kelompokkunjungan}', [KelompokKunjunganController::class, 'showkelompokkunjungan'])->name('account.wisata.kelompokkunjungan.show');
+  Route::get('editkelompokKunjungan/edit/{kelompokkunjungan}', [KelompokKunjunganController::class, 'editkelompokKunjungan'])->name('account.wisata.kelompokkunjungan.edit');
+  Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('account.wisata.kelompokkunjungan.update');
+  Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('account.wisata.kelompokkunjungan.massDestroy');
+  Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('account.wisata.kelompokkunjungan.destroy');
+
+
+// --- data kunjungan wisata ------
+
+  Route::get('getwisatawan', [WisataAuthorController::class, 'getwisatawan'])->name('account.wisata.getwisatawan');;
   Route::get('logout', [WisataAuthorController::class, 'logout'])->name('account.wisata.logout');
   Route::get('/dashboard', [WisataAuthorController::class, 'index'])->name('account.wisata.user-wisata');
   Route::get('/wisataguide', [WisataAuthorController::class, 'wisataguide'])->name('account.wisata.guide.index');

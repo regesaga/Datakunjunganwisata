@@ -28,11 +28,11 @@
                       <i class="fas fa-receipt"></i> Fasilitas
                     </a>
                   </li>
-                  {{-- <li class="list-group-item list-group-item-action {{ request()->segment(2) == 'cek' ? 'active': ''}}">
-                    <a href="{{ route('account.wisata.validasitiket.index') }}" class="account-nav-link">
-                      <i class="fas fa-search"></i> Validasi Tiket
+                  <li class="list-group-item list-group-item-action {{ request()->segment(2) == 'cek' ? 'active': ''}}">
+                    <a href="{{ route('account.wisata.datakunjunganwisata.index') }}" class="account-nav-link">
+                      <i class="fas fa-search"></i> Data Kunjungan
                     </a>
-                  </li> --}}
+                  </li>
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
                       <li class="nav-item dropdown dropdown-left">
