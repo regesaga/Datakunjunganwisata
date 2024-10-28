@@ -16,6 +16,7 @@ use App\Http\Controllers\Author\KulinerAuthorController;
 use App\Http\Controllers\Author\EkrafAuthorController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\KelompokKunjunganController;
+use App\Http\Controllers\Admin\WismanNegaraController;
 use App\Http\Controllers\Admin\KunjunganWisataController;
 use App\Http\Controllers\Admin\BanerPromoController;
 use App\Http\Controllers\Admin\TagController;
@@ -441,6 +442,19 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('account.wisata.kelompokkunjungan.update');
   Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('account.wisata.kelompokkunjungan.massDestroy');
   Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('account.wisata.kelompokkunjungan.destroy');
+
+
+
+  Route::get('get_allwismannegara', [WismanNegaraController::class, 'getAllwismannegara'])->name('account.wisata.wismannegara.index');
+  Route::get('create_wismannegara', [WismanNegaraController::class, 'createwismannegara'])->name('account.wisata.wismannegara.create');
+  Route::post('storewismannegara', [WismanNegaraController::class, 'storewismannegara'])->name('account.wisata.wismannegara.storewismannegara');
+  Route::get('showwismannegara/show/{wismannegara}', [WismanNegaraController::class, 'showwismannegara'])->name('account.wisata.wismannegara.show');
+  Route::get('editwismannegara/edit/{wismannegara}', [WismanNegaraController::class, 'editwismannegara'])->name('account.wisata.wismannegara.edit');
+  Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('account.wisata.wismannegara.update');
+  Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('account.wisata.wismannegara.storeMedia');
+  Route::delete('wismannegara/destroy', [WismanNegaraController::class, 'massDestroy'])->name('account.wisata.wismannegara.massDestroy');
+  Route::delete('wismannegara/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('account.wisata.wismannegara.destroy');
+
 
 
 // --- data kunjungan wisata ------

@@ -19,7 +19,7 @@ class CreateWismanwisataTable extends Migration
             $table->date('tanggal_kunjungan');
             
             // Wisatawan Mancanegara (WISMAN)
-            $table->string('wisman_negara')->nullable();
+            $table->unsignedInteger('wismannegara_id');
             $table->integer('jml_wisman_laki')->default(0);
             $table->integer('jml_wisman_perempuan')->default(0);
 

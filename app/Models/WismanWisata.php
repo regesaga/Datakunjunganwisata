@@ -12,7 +12,7 @@ class WismanWisata extends Model
     protected $fillable = [
         'wisata_id',
         'tanggal_kunjungan',
-        'wisman_negara', 
+        'wismannegara_id', 
         'jml_wisman_laki', 
         'jml_wisman_perempuan'
     ];
@@ -25,4 +25,11 @@ class WismanWisata extends Model
     {
         return $this->belongsToMany(KelompokKunjungan::class);
     }
+    
+    public function wismannegara()
+    {
+        return $this->belongsToMany(WismanNegara::class);
+    }
+
+    
 }

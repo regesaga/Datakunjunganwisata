@@ -78,11 +78,11 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select name="wisman_negara[]" class="form-control" required>
+                                <select name="wismannegara_id[]" class="form-control" required>
                                     <option value="" disabled selected>-- Pilih Negara --</option>
-                                    <option value="Amerika Serikat">Amerika Serikat</option>
-                                    <option value="Australia">Australia</option>
-                                    <option value="Jepang">Jepang</option>
+                                    @foreach($wismannegara as $negara)
+                                    <option value="{{ $negara->id }}">{{ $negara->wismannegara_name }}</option>
+                                    @endforeach
                                 </select>
                             </td>
                             <td><input type="number" name="jml_wisman_laki[]" class="form-control" required></td>
@@ -144,60 +144,56 @@
     });
 </script>
 <script>
-     // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
-     function calculateWISMAN() {
-            let totalLakiWISMAN = 0;
-            let totalPerempuanWISMAN = 0;
-    
-            // Loop melalui semua input wisman laki-laki dan perempuan
-            $('input[name="jml_wisman_laki[]"]').each(function () {
-                totalLakiWISMAN += parseInt($(this).val()) || 0;
-            });
-    
-            $('input[name="jml_wisman_perempuan[]"]').each(function () {
-                totalPerempuanWISMAN += parseInt($(this).val()) || 0;
-            });
-    
-            let totalWISMAN = totalLakiWISMAN + totalPerempuanWISMAN;
-            // Update nilai pada field total
-            $('#jml_wismanlakilaki').val(totalLakiWISMAN);
-            $('#jml_wismanperempuan').val(totalPerempuanWISMAN);
-            $('#total_wisman').val(totalWISMAN);
-        }
-    
-     
-    
-        // Event listener untuk setiap perubahan input WISMAN
-        $(document).on('input', 'input[name="jml_wisman_laki[]"], input[name="jml_wisman_perempuan[]"]', function () {
-            calculateWISMAN();
+    // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
+    function calculateWISMAN() {
+        let totalLakiWISMAN = 0;
+        let totalPerempuanWISMAN = 0;
+
+        // Loop melalui semua input wisman laki-laki dan perempuan
+        $('input[name="jml_wisman_laki[]"]').each(function () {
+            totalLakiWISMAN += parseInt($(this).val()) || 0;
         });
 
-
-         // Menambah baris WISMAN
-         $('#add-row').click(function () {
-            let newRow = `
-                <tr>
-                    <td>
-                        <select name="wisman_negara[]" class="form-control" required>
-                            <option value="" disabled selected>-- Pilih Negara --</option>
-                            <option value="Amerika Serikat">Amerika Serikat</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Jepang">Jepang</option>
-                        </select>
-                    </td>
-                    <td><input type="number" name="jml_wisman_laki[]" class="form-control" required></td>
-                    <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" required></td>
-                    <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                </tr>`;
-            $('#wisman-table tbody').append(newRow);
+        $('input[name="jml_wisman_perempuan[]"]').each(function () {
+            totalPerempuanWISMAN += parseInt($(this).val()) || 0;
         });
-    
-        // Menghapus baris WISMAN
-        $(document).on('click', '.remove-row', function () {
-            $(this).closest('tr').remove();
-            calculateWISMAN(); // Update total setelah menghapus baris
-        });
-        
-    </script>
 
+        let totalWISMAN = totalLakiWISMAN + totalPerempuanWISMAN;
+        // Update nilai pada field total
+        $('#jml_wismanlakilaki').val(totalLakiWISMAN);
+        $('#jml_wismanperempuan').val(totalPerempuanWISMAN);
+        $('#total_wisman').val(totalWISMAN);
+    }
+
+    // Event listener untuk setiap perubahan input WISMAN
+    $(document).on('input', 'input[name="jml_wisman_laki[]"], input[name="jml_wisman_perempuan[]"]', function () {
+        calculateWISMAN();
+    });
+
+    // Menambah baris WISMAN
+    $('#add-row').click(function () {
+        let newRow = `
+            <tr>
+                <td>
+                    <select name="wismannegara_id[]" class="form-control" required>
+                        <option value="" disabled selected>-- Pilih Negara --</option>
+                        @foreach($wismannegara as $negara)
+                        <option value="{{ $negara->id }}">{{ $negara->wismannegara_name }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td><input type="number" name="jml_wisman_laki[]" class="form-control" required></td>
+                <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" required></td>
+                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+            </tr>`;
+        $('#wisman-table tbody').append(newRow);
+        calculateWISMAN(); // Hitung ulang total setelah menambah baris
+    });
+
+    // Menghapus baris WISMAN
+    $(document).on('click', '.remove-row', function () {
+        $(this).closest('tr').remove();
+        calculateWISMAN(); // Update total setelah menghapus baris
+    });
+</script>
 @endsection

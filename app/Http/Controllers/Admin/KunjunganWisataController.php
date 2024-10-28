@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\WisnuWisata;
 use App\Models\KelompokKunjungan;
 use App\Models\WismanWisata;
+use App\Models\WismanNegara;
 use App\Models\Wisata;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -19,9 +20,14 @@ class KunjunganWisataController extends Controller
         // Ambil data kunjungan untuk tanggal_kunjungan tertentu, kelompok berdasarkan Umum, Pelajar, Instansi
         $kunjungan = WisnuWisata::all();
         $kelompok = KelompokKunjungan::pluck('kelompokkunjungan_name');
-        return view('account.wisata.kunjunganwisata.index', compact('kunjungan','kelompok'))->with([
+        $wismannegara = WismanNegara::all();
+        $wismanwisata = WismanWisata::all();
+
+        return view('account.wisata.kunjunganwisata.index', compact('kunjungan','kelompok','wismanwisata','wismannegara'))->with([
             'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok
+            'kelompok' => $kelompok,
+            'wismanwisata' => $wismanwisata,
+            'wismannegara' => $wismannegara
         ]);
 }
 
@@ -31,9 +37,12 @@ public function createwisnu()
     $company_id = auth()->user()->company->id;
     $kelompok = KelompokKunjungan::pluck('kelompokkunjungan_name');
     $wisata = Wisata::where('company_id', $company_id)->first();
-    return view('account.wisata.kunjunganwisata.create', compact('wisata','kelompok'))->with([
+    $wismannegara = WismanNegara::all();
+    return view('account.wisata.kunjunganwisata.create', compact('wisata','kelompok','wismannegara'))->with([
         'wisata' => $wisata,
-        'kelompok' => $kelompok
+        'kelompok' => $kelompok,
+        'wismannegara' => $wismannegara
+
     ]);
 }
 
@@ -48,7 +57,7 @@ public function storewisnu(Request $request)
         'jumlah_laki_laki.*' => 'required|integer|min:0', // Setiap nilai dalam array harus integer
         'jumlah_perempuan.*' => 'required|integer|min:0', // Setiap nilai dalam array harus integer
 
-        'wisman_negara' => 'required|array', // Pastikan ini adalah array
+        'wismannegara_id' => 'required|array', // Pastikan ini adalah array
         'jml_wisman_laki' => 'required|array', // Pastikan ini adalah array
         'jml_wisman_perempuan' => 'required|array', // Pastikan ini adalah array
         'jml_wisman_laki.*' => 'required|integer|min:0', // Setiap nilai dalam array harus integer
@@ -70,13 +79,13 @@ public function storewisnu(Request $request)
         }
 
         // Loop untuk data WISMAN (Wisatawan Mancanegara)
-        foreach ($request->wisman_negara as $index => $negara) {
+        foreach ($request->wismannegara_id as $index => $negara) {
             $jumlah_wisman_laki = $request->jml_wisman_laki[$index]; // Mengambil jumlah laki-laki dari index yang sama
             $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index]; // Mengambil jumlah perempuan dari index yang sama
 
             WismanWisata::create([
                 'wisata_id' => $request->wisata_id,
-                'wisman_negara' => $negara, // Nama negara
+                'wismannegara_id' => $negara, // Nama negara
                 'jml_wisman_laki' => $jumlah_wisman_laki, // Jumlah laki-laki dari negara
                 'jml_wisman_perempuan' => $jumlah_wisman_perempuan, // Jumlah perempuan dari negara
                 'tanggal_kunjungan' => now(),

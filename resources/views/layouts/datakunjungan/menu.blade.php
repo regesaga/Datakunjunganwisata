@@ -26,6 +26,14 @@
                    Kelompok Data Kunjungan
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('account.wisata.wismannegara.index') }}" class="nav-link ? 'active' : '' ">
+                    <i class="fas fa-edit nav-icon"></i>
+
+                    </i>
+                   Negara Data Kunjungan
+                </a>
+            </li>
 
           
 
