@@ -134,7 +134,12 @@ public function wisataguide()
 }
 
    
-
+//-----datakunjungan //
+public function indexkunjunganwisata()
+{
+    $wisatas = Wisata::all(); // Mengambil semua data wisata untuk form
+    return view('account.wisata.datakunjunganwisata.index', compact('wisatas'));
+}
     
 
     public function changePasswordView()

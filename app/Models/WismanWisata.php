@@ -26,10 +26,13 @@ class WismanWisata extends Model
         return $this->belongsToMany(KelompokKunjungan::class);
     }
     
-    public function wismannegara()
-    {
-        return $this->belongsToMany(WismanNegara::class);
-    }
+ 
+
+    // Di model WismanWisata
+public function wismanNegara()
+{
+    return $this->belongsToMany(WismanNegara::class, 'wisman_negara_wisman_wisata', 'wisman_wisata_id', 'wismannegara_id');
+}
 
     
 }

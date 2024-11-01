@@ -12,7 +12,7 @@ class WisnuWisata extends Model
     protected $fillable = [
         'wisata_id',
         'tanggal_kunjungan',
-        'kelompok', 
+        'kelompok_kunjungan_id', 
         'jumlah_laki_laki', 
         'jumlah_perempuan'
     ];

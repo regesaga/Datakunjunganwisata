@@ -16,26 +16,59 @@ class KunjunganWisataController extends Controller
 {
     public function indexkunjunganwisata()
     {
-
-        // Ambil data kunjungan untuk tanggal_kunjungan tertentu, kelompok berdasarkan Umum, Pelajar, Instansi
-        $kunjungan = WisnuWisata::all();
-        $kelompok = KelompokKunjungan::pluck('kelompokkunjungan_name');
+        // Fetch data from the database
+        $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        // Initialize an array to hold all visits data
+        $kunjungan = [];
+    
+        // Populate the kunjungan array with data for each date
+        foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
+            // Convert to collection for easier manipulation
+            $dataTanggal = collect($dataTanggal);
+    
+            // Get the total local visitors
+            $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
+            $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
+    
+            // Get the total foreign visitors, defaulting to 0 if no data exists
+            $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
+            $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
+    
+            // Initialize an array to hold foreign visitor counts by country
+            $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
+    
+            $kunjungan[$tanggal] = [
+                'jumlah_laki_laki' => $jumlahLakiLaki,
+                'jumlah_perempuan' => $jumlahPerempuan,
+                'kelompok' => $dataTanggal, // Store the collection for later use
+                'jml_wisman_laki' => $jmlWismanLaki ?: 0, // Ensure default to 0
+                'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0, // Ensure default to 0
+                'wisman_by_negara' => $wismanByNegara, // Store foreign visitor data by country
+            ];
+        }
+    
+        // Convert to a collection for easier manipulation in the view
+        $kunjungan = collect($kunjungan);
+    
+        // Get kelompok and wisman negara
+        $kelompok = KelompokKunjungan::all();
         $wismannegara = WismanNegara::all();
-        $wismanwisata = WismanWisata::all();
-
-        return view('account.wisata.kunjunganwisata.index', compact('kunjungan','kelompok','wismanwisata','wismannegara'))->with([
-            'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok,
-            'wismanwisata' => $wismanwisata,
-            'wismannegara' => $wismannegara
-        ]);
-}
+    
+        return view('account.wisata.kunjunganwisata.index', compact('kunjungan', 'kelompok', 'wismannegara'));
+    }
 
 // Menampilkan form input kunjungan
 public function createwisnu()
 {
     $company_id = auth()->user()->company->id;
-    $kelompok = KelompokKunjungan::pluck('kelompokkunjungan_name');
+    $kelompok = KelompokKunjungan::all();
     $wisata = Wisata::where('company_id', $company_id)->first();
     $wismannegara = WismanNegara::all();
     return view('account.wisata.kunjunganwisata.create', compact('wisata','kelompok','wismannegara'))->with([
@@ -72,7 +105,7 @@ public function storewisnu(Request $request)
 
             WisnuWisata::create([
                 'wisata_id' => $request->wisata_id,
-                'kelompok' => $kelompok, 
+                'kelompok_kunjungan_id' => $kelompok, 
                 'jumlah_laki_laki' => $jumlah_laki,
                 'jumlah_perempuan' => $jumlah_perempuan,
                 'tanggal_kunjungan' => $request->tanggal_kunjungan,

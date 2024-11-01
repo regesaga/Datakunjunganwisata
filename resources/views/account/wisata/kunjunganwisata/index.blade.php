@@ -11,9 +11,13 @@
         <thead class="table-light">
             <tr>
                 <th rowspan="2">Tanggal</th>
+                <th rowspan="2">Total</th>
                 <!-- Header Kelompok (Otomatis) -->
                 @foreach ($kelompok as $namaKelompok)
-                    <th colspan="2">{{ $namaKelompok }}</th>
+                    <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                @endforeach
+                @foreach ($wismannegara as $negara)
+                    <th colspan="2">{{ $negara->wismannegara_name }}</th>
                 @endforeach
             </tr>
             <tr>
@@ -22,16 +26,29 @@
                     <th>L</th>
                     <th>P</th>
                 @endforeach
+                @foreach ($wismannegara as $negara)
+                    <th>L</th>
+                    <th>P</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-            @foreach ($kunjungan->groupBy('tanggal_kunjungan')->sortKeys() as $tanggal => $dataTanggal)
+            @foreach ($kunjungan as $tanggal => $dataTanggal)
                 <tr>
                     <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
-                    <!-- Data Kunjungan per Kelompok (Otomatis) -->
+                    <td>
+                        {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                    </td>
+                   
                     @foreach ($kelompok as $namaKelompok)
-                        <td>{{ $dataTanggal->where('kelompok', $namaKelompok)->sum('jumlah_laki_laki') }}</td>
-                        <td>{{ $dataTanggal->where('kelompok', $namaKelompok)->sum('jumlah_perempuan') }}</td>
+                        <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
+                        <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
+                    @endforeach
+                    
+                    <!-- Data Kunjungan per Negara -->
+         @foreach ($wismannegara as $negara)
+                        <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
+                        <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
                     @endforeach
                 </tr>
             @endforeach

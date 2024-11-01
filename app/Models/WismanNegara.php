@@ -8,24 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class WismanNegara extends Model
 {
     use HasFactory;
-    public $timestamps = false;
 
     public $table = 'wismannegara';
-    protected $primaryKey = 'id';
-    protected $fillable = [
-        'wismannegara_name',
-        'created_at',
-        'updated_at',
-    ];
-
-    protected $dates = [
-        'created_at',
-        'updated_at',
-    ];
+    protected $fillable = ['wismannegara_name'];
 
 
-    public function wismanwisata()
-    {
-        return $this->belongsToMany(WismanWisata::class);
-    }
+   
+
+
+// Di model WismanNegara
+public function wismanWisata()
+{
+    return $this->belongsToMany(WismanWisata::class, 'wisman_negara_wisman_wisata', 'wismannegara_id', 'wisman_wisata_id');
+}
+
+
+
+
 }

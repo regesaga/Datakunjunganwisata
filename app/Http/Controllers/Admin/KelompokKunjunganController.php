@@ -34,7 +34,7 @@ class KelompokKunjunganController extends Controller
         KelompokKunjungan::create([
             'kelompokkunjungan_name' => $request->kelompokkunjungan_name
         ]);
-        Alert::toast('FAsilitas Created!', 'success');
+        Alert::toast('Kelompok Created!', 'success');
         return redirect()->route('account.wisata.kelompokkunjungan.index');
     }
 

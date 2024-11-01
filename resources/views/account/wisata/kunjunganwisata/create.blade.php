@@ -158,12 +158,12 @@
                                             <tbody>
                                                 @foreach ($kelompok as $namaKelompok)
                                                 <tr>
-                                                    <td>{{ $namaKelompok }}</td>
+                                                    <td>{{ $namaKelompok->kelompokkunjungan_name }}</td>
                                                     <td>
-                                                        <input type="number" id="jumlah_laki_laki_{{ $namaKelompok }}" name="jumlah_laki_laki[{{ $namaKelompok }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                        <input type="number" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                     </td>
                                                     <td>
-                                                        <input type="number" id="jumlah_perempuan_{{ $namaKelompok }}" name="jumlah_perempuan[{{ $namaKelompok }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                        <input type="number" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                     </td>
                                                 </tr>
                                                 @endforeach
@@ -256,8 +256,8 @@
         let totalPerempuan = 0;
 
         kelompok.forEach(kelompok => {
-            let laki = parseInt(document.getElementById('jumlah_laki_laki_' + kelompok).value) || 0;
-            let perempuan = parseInt(document.getElementById('jumlah_perempuan_' + kelompok).value) || 0;
+            let laki = parseInt(document.getElementById('jumlah_laki_laki_' + kelompok.id).value) || 0;
+            let perempuan = parseInt(document.getElementById('jumlah_perempuan_' + kelompok.id).value) || 0;
             
             totalLaki += laki;
             totalPerempuan += perempuan;
@@ -269,8 +269,8 @@
     }
 
     kelompok.forEach(kelompok => {
-        document.getElementById('jumlah_laki_laki_' + kelompok).addEventListener('input', hitungTotal);
-        document.getElementById('jumlah_perempuan_' + kelompok).addEventListener('input', hitungTotal);
+        document.getElementById('jumlah_laki_laki_' + kelompok.id).addEventListener('input', hitungTotal);
+        document.getElementById('jumlah_perempuan_' + kelompok.id).addEventListener('input', hitungTotal);
     });
 </script>
 <script>
