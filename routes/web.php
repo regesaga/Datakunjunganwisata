@@ -426,10 +426,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   // tambahkan rute lain untuk admin di sini0
 // --- data kunjungan wisata ------
-  Route::get('indexkunjunganwisata', [WisataAuthorController::class, 'indexkunjunganwisata'])->name('account.wisata.datakunjunganwisata.index');
-  Route::get('createkunjunganwisata', [WisataAuthorController::class, 'createkunjunganwisata'])->name('account.wisata.datakunjunganwisata.createkunjunganwisata');
-  Route::post('/wisata/storekunjunganwisata', [WisataAuthorController::class, 'storekunjunganwisata'])->name('account.wisata.datakunjunganwisata.storekunjunganwisata');
-  
   Route::get('/wisata/kunjungan', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
   Route::get('/wisata/create', [KunjunganWisataController::class, 'createwisnu'])->name('account.wisata.kunjunganwisata.createwisnu');
   Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');

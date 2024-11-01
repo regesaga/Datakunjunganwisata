@@ -1,7 +1,6 @@
 @extends('layouts.datakunjungan.datakunjungan')
 @section('content')
 <div class="container">
-<main class="main">
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">Kelompok Kunjungan</li>
     </ol>
@@ -76,7 +75,6 @@
         </div>
         </div>
     </div>
-</main>
 @endsection
 @section('scripts')
 @parent

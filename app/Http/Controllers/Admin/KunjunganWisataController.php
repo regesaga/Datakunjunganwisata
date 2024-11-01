@@ -52,6 +52,7 @@ public function storewisnu(Request $request)
     // Validasi input
     $request->validate([
         'wisata_id' => 'required', // Pastikan wisata_id valid
+        'tanggal_kunjungan' => 'required|date', // Pastikan wisata_id valid
         'jumlah_laki_laki' => 'required|array', // Pastikan ini adalah array
         'jumlah_perempuan' => 'required|array', // Pastikan ini adalah array
         'jumlah_laki_laki.*' => 'required|integer|min:0', // Setiap nilai dalam array harus integer
@@ -74,34 +75,38 @@ public function storewisnu(Request $request)
                 'kelompok' => $kelompok, 
                 'jumlah_laki_laki' => $jumlah_laki,
                 'jumlah_perempuan' => $jumlah_perempuan,
-                'tanggal_kunjungan' => now(),
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
             ]);
         }
 
         // Loop untuk data WISMAN (Wisatawan Mancanegara)
         foreach ($request->wismannegara_id as $index => $negara) {
-            $jumlah_wisman_laki = $request->jml_wisman_laki[$index]; // Mengambil jumlah laki-laki dari index yang sama
-            $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index]; // Mengambil jumlah perempuan dari index yang sama
+            $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
+            $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
 
             WismanWisata::create([
                 'wisata_id' => $request->wisata_id,
-                'wismannegara_id' => $negara, // Nama negara
-                'jml_wisman_laki' => $jumlah_wisman_laki, // Jumlah laki-laki dari negara
-                'jml_wisman_perempuan' => $jumlah_wisman_perempuan, // Jumlah perempuan dari negara
-                'tanggal_kunjungan' => now(),
+                'wismannegara_id' => $negara,
+                'jml_wisman_laki' => $jumlah_wisman_laki,
+                'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
             ]);
         }
 
         return redirect()->back()->with('success', 'Data kunjungan berhasil disimpan.');
     } catch (\Exception $e) {
         // Log error
-        Log::error('Failed to save kunjungan: ' . $e->getMessage(), [
-            'request' => $request->all(),
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString()
         ]);
 
         return redirect()->back()->with('error', 'Gagal menyimpan data kunjungan. Silakan coba lagi.');
     }
 }
+
+
 
 
 

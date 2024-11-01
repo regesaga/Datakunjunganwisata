@@ -6,11 +6,11 @@
     <a class="btn btn-success" href="{{ route("account.wisata.kunjunganwisata.createwisnu") }}">
         Tambah Data
     </a>
+    
     <table class="table table-bordered">
         <thead class="table-light">
             <tr>
                 <th rowspan="2">Tanggal</th>
-
                 <!-- Header Kelompok (Otomatis) -->
                 @foreach ($kelompok as $namaKelompok)
                     <th colspan="2">{{ $namaKelompok }}</th>
@@ -25,10 +25,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($kunjungan->groupBy('tanggal') as $tanggal => $dataTanggal)
+            @foreach ($kunjungan->groupBy('tanggal_kunjungan')->sortKeys() as $tanggal => $dataTanggal)
                 <tr>
                     <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
-
                     <!-- Data Kunjungan per Kelompok (Otomatis) -->
                     @foreach ($kelompok as $namaKelompok)
                         <td>{{ $dataTanggal->where('kelompok', $namaKelompok)->sum('jumlah_laki_laki') }}</td>

@@ -6,12 +6,20 @@
                     <i class="fa-fw fas fa-users nav-icon">
 
                     </i>
+                   DashBoard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('account.wisata.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
+                    <i class="fa-fw fas fa-users nav-icon">
+
+                    </i>
                    Data Kunjungan
                 </a>
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('account.wisata.datakunjunganwisata.createkunjunganwisata') }}" class="nav-link ? 'active' : '' ">
+                <a href="{{ route('account.wisata.kunjunganwisata.createwisnu') }}" class="nav-link ? 'active' : '' ">
                     <i class="fas fa-edit nav-icon"></i>
 
                     </i>

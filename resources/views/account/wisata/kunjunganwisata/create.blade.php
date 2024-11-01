@@ -103,7 +103,7 @@
         width: 100%;
         font-weight: bold;
         margin-top: 10px;
-        background-color: #3498db;
+        background-color: #0d212e;
         color: white;
         padding: 8px;
         border: none;
@@ -135,7 +135,7 @@
         @endif
         <div class="form-date">
             <label for="tanggal">Tanggal:</label>
-            <input type="date" name="tanggal" class="form-control">
+            <input type="date" name="tanggal_kunjungan" class="form-control">
         </div>
         <button type="submit" class="btn-save">Simpan Data</button>
     </div>
@@ -170,7 +170,7 @@
                                             </tbody>
                                             <tfoot>
                                                 <tr>
-                                                    <td><strong>Jumlah</strong></td>
+                                                    <td>Jumlah</td>
                                                     <td>
                                                         <input type="text" id="total_wisnu_laki" name="total_wisnu_laki" class="form-control" value="0" readonly>
                                                     </td>
@@ -179,9 +179,9 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="3"><strong>Total Kunjungan:</strong>
-                                                        <input type="text" id="total_wisnu" name="total_wisnu" class="form-control"    value="0" readonly>
+                                                    <td>Total                                                  
                                                     </td>
+                                                    <td colspan="2"> <input type="text" id="total_wisnu" name="total_wisnu" class="form-control"    value="0" readonly></td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -193,7 +193,7 @@
                                         <table class="table table-bordered" id="wisman-table">
                                             <thead>
                                                 <tr>
-                                                    <th>Negara</th>
+                                                    <th width="50">Negara</th>
                                                     <th>Laki-laki</th>
                                                     <th>Perempuan</th>
                                                     <th>Hapus</th>
@@ -201,7 +201,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>
+                                                    <td width="100">
                                                         <select name="wismannegara_id[]" class="form-control" required>
                                                             <option value="" disabled selected>Pilih</option>
                                                             @foreach($wismannegara as $negara)
@@ -223,14 +223,13 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td><strong>Jumlah</strong></td>
+                                                    <td>Jumlah</td>
                                                     <td><input type="text" name="jml_wismanlakilaki" id="jml_wismanlakilaki" class="form-control" value="0" readonly></td>
                                                     <td><input type="text" name="jml_wismanperempuan" id="jml_wismanperempuan" class="form-control" value="0" readonly></td>
-                                                    <td></td>
+                                                    <td><input type="text" name="total_wisman" id="total_wisman" class="form-control" value="0" readonly></td>
+                                                    
                                                 </tr>
-                                                <tr>
-                                                    <td colspan="4"><strong>Total Kunjungan:</strong><input type="text" name="total_wisman" id="total_wisman" class="form-control" value="0" readonly></td>
-                                                </tr>
+                                               
                                             </tfoot>
                                         </table>
                                 </div>
@@ -275,6 +274,12 @@
     });
 </script>
 <script>
+    // Set tanggal default ke hari ini
+document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date();
+    const dateInput = document.querySelector('input[name="tanggal_kunjungan"]');
+    dateInput.value = today.toISOString().split('T')[0];
+});
     // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
     function calculateWISMAN() {
         let totalLakiWISMAN = 0;

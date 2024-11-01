@@ -1,15 +1,14 @@
 @extends('layouts.datakunjungan.datakunjungan')
 @section('content')
 <div class="container">
-<main class="main">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Kelompok Kunjungan</li>
+        <li class="breadcrumb-item active">Kelompok Negara Kunjungan</li>
     </ol>
     <div class="container-fluid">
         <div class="animated fadeIn">
         <div class="col-lg-12">
             <a class="btn btn-success" href="{{ route("account.wisata.wismannegara.create") }}">
-                Tambah Nama
+                Tambah Negara
             </a>
 <div class="card">
     <div class="card-header">
@@ -76,7 +75,6 @@
         </div>
         </div>
     </div>
-</main>
 @endsection
 @section('scripts')
 @parent
