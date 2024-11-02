@@ -12,6 +12,7 @@
             <tr>
                 <th rowspan="2">Tanggal</th>
                 <th rowspan="2">Total</th>
+                <th rowspan="2">Ubah</th>
                 <!-- Header Kelompok (Otomatis) -->
                 @foreach ($kelompok as $namaKelompok)
                     <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
@@ -38,6 +39,13 @@
                     <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                     <td>
                         {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                    </td>
+                    <td>
+                        <a class="btn btn-xs btn-info" href="{{ route('account.wisata.kunjunganwisata.edit', $tanggal) }}">
+                            Ubah    
+                        </a>
+
+
                     </td>
                    
                     @foreach ($kelompok as $namaKelompok)

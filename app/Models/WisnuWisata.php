@@ -22,9 +22,9 @@ class WisnuWisata extends Model
         return $this->belongsTo(Wisata::class, 'wisata_id');
     }
 
-    public function KelompokKunjungan()
+    public function kelompokkunjungan()
     {
-        return $this->belongsToMany(KelompokKunjungan::class);
+        return $this->belongsTo(KelompokKunjungan::class, 'kelompok_kunjungan_id');
     }
 
 }
