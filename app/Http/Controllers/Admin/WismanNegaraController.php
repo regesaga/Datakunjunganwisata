@@ -62,7 +62,7 @@ class WismanNegaraController extends Controller
         $newWismanNegara = $wismannegara->update($request->all());
 
 
-        Alert::toast('WismanNegara Updated!', 'success');
+        Alert::toast('Negara di perbaharui!', 'success');
         return redirect()->route('account.wisata.wismannegara.index');
     }
 
@@ -70,7 +70,7 @@ class WismanNegaraController extends Controller
     {
         $wismannegara = WismanNegara::find($id);
         $wismannegara->delete();
-        Alert::toast('WismanNegara Delete!', 'success');
+        Alert::toast('Negara Dihapus!', 'success');
         return redirect()->route('account.wisata.wismannegara.index');
     }
 

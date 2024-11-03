@@ -7,12 +7,12 @@
     </div>
 
     <div class="card-body">
-        <form method="POST" action="{{ route('account.wisata.fasilitas.update', $hash->encodeHex($fasilitas->id)) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('account.wisata.kelompokkunjungan.update', $hash->encodeHex($kelompokKunjungan->id)) }}" enctype="multipart/form-data">
             @method('PUT')
             @csrf
             <div class="form-group">
                 <label class="required" for="name">Nama</label>
-                <input class="form-control" type="text" name="name" id="name" value=" {{$fasilitas->fasilitas_name }}" required>
+                <input class="form-control" type="text" name="kelompokkunjungan_name" id="name" value=" {{$kelompokKunjungan->kelompokkunjungan_name }}" required>
                 
             </div>
             <div class="form-group">
@@ -26,5 +26,4 @@
     </div>
 </div>
 </div>
-@endpush
 @endsection

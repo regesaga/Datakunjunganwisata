@@ -62,15 +62,15 @@ class KelompokKunjunganController extends Controller
         $newKelompokKunjungan = $kelompokKunjungan->update($request->all());
 
 
-        Alert::toast('KelompokKunjungan Updated!', 'success');
-        return redirect()->route('account.wisata.kelompokKunjungan.index');
+        Alert::toast('Kelompok di perbaharui!', 'success');
+        return redirect()->route('account.wisata.kelompokkunjungan.index');
     }
 
     public function destroykelompokkunjungan($id)
     {
         $kelompokKunjungan = KelompokKunjungan::find($id);
         $kelompokKunjungan->delete();
-        Alert::toast('KelompokKunjungan Delete!', 'success');
+        Alert::toast('Kelompok Kunjungan Delete!', 'success');
         return redirect()->route('account.wisata.kelompokkunjungan.index');
     }
 
