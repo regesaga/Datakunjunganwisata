@@ -427,10 +427,12 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   // tambahkan rute lain untuk admin di sini0
 // --- data kunjungan wisata ------
 Route::get('indexkunjunganwisata', [WisataAuthorController::class, 'indexkunjunganwisata'])->name('account.wisata.datakunjunganwisata.index');
+Route::get('wisata/perbulan', [KunjunganWisataController::class, 'filterbulan'])->name('account.wisata.kunjunganwisata.filterbulan');
 Route::get('/wisata/kunjungan', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
 Route::get('/wisata/create', [KunjunganWisataController::class, 'createwisnu'])->name('account.wisata.kunjunganwisata.createwisnu');
+Route::get('/wisata/confirm/{wisata_id}/{tanggal_kunjungan}',  [KunjunganWisataController::class, 'confirm'])->name('account.wisata.kunjunganwisata.confirm');
 Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');
-Route::get('/wisata/edit/{tanggal_kunjungan}', [KunjunganWisataController::class, 'editwisnu'])->name('account.wisata.kunjunganwisata.edit');
+Route::get('wisata/kunjungan/{wisata_id}/{tanggal_kunjungan}/edit', [KunjunganWisataController::class, 'editwisnu'])->name('account.wisata.kunjunganwisata.edit');
 Route::put('/wisata/update/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updatewisnu'])->name('account.wisata.kunjunganwisata.update');
 
 

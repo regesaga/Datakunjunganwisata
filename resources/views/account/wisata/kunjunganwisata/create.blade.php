@@ -121,24 +121,39 @@
     }
 </style>
 @section('content')
-
     <div class="container">
+         {{-- Menampilkan notifikasi --}}
+    
         <form action="{{ route('account.wisata.kunjunganwisata.storewisnu') }}" method="POST">
             @csrf
         <div class="form-header">
                 <h3>Tambah Laporan Kunjungan</h3>
             <h2>{{$wisata->namawisata}}</h2>
-            @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
+            
+          
             <div class="form-date">
                 <label for="tanggal">Tanggal:</label>
                 <input type="date" name="tanggal_kunjungan" class="form-control">
             </div>
             <button type="submit" class="btn-save">Simpan Data</button>
         </div>
+        @if (session('warning'))
+    <div class="alert alert-warning">
+        {{ session('warning') }} 
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
     
             <div class="col-lg-12">
                         <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
@@ -160,10 +175,10 @@
                                                     <tr>
                                                         <td>{{ $namaKelompok->kelompokkunjungan_name }}</td>
                                                         <td>
-                                                            <input type="number" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                            <input type="number" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"  value="0"  oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                         </td>
                                                         <td>
-                                                            <input type="number" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"   oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                            <input type="number" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"  value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -209,9 +224,9 @@
                                                                 @endforeach
                                                             </select>
                                                         </td>
-                                                        <td><input type="number" name="jml_wisman_laki[]" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                        <td><input type="number" name="jml_wisman_laki[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
                                                             oninvalid="this.setCustomValidity('Harap masukkan angka')" required></td>
-                                                        <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                        <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
                                                             oninvalid="this.setCustomValidity('Harap masukkan angka')"  required></td>
                                                         <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                                     </tr>
@@ -318,8 +333,8 @@
                             @endforeach
                         </select>
                     </td>
-                    <td><input type="number" name="jml_wisman_laki[]" class="form-control" required></td>
-                    <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" required></td>
+                    <td><input type="number" name="jml_wisman_laki[]" value="0" class="form-control" required></td>
+                    <td><input type="number" name="jml_wisman_perempuan[]" value="0" class="form-control" required></td>
                     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                 </tr>`;
             $('#wisman-table tbody').append(newRow);

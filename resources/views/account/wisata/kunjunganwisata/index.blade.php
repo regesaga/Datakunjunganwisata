@@ -41,7 +41,7 @@
                         {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                     </td>
                     <td>
-                        <a class="btn btn-xs btn-info" href="{{ route('account.wisata.kunjunganwisata.edit', $tanggal) }}">
+                        <a class="btn btn-xs btn-info" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $wisata->id, 'tanggal_kunjungan' => $tanggal]) }}">
                             Ubah    
                         </a>
 

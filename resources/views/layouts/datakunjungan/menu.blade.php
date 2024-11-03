@@ -10,7 +10,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('account.wisata.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
+                <a href="{{ route('account.wisata.kunjunganwisata.filterbulan') }}" class="nav-link ? 'active' : '' ">
                     <i class="fa-fw fas fa-users nav-icon">
 
                     </i>
