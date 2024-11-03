@@ -122,9 +122,9 @@
 </style>
 @section('content')
     <div class="container">
-        <form action="{{ route('account.wisata.kunjunganwisata.update', $wisnuData->first()->tanggal_kunjungan) }}" method="POST">
+        <form action="{{ route('account.wisata.kunjunganwisata.update', $tanggal_kunjungan) }}" method="POST">
             @csrf
-            @method('PATCH')
+            @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
             <div class="form-header">
                 <h1>Edit Data Kunjungan</h1>
                 <h2>{{ $wisata->namawisata }}</h2>
@@ -133,14 +133,14 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
+        
                 <div class="form-date">
                     <label for="tanggal">Tanggal:</label>
-                    <input type="date" class="form-control" name="tanggal_kunjungan" value="{{ old('tanggal_kunjungan', $wisnuData->first()->tanggal_kunjungan) }}" required>
+                    <input type="date" class="form-control" name="tanggal_kunjungan" value="{{ old('tanggal_kunjungan', $tanggal_kunjungan) }}" required>
                 </div>
                 <button type="submit" class="btn-save">Simpan Data</button>
             </div>
-
+        
             <div class="col-lg-12">
                 <input type="hidden" name="wisata_id" value="{{ old('wisata_id', $wisata->id) }}" required>
                 <div class="visitor-section">
@@ -157,23 +157,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($wisnuData as $data)
-                                            <tr>
-                                                <td>{{ $data->kelompokkunjungan->kelompokkunjungan_name }}</td>
-                                                <td>
-                                                    <input type="number" class="form-control" name="jumlah_laki_laki[{{ $data->kelompokkunjungan->id }}]" 
-                                                    value="{{ old('jumlah_laki_laki.'.$data->kelompokkunjungan->id, $data->jumlah_laki_laki) }}" 
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" 
-                                                    oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" class="form-control" name="jumlah_perempuan[{{ $data->kelompokkunjungan->id }}]" 
-                                                    value="{{ old('jumlah_perempuan.'.$data->kelompokkunjungan->id, $data->jumlah_perempuan) }}" 
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" 
-                                                    oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                        @foreach ($aggregatedWisnuData as $data)
+                                        <tr>
+                                            <td>{{ $data['kelompok_kunjungan_name'] }}</td>
+                                            <td>
+                                                <input type="number" class="form-control" name="jumlah_laki_laki[{{ $data['kelompok_kunjungan_id'] }}]" 
+                                                value="{{ old('jumlah_laki_laki.'.$data['kelompok_kunjungan_id'], $data['jumlah_laki_laki']) }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" 
+                                                oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control" name="jumlah_perempuan[{{ $data['kelompok_kunjungan_id'] }}]" 
+                                                value="{{ old('jumlah_perempuan.'.$data['kelompok_kunjungan_id'], $data['jumlah_perempuan']) }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" 
+                                                oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -206,34 +206,34 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($wismanData as $index => $data)
-                                            <tr>
-                                                <td width="100">
-                                                    <select class="form-control" name="wismannegara_id[]" required>
-                                                        <option value="">Pilih Negara</option>
-                                                        @foreach($wismannegara as $negara)
-                                                            <option value="{{ $negara->id }}" 
-                                                                {{ old('wismannegara_id.'.$index, $data->wismannegara_id) == $negara->id ? 'selected' : '' }}>
-                                                                {{ $negara->wismannegara_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="jml_wisman_laki[]" class="form-control" 
-                                                    value="{{ old('jml_wisman_laki.'.$index, $data->jml_wisman_laki) }}" 
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
-                                                    oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="jml_wisman_perempuan[]" class="form-control" 
-                                                    value="{{ old('jml_wisman_perempuan.'.$index, $data->jml_wisman_perempuan) }}" 
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
-                                                    oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
-                                                </td>
-                                                <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                                            </tr>
-                                        @endforeach
+                                        @foreach ($aggregatedWismanData as $index => $data)
+                                        <tr>
+                                            <td width="100">
+                                                <select class="form-control" name="wismannegara_id[]" required>
+                                                    <option value="">Pilih Negara</option>
+                                                    @foreach($wismannegara as $negara)
+                                                        <option value="{{ $negara->id }}" 
+                                                            {{ old('wismannegara_id.'.$index, $data['wismannegara_id']) == $negara->id ? 'selected' : '' }}>
+                                                            {{ $negara->wismannegara_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="jml_wisman_laki[]" class="form-control" 
+                                                value="{{ old('jml_wisman_laki.'.$index, $data['jml_wisman_laki']) }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="jml_wisman_perempuan[]" class="form-control" 
+                                                value="{{ old('jml_wisman_perempuan.'.$index, $data['jml_wisman_perempuan']) }}" 
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                            <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -255,6 +255,7 @@
                 </div>
             </div>
         </form>
+        
     </div>
 @endsection
 
@@ -287,12 +288,7 @@
       
     </script>
      <script>
-        // Set tanggal default ke hari ini
-        document.addEventListener('DOMContentLoaded', function () {
-            const today = new Date();
-            const dateInput = document.querySelector('input[name="tanggal_kunjungan"]');
-            dateInput.value = today.toISOString().split('T')[0];
-        });
+        
         // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
         function calculateWISMAN() {
             let totalLakiWISMAN = 0;
