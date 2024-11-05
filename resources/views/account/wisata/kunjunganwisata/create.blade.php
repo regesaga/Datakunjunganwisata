@@ -215,7 +215,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
+                                                    <!-- <tr>
                                                         <td width="100">
                                                             <select name="wismannegara_id[]" class="form-control" required>
                                                                 <option value="" disabled selected>Pilih</option>
@@ -229,7 +229,7 @@
                                                         <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
                                                             oninvalid="this.setCustomValidity('Harap masukkan angka')"  required></td>
                                                         <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
-                                                    </tr>
+                                                    </tr> -->
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>

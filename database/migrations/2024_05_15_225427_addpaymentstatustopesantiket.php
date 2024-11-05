@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Addpaymentstatustopesantiket extends Migration
+class AddPaymentStatusToPesanTiket extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,9 @@ class Addpaymentstatustopesantiket extends Migration
     public function up()
     {
         Schema::table('pesantiket', function (Blueprint $table) {
-            $table->enum('payment_status', ['00','11', '22', '33'])->comment('00=menunggu pembayaran, 11=sudah dibayar, 22=kadaluarsa, 33=cancel')->default(00);
+            $table->enum('payment_status', ['00', '11', '22', '33'])
+                  ->default('00')
+                  ->comment('00=menunggu pembayaran, 11=sudah dibayar, 22=kadaluarsa, 33=cancel');
         });
     }
 
@@ -26,7 +28,7 @@ class Addpaymentstatustopesantiket extends Migration
     public function down()
     {
         Schema::table('pesantiket', function (Blueprint $table) {
-            //
+            $table->dropColumn('payment_status');
         });
     }
 }

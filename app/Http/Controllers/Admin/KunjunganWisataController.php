@@ -171,24 +171,24 @@ public function storewisnu(Request $request)
         'jumlah_perempuan' => 'required|array',
         'jumlah_laki_laki.*' => 'required|integer|min:0',
         'jumlah_perempuan.*' => 'required|integer|min:0',
-        'wismannegara_id' => 'required|array',
-        'jml_wisman_laki' => 'required|array',
-        'jml_wisman_perempuan' => 'required|array',
-        'jml_wisman_laki.*' => 'required|integer|min:0',
-        'jml_wisman_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'array',
+        'jml_wisman_laki' => 'array',
+        'jml_wisman_perempuan' => 'array',
+        'jml_wisman_laki.*' => 'integer|min:0',
+        'jml_wisman_perempuan.*' => 'integer|min:0',
     ]);
 
-     // Cek apakah tanggal sudah ada di database
-     $existingWisnu = WisnuWisata::where('wisata_id', $request->wisata_id)
-     ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
-     ->first();
+    // Cek apakah tanggal sudah ada di database
+    $existingWisnu = WisnuWisata::where('wisata_id', $request->wisata_id)
+        ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+        ->first();
 
-                if ($existingWisnu) {
-                // Jika ada, buat notifikasi untuk mengonfirmasi apakah akan mengubah data
-                $formattedDate = Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y');
-                return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di InputPilih Tanggal Lain')
-                    ->withInput();
-                }
+    if ($existingWisnu) {
+        // Jika ada, buat notifikasi untuk mengonfirmasi apakah akan mengubah data
+        $formattedDate = Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y');
+        return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di Input. Pilih Tanggal Lain')
+            ->withInput();
+    }
 
     try {
         // Loop untuk data WISNU (Wisatawan Nusantara)
@@ -204,18 +204,20 @@ public function storewisnu(Request $request)
             ]);
         }
 
-        // Loop untuk data WISMAN (Wisatawan Mancanegara)
-        foreach ($request->wismannegara_id as $index => $negara) {
-            $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
-            $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
+        // Loop untuk data WISMAN (Wisatawan Mancanegara) hanya jika data tersedia
+        if ($request->filled('wismannegara_id') && $request->filled('jml_wisman_laki') && $request->filled('jml_wisman_perempuan')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
 
-            WismanWisata::create([
-                'wisata_id' => $request->wisata_id,
-                'wismannegara_id' => $negara,
-                'jml_wisman_laki' => $jumlah_wisman_laki,
-                'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
-                'tanggal_kunjungan' => $request->tanggal_kunjungan,
-            ]);
+                WismanWisata::create([
+                    'wisata_id' => $request->wisata_id,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'Data kunjungan berhasil disimpan.');

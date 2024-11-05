@@ -21,8 +21,10 @@ class Reservakomodsi extends Migration
             $table->integer('totalHarga');
             $table->string('snap_token')->nullable();
             $table->string('metodepembayaran');
-            $table->enum('statuspemakaian',[00,11,22])->default(00);
-            $table->enum('payment_status', ['00','11', '22', '33'])->comment('00=menunggu pembayaran, 11=sudah dibayar, 22=kadaluarsa, 33=cancel')->default(00);
+            $table->enum('statuspemakaian',['00','11', '22'])->default('00');
+            $table->enum('payment_status', ['00','11', '22', '33'])
+            ->default('00')
+            ->comment('00=menunggu pembayaran, 11=sudah dibayar, 22=kadaluarsa, 33=cancel');
 
             $table->timestamps();
 
