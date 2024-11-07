@@ -11,9 +11,10 @@ use App\Models\Wisata;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Symfony\Component\Routing\Annotation\Route;
-use Carbon\Carbon; 
 use Illuminate\Support\Facades\DB;
 use Hashids\Hashids;
+use Carbon\Carbon; 
+
 
 class KunjunganWisataController extends Controller
 {
@@ -75,9 +76,77 @@ class KunjunganWisataController extends Controller
         return view('account.wisata.kunjunganwisata.index', compact('kunjungan','wisata','kelompok', 'wismannegara', 'hash'));
     }
 
-    public function filterbulan(Request $request)
+    public function filterbyinput(Request $request)
     {
         $hash = new Hashids();
+        $company_id = auth()->user()->company->id;
+        $wisata = Wisata::where('company_id', $company_id)->first();
+    
+        // Ambil tahun dan bulan dari request, default ke tahun dan bulan saat ini jika tidak ada input
+        $year = $request->input('year', date('Y'));
+        $month = $request->input('month', date('m'));
+    
+        // Fetch data dari database dengan filter tahun dan bulan
+        $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->whereYear('tanggal_kunjungan', $year)
+            ->whereMonth('tanggal_kunjungan', $month)
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->whereYear('tanggal_kunjungan', $year)
+            ->whereMonth('tanggal_kunjungan', $month)
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        // Inisialisasi array untuk menyimpan data kunjungan
+        $kunjungan = [];
+    
+        // Membuat array kunjungan untuk setiap tanggal
+        $startDate = Carbon::createFromFormat('Y-m-d', "$year-$month-01");
+        $endDate = $startDate->endOfMonth();
+    
+        while ($startDate->lte($endDate)) {
+            $tanggal = $startDate->format('Y-m-d');
+    
+            // Ambil data kunjungan lokal
+            $dataTanggal = $wisnuKunjungan->get($tanggal, collect());
+            $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
+            $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
+    
+            // Ambil data kunjungan internasional
+            $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
+            $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
+            
+            // Kelompokkan data kunjungan internasional berdasarkan negara
+            $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
+    
+            // Tambahkan data kunjungan ke array
+            $kunjungan[$tanggal] = [
+                'jumlah_laki_laki' => $jumlahLakiLaki,
+                'jumlah_perempuan' => $jumlahPerempuan,
+                'jml_wisman_laki' => $jmlWismanLaki ?: 0,
+                'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
+                'wisman_by_negara' => $wismanByNegara,
+            ];
+    
+            $startDate->addDay(); // Tambahkan satu hari ke tanggal
+        }
+    
+        // Convert ke koleksi untuk manipulasi yang lebih mudah di view
+        $kunjungan = collect($kunjungan);
+    
+        // Ambil data kelompok dan negara
+        $kelompok = KelompokKunjungan::all();
+        $wismannegara = WismanNegara::all();
+    
+        // Kembalikan view dengan data yang sudah difilter
+        return view('account.wisata.kunjunganwisata.filterbyinput', compact('kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'year', 'month'));
+    }
+    
+
+    public function filterbulan(Request $request)
+    {
         $company_id = auth()->user()->company->id;
         $wisata = Wisata::where('company_id', $company_id)->first();
         $hash = new Hashids();
