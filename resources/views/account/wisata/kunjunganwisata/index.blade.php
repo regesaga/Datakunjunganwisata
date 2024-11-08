@@ -1,14 +1,13 @@
 @extends('layouts.datakunjungan.datakunjungan')
-
 @section('content')
 <div class="container">
-    <h2>Laporan Kunjungan Wisatawan Nusantara</h2>
+    <h2>Laporan Kunjungan Wisatawan</h2>
     <a class="btn btn-success" href="{{ route("account.wisata.kunjunganwisata.createwisnu") }}">
         Tambah Data
     </a>
     
-    <table class="table table-bordered">
-        <thead class="table-light">
+    <table id="example1" class="table table-bordered table-striped">
+        <thead>
             <tr>
                 <th rowspan="2">Tanggal</th>
                 <th rowspan="2">Total</th>
@@ -62,4 +61,23 @@
         </tbody>
     </table>
 </div>
+@section('scripts')
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+@endsection
 @endsection
