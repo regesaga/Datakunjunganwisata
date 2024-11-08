@@ -121,8 +121,8 @@
     }
 </style>
 @section('content')
-    <div class="container">
-         {{-- Menampilkan notifikasi --}}
+<section class="content-header">
+    <div class="container-fluid">
     
         <form action="{{ route('account.wisata.kunjunganwisata.storewisnu') }}" method="POST">
             @csrf
@@ -208,7 +208,7 @@
                                             <table class="table table-bordered" id="wisman-table">
                                                 <thead>
                                                     <tr>
-                                                        <th width="50">Negara</th>
+                                                        <th>Negara</th>
                                                         <th>Laki-laki</th>
                                                         <th>Perempuan</th>
                                                         <th>Hapus</th>
@@ -216,7 +216,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <!-- <tr>
-                                                        <td width="100">
+                                                        <td>
                                                             <select name="wismannegara_id[]" class="form-control" required>
                                                                 <option value="" disabled selected>Pilih</option>
                                                                 @foreach($wismannegara as $negara)
@@ -252,13 +252,10 @@
                             </div>
                         </div>
             </div>
-
-
-        
-
         
         </form>
     </div>
+</section>
 @endsection
 
 @section('scripts')

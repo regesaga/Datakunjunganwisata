@@ -6,13 +6,14 @@
       </li>
      
     </ul>
-
+   
+   
+     
+    
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-    
-
-      
       <!-- Notifications Dropdown Menu -->
+    
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
@@ -44,10 +45,21 @@
           <i class="fas fa-expand-arrows-alt"></i>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
-        </a>
+      <li class="nav-item dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="padding-right: 45px;"><img class="img-profile rounded-circle" src="{{asset('images/logo/KuninganBeu.png')}}" width="40px"> </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+          <a href="{{route('account.wisata.changePassword')}}" class="dropdown-item ">
+            <i class="fas fa-key mr-2"></i>Ubah Password
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{{route('account.wisata.logout')}}" class="dropdown-item">
+            <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+          </a>
+        </div>
       </li>
+     
+      
+      
     </ul>
   </nav>

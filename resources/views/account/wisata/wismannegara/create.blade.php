@@ -1,6 +1,7 @@
 @extends('layouts.datakunjungan.datakunjungan')
 @section('content')
-<div class="container">
+<section class="content-header">
+    <div class="container-fluid">
 <div class="card">
     <div class="card-header">
         Tambah Negara
@@ -31,4 +32,5 @@
     </div>
 </div>
 </div>
+</section>
 @endsection

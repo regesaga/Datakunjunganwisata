@@ -121,7 +121,8 @@
     }
 </style>
 @section('content')
-    <div class="container">
+<section class="content-header">
+    <div class="container-fluid">
         <form action="{{ route('account.wisata.kunjunganwisata.update', $tanggal_kunjungan) }}" method="POST">
             @csrf
             @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
@@ -211,7 +212,7 @@
                                 <table class="table table-bordered" id="wisman-table">
                                     <thead>
                                         <tr>
-                                            <th width="50">Negara</th>
+                                            <th>Negara</th>
                                             <th>Laki-laki</th>
                                             <th>Perempuan</th>
                                             <th>Hapus</th>
@@ -220,7 +221,7 @@
                                     <tbody>
                                         @foreach ($aggregatedWismanData as $index => $data)
                                         <tr>
-                                            <td width="100">
+                                            <td>
                                                 <select class="form-control" name="wismannegara_id[]" required>
                                                     <option value="">Pilih Negara</option>
                                                     @foreach($wismannegara as $negara)
@@ -269,6 +270,7 @@
         </form>
         
     </div>
+</section>
 @endsection
 
 @section('scripts')
