@@ -3,10 +3,10 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-        <h2>Laporan Kunjungan Wisatawan Per Bulan</h2>
+        <h2>Laporan Kunjungan Wisatawan Nusantara</h2>
 
         <!-- Form Filter Bulan dan Tahun -->
-        <form method="GET" action="{{ route('account.wisata.kunjunganwisata.index') }}">
+        <form method="GET" action="{{ route('account.wisata.kunjunganwisata.filterwisnubulan') }}">
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
@@ -48,19 +48,14 @@
                         @foreach ($kelompok as $namaKelompok)
                             <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                         @endforeach
-                        @foreach ($wismannegara as $negara)
-                            <th colspan="2">{{ $negara->wismannegara_name }}</th>
-                        @endforeach
+                        
                     </tr>
                     <tr>
                         @foreach ($kelompok as $namaKelompok)
                             <th>L</th>
                             <th>P</th>
                         @endforeach
-                        @foreach ($wismannegara as $negara)
-                            <th>L</th>
-                            <th>P</th>
-                        @endforeach
+                      
                     </tr>
                 </thead>
                 <tbody>
@@ -68,7 +63,7 @@
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                             <td>
-                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>
                             <td>
                                 <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
@@ -84,10 +79,7 @@
                                 <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
                             @endforeach
 
-                            @foreach ($wismannegara as $negara)
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
-                            @endforeach
+                          
                         </tr>
                     @endforeach
                 </tbody>
@@ -97,7 +89,7 @@
                         <th>Total Keseluruhan</th>
                         <th>
                             {{ $kunjungan->sum(function($dataTanggal) {
-                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
+                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'];
                             }) }}
                         </th>
                         <th></th>
@@ -108,15 +100,6 @@
                             }) }}</th>
                             <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
                                 return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan');
-                            }) }}</th>
-                        @endforeach
-
-                        @foreach ($wismannegara as $negara)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                            }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
                             }) }}</th>
                         @endforeach
                     </tr>

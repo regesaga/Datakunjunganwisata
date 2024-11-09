@@ -44,6 +44,24 @@
         </a>
       </li>
       <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+          <p>
+            Wisnuperbulan
+            <span class="right badge badge-danger">New</span>
+          </p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.filterwismanbulan') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+          <p>
+            Wismanperbulan
+            <span class="right badge badge-danger">New</span>
+          </p>
+        </a>
+      </li>
+      <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.createwisnu') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
 
