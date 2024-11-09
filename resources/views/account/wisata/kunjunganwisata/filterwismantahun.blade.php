@@ -4,7 +4,6 @@
 <section class="content-header">
     <div class="container-fluid">
         <h2>Laporan Kunjungan Wisatawan Mancanegara</h2>
-
         <!-- Form Filter Bulan dan Tahun -->
         <form method="GET" action="{{ route('account.wisata.kunjunganwisata.filterwismanbulan') }}">
             <div class="row">
@@ -110,14 +109,4 @@
         </div>
     </div>
 </section>
-@endsection
-@section('scripts')
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    });
-</script>
 @endsection

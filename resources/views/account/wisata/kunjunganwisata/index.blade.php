@@ -1,9 +1,10 @@
 @extends('layouts.datakunjungan.datakunjungan')
 
 @section('content')
+
 <section class="content-header">
+
     <div class="container-fluid">
-        <h2>Laporan Kunjungan Wisatawan Per Bulan</h2>
 
         <!-- Form Filter Bulan dan Tahun -->
         <form method="GET" action="{{ route('account.wisata.kunjunganwisata.index') }}">

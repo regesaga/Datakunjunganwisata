@@ -4,7 +4,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="card-header">
-            <form action="{{ route('account.wisata.kunjunganwisata.filtertahun') }}" method="GET" class="mb-4">
+            <form action="{{ route('account.wisata.kunjunganwisata.dashboard') }}" method="GET" class="mb-4">
                 <div class="row">
                     <div class="col-lg-4">
                         <label for="year" class="form-label">Tahun</label>

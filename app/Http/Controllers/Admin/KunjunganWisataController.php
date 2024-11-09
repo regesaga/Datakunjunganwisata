@@ -87,6 +87,55 @@ class KunjunganWisataController extends Controller
     return view('account.wisata.kunjunganwisata.index', compact('kunjungan','tanggal_kunjungan','wisata','kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'));
 }
 
+public function dashboard(Request $request)
+    {
+        $company_id = auth()->user()->company->id;
+        $wisata = Wisata::where('company_id', $company_id)->first();
+        $hash = new Hashids();
+    
+        // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
+        $year = $request->input('year', date('Y'));
+    
+        // Buat array untuk menyimpan data kunjungan per bulan
+        $kunjungan = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $totalLakiLaki = WisnuWisata::whereYear('tanggal_kunjungan', $year)
+                ->whereMonth('tanggal_kunjungan', $month)
+                ->sum('jumlah_laki_laki');
+    
+            $totalPerempuan = WisnuWisata::whereYear('tanggal_kunjungan', $year)
+                ->whereMonth('tanggal_kunjungan', $month)
+                ->sum('jumlah_perempuan');
+    
+            $totalWismanLaki = WismanWisata::whereYear('tanggal_kunjungan', $year)
+                ->whereMonth('tanggal_kunjungan', $month)
+                ->sum('jml_wisman_laki');
+    
+            $totalWismanPerempuan = WismanWisata::whereYear('tanggal_kunjungan', $year)
+                ->whereMonth('tanggal_kunjungan', $month)
+                ->sum('jml_wisman_perempuan');
+    
+            // Simpan data kunjungan per bulan ke dalam array kunjungan
+            $kunjungan[$month] = [
+                'total_laki_laki' => $totalLakiLaki,
+                'total_perempuan' => $totalPerempuan,
+                'total_wisman_laki' => $totalWismanLaki,
+                'total_wisman_perempuan' => $totalWismanPerempuan,
+            ];
+        }
+    
+        // Hitung total keseluruhan per tahun dari semua data
+        $totalKeseluruhan = [
+            'total_laki_laki' => array_sum(array_column($kunjungan, 'total_laki_laki')),
+            'total_perempuan' => array_sum(array_column($kunjungan, 'total_perempuan')),
+            'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
+            'total_wisman_perempuan' => array_sum(array_column($kunjungan, 'total_wisman_perempuan')),
+        ];
+    
+        // Kirim year, kunjungan, dan totalKeseluruhan ke view untuk keperluan display
+        return view('account.wisata.kunjunganwisata.dashboard', compact('kunjungan', 'wisata', 'hash', 'year', 'totalKeseluruhan'));
+    }
+
 
     public function filterbyinput(Request $request)
 {
