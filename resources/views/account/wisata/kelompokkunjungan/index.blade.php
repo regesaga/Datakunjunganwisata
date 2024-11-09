@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-header">
                 <a class="btn btn-success" href="{{ route("account.wisata.kelompokkunjungan.create") }}">
-                    Tambah Nama
+                    Tambah Nama Kelompok 
                 </a>
             </div>
 

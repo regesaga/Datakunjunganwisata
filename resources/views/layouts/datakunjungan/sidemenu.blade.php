@@ -29,7 +29,16 @@
         <a href="{{ route('account.wisata.kunjunganwisata.filterbulan') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
           <p>
-            Widgets
+            perbulan
+            <span class="right badge badge-danger">New</span>
+          </p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.filtertahun') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+          <p>
+            pertahun
             <span class="right badge badge-danger">New</span>
           </p>
         </a>

@@ -10,7 +10,6 @@
             <div class="card-header">
                 <form action="{{ route('account.wisata.kunjunganwisata.filterbulan') }}" method="GET" class="mb-4">
                     <div class="row">
-                        
                         <div class="col-lg-4">
                             <label for="year" class="form-label">Tahun</label>
                             <select id="year" name="year"  class="form-control select2" style="width: 100%;">
@@ -35,7 +34,8 @@
                     </div>
                 </form>
             </div>
-        <!-- Tabel Data Kunjungan -->
+
+            <!-- Tabel Data Kunjungan -->
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
@@ -46,7 +46,6 @@
                             <th>Total Wisman Laki-Laki</th>
                             <th>Total Wisman Perempuan</th>
                             <th>Sub Total</th>
-                            <!-- Kolom lainnya sesuai kebutuhan -->
                         </tr>
                     </thead>
                     <tbody>
@@ -58,7 +57,6 @@
                                 <td>{{ $data['jml_wisman_laki'] }}</td>
                                 <td>{{ $data['jml_wisman_perempuan'] }}</td>
                                 <td>{{ $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }}</td>
-                                <!-- Data lainnya -->
                             </tr>
                         @empty
                             <tr>
@@ -66,28 +64,36 @@
                             </tr>
                         @endforelse
                     </tbody>
+
+                    <!-- TFOOT untuk menampilkan total keseluruhan -->
+                    <tfoot>
+                        <tr>
+                            <th>Total</th>
+                            <th>{{ $kunjungan->sum('jumlah_laki_laki') }}</th>
+                            <th>{{ $kunjungan->sum('jumlah_perempuan') }}</th>
+                            <th>{{ $kunjungan->sum('jml_wisman_laki') }}</th>
+                            <th>{{ $kunjungan->sum('jml_wisman_perempuan') }}</th>
+                            <th>
+                                {{ $kunjungan->sum(function($data) {
+                                    return $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'];
+                                }) }}
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
     </div>
 </section>
+
 @section('scripts')
 <script>
     $(function () {
-      $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
-  </script>
+</script>
 @endsection
 @endsection
