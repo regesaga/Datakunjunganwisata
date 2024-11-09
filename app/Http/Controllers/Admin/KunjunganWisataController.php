@@ -50,7 +50,7 @@ class KunjunganWisataController extends Controller
     foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
         // Convert to collection for easier manipulation
         $dataTanggal = collect($dataTanggal);
-
+        $tanggal_kunjungan = $tanggal;
         // Get the total local visitors
         $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
         $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
@@ -84,15 +84,21 @@ class KunjunganWisataController extends Controller
     $kelompok = KelompokKunjungan::all();
     $wismannegara = WismanNegara::all();
 
-    return view('account.wisata.kunjunganwisata.index', compact('kunjungan','wisata','kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'));
+    return view('account.wisata.kunjunganwisata.index', compact('kunjungan','tanggal_kunjungan','wisata','kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'));
 }
 
 
     public function filterbyinput(Request $request)
 {
-   
+    $company_id = auth()->user()->company->id;
+    $kelompok = KelompokKunjungan::all();
+    $wisata = Wisata::where('company_id', $company_id)->first();
+    $wismannegara = WismanNegara::all();
 
-    return view('account.wisata.kunjunganwisata.filterbyinput');
+    // Define the $tanggal variable, you can set it to the current date or any other logic
+    $tanggal = now()->format('d-m-Y'); // This sets $tanggal to today's date in Y-m-d format
+
+    return view('account.wisata.kunjunganwisata.filterbyinput', compact('wisata', 'kelompok', 'wismannegara', 'tanggal'));
 }
 
 
@@ -245,7 +251,7 @@ class KunjunganWisataController extends Controller
             foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
                 // Convert to collection for easier manipulation
                 $dataTanggal = collect($dataTanggal);
-        
+                $tanggal_kunjungan = $tanggal;
                 // Get the total local visitors
                 $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
                 $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
@@ -270,7 +276,7 @@ class KunjunganWisataController extends Controller
             // Get kelompok and wisman negara
             $kelompok = KelompokKunjungan::all();
         
-            return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun'));
+            return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun','tanggal_kunjungan'));
         }
     }
 
@@ -303,7 +309,7 @@ class KunjunganWisataController extends Controller
             foreach ($wismanKunjungan as $tanggal => $dataTanggal) {
                 // Convert to collection for easier manipulation
                 $dataTanggal = collect($dataTanggal);
-        
+                $tanggal_kunjungan = $tanggal;
                 // Get the total local visitors
                 $jmlWismanLaki = $dataTanggal->sum('jml_wisman_laki');
                 $jmlWismanPerempuan = $dataTanggal->sum('jml_wisman_perempuan');
@@ -329,7 +335,7 @@ class KunjunganWisataController extends Controller
             // Get kelompok and wisman negara
             $wismannegara = WismanNegara::all();
         
-            return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun'));
+            return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun','tanggal_kunjungan'));
         }
     }
 
@@ -374,7 +380,7 @@ public function storewisnu(Request $request)
     if ($existingWisnu) {
         // Jika ada, buat notifikasi untuk mengonfirmasi apakah akan mengubah data
         $formattedDate = Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y');
-        return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di Input. Pilih Tanggal Lain')
+        return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di Input. Pilih Tanggal Lain atau Ubah data di menu')
             ->withInput();
     }
 
@@ -570,6 +576,61 @@ public function updatewisnu(Request $request, $tanggal_kunjungan)
 }
 
 
+// Fungsi untuk menghapus data kunjungan
+public function deletewisnu($wisata_id, $tanggal_kunjungan)
+{
+    $hash = new Hashids();
+    
+    // Dekripsi `wisata_id`
+    $wisata_id = $hash->decode($wisata_id)[0] ?? null;
+
+    if (!$wisata_id) {
+        abort(404); // Jika `wisata_id` tidak valid, return 404
+    }
+
+    try {
+        // Mulai transaksi
+        DB::beginTransaction();
+        
+        // Hapus data WISNU berdasarkan wisata_id dan tanggal_kunjungan
+        $deletedWisnu = WisnuWisata::where('wisata_id', $wisata_id)
+                                    ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                    ->delete();
+
+        // Hapus data WISMAN berdasarkan wisata_id dan tanggal_kunjungan
+        $deletedWisman = WismanWisata::where('wisata_id', $wisata_id)
+                                      ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                      ->delete();
+
+        // Log jumlah data yang dihapus
+        Log::info('Deleted WISNU and WISMAN data', [
+            'wisata_id' => $wisata_id,
+            'tanggal_kunjungan' => $tanggal_kunjungan,
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+        // Commit transaksi
+        DB::commit();
+
+        return redirect()->route('account.wisata.kunjunganwisata.index')
+                         ->with('success', 'Data kunjungan berhasil dihapus.');
+    } catch (\Exception $e) {
+        // Rollback transaksi jika ada kesalahan
+        DB::rollBack();
+
+        // Log error
+        Log::error('Failed to delete kunjungan data.', [
+            'error_message' => $e->getMessage(),
+            'wisata_id' => $wisata_id,
+            'tanggal_kunjungan' => $tanggal_kunjungan,
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return redirect()->route('account.wisata.kunjunganwisata.index')
+                         ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
+    }
+}
 
 
 

@@ -69,9 +69,16 @@
                                 <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
                                     <i class="fas fa-pencil-alt"></i> Ubah
                                 </a>
-                                <a class="btn btn-danger btn-sm" href="#">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </a>
+                                <a href="{{ route('account.wisata.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
+                                     <i class="fas fa-trash"></i> Hapus
+                                 </a>
+                                 
+                                 <form id="delete-form" action="{{ route('account.wisata.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
+                                     @csrf
+                                     @method('DELETE')
+                                 </form>
                             </td>
 
                             @foreach ($kelompok as $namaKelompok)
@@ -108,4 +115,14 @@
         </div>
     </div>
 </section>
+@endsection
+@section('scripts')
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+</script>
 @endsection

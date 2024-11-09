@@ -438,6 +438,8 @@ Route::get('/wisata/confirm/{wisata_id}/{tanggal_kunjungan}',  [KunjunganWisataC
 Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');
 Route::get('wisata/kunjungan/{wisata_id}/{tanggal_kunjungan}/edit', [KunjunganWisataController::class, 'editwisnu'])->name('account.wisata.kunjunganwisata.edit');
 Route::put('/wisata/update/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updatewisnu'])->name('account.wisata.kunjunganwisata.update');
+Route::delete('/kunjunganwisata/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnu'])->name('account.wisata.kunjunganwisata.delete');
+
 
 
   Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('account.wisata.kelompokkunjungan.index');

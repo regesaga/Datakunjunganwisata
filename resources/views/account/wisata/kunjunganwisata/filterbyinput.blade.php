@@ -1,252 +1,217 @@
 @extends('layouts.datakunjungan.datakunjungan')
+
+@section('styles')
+<!-- FullCalendar CSS -->
+<link href="{{ asset('datakunjungan/plugins/fullcalendar/main.css') }}" rel="stylesheet">
+
+<style>
+    /* FullCalendar Styling */
+    #calendar {
+        width: 100%;
+        margin: 20px 0;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    /* Responsif untuk perangkat mobile */
+    @media (max-width: 768px) {
+        #calendar {
+            font-size: 12px;  /* Ukuran font lebih kecil di perangkat mobile */
+            padding: 5px;
+        }
+    }
+
+    /* Menambahkan ukuran lebih kecil untuk tampilan desktop */
+    @media (min-width: 992px) {
+        #calendar {
+            font-size: 14px; /* Ukuran font sedikit lebih besar untuk desktop */
+        }
+    }
+
+    /* Styling form-container dan elemen lainnya */
+    .form-container {
+        max-width: 1000px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+    .form-header h3 {
+        font-size: 16px;
+        color: darkgrey;
+        margin: 0;
+    }
+    .form-header h2 {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+    .form-date {
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-save {
+        background-color: #8e44ad;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+@endsection
+
 @section('content')
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-   
-
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-3">
-            <div class="sticky-top mb-3">
-              <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">Draggable Events</h4>
+<section class="content-header">
+    <div class="container-fluid">
+        <div id="calendar"></div>
+        <form action="{{ route('account.wisata.kunjunganwisata.storewisnu') }}" method="POST">
+            @csrf
+            <div class="form-header">
+                <h3>Tambah Laporan Kunjungan</h3>
+                <h2>{{$wisata->namawisata}}</h2>
+                <div class="form-date">
+                    <label for="tanggal">Tanggal:</label>
+                    <input type="date" name="tanggal_kunjungan" class="form-control">
                 </div>
-                <div class="card-body">
-                  <!-- the events -->
-                  <div id="external-events">
-                    <div class="external-event bg-success">Lunch</div>
-                    <div class="external-event bg-warning">Go home</div>
-                    <div class="external-event bg-info">Do homework</div>
-                    <div class="external-event bg-primary">Work on UI design</div>
-                    <div class="external-event bg-danger">Sleep tight</div>
-                    <div class="checkbox">
-                      <label for="drop-remove">
-                        <input type="checkbox" id="drop-remove">
-                        remove after drop
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-              <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">Create Event</h3>
-                </div>
-                <div class="card-body">
-                  <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                    <ul class="fc-color-picker" id="color-chooser">
-                      <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                    </ul>
-                  </div>
-                  <!-- /btn-group -->
-                  <div class="input-group">
-                    <input id="new-event" type="text" class="form-control" placeholder="Event Title">
-
-                    <div class="input-group-append">
-                      <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
-                    </div>
-                    <!-- /btn-group -->
-                  </div>
-                  <!-- /input-group -->
-                </div>
-              </div>
+                <button type="submit" class="btn-save">Simpan Data</button>
             </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-md-9">
-            <div class="card card-primary">
-              <div class="card-body p-0">
-                <!-- THE CALENDAR -->
-                <div id="calendar"></div>
-              </div>
-              <!-- /.card-body -->
+            @if (session('warning'))
+                <div class="alert alert-warning">
+                    {{ session('warning') }} 
+                </div>
+            @endif
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+            <div class="col-lg-12">
+                <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
+                <div class="visitor-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="visitor-card">
+                                <strong>Kunjungan Wisatawan Nusantara (WISNU)</strong>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Kelompok Pengunjung</th>
+                                            <th>Laki-laki</th>
+                                            <th>Perempuan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($kelompok as $namaKelompok)
+                                        <tr>
+                                            <td>{{ $namaKelompok->kelompokkunjungan_name }}</td>
+                                            <td>
+                                                <input type="number" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"  value="0"  oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"  value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td>Jumlah</td>
+                                            <td>
+                                                <input type="text" id="total_wisnu_laki" name="total_wisnu_laki" class="form-control" value="0" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="text" id="total_wisnu_perempuan" name="total_wisnu_perempuan" class="form-control"   value="0" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total</td>
+                                            <td colspan="2"> 
+                                                <input type="text" id="total_wisnu" name="total_wisnu" class="form-control" value="0" readonly>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="visitor-card">
+                                <strong>Kunjungan Wisatawan Mancanegara (WISMAN)</strong>
+                                <table class="table table-bordered" id="wisman-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Negara</th>
+                                            <th>Laki-laki</th>
+                                            <th>Perempuan</th>
+                                            <th>Hapus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4">
+                                                <button type="button" class="btn btn-primary" id="add-row">Tambah</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jumlah</td>
+                                            <td><input type="text" name="jml_wismanlakilaki" id="jml_wismanlakilaki" class="form-control" value="0" readonly></td>
+                                            <td><input type="text" name="jml_wismanperempuan" id="jml_wismanperempuan" class="form-control" value="0" readonly></td>
+                                            <td><input type="text" name="total_wisman" id="total_wisman" class="form-control" value="0" readonly></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  @section('scripts')
-  <script>
-    $(function () {
-  
-      /* initialize the external events
-       -----------------------------------------------------------------*/
-      function ini_events(ele) {
-        ele.each(function () {
-  
-          // create an Event Object (https://fullcalendar.io/docs/event-object)
-          // it doesn't need to have a start or end
-          var eventObject = {
-            title: $.trim($(this).text()) // use the element's text as the event title
-          }
-  
-          // store the Event Object in the DOM element so we can get to it later
-          $(this).data('eventObject', eventObject)
-  
-          // make the event draggable using jQuery UI
-          $(this).draggable({
-            zIndex        : 1070,
-            revert        : true, // will cause the event to go back to its
-            revertDuration: 0  //  original position after the drag
-          })
-  
-        })
-      }
-  
-      ini_events($('#external-events div.external-event'))
-  
-      /* initialize the calendar
-       -----------------------------------------------------------------*/
-      //Date for the calendar events (dummy data)
-      var date = new Date()
-      var d    = date.getDate(),
-          m    = date.getMonth(),
-          y    = date.getFullYear()
-  
-      var Calendar = FullCalendar.Calendar;
-      var Draggable = FullCalendar.Draggable;
-  
-      var containerEl = document.getElementById('external-events');
-      var checkbox = document.getElementById('drop-remove');
-      var calendarEl = document.getElementById('calendar');
-  
-      // initialize the external events
-      // -----------------------------------------------------------------
-  
-      new Draggable(containerEl, {
-        itemSelector: '.external-event',
-        eventData: function(eventEl) {
-          return {
-            title: eventEl.innerText,
-            backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-            borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-            textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
-          };
-        }
-      });
-  
-      var calendar = new Calendar(calendarEl, {
-        headerToolbar: {
-          left  : 'prev,next today',
-          center: 'title',
-          right : 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        themeSystem: 'bootstrap',
-        //Random default events
-        events: [
-          {
-            title          : 'All Day Event',
-            start          : new Date(y, m, 1),
-            backgroundColor: '#f56954', //red
-            borderColor    : '#f56954', //red
-            allDay         : true
-          },
-          {
-            title          : 'Long Event',
-            start          : new Date(y, m, d - 5),
-            end            : new Date(y, m, d - 2),
-            backgroundColor: '#f39c12', //yellow
-            borderColor    : '#f39c12' //yellow
-          },
-          {
-            title          : 'Meeting',
-            start          : new Date(y, m, d, 10, 30),
-            allDay         : false,
-            backgroundColor: '#0073b7', //Blue
-            borderColor    : '#0073b7' //Blue
-          },
-          {
-            title          : 'Lunch',
-            start          : new Date(y, m, d, 12, 0),
-            end            : new Date(y, m, d, 14, 0),
-            allDay         : false,
-            backgroundColor: '#00c0ef', //Info (aqua)
-            borderColor    : '#00c0ef' //Info (aqua)
-          },
-          {
-            title          : 'Birthday Party',
-            start          : new Date(y, m, d + 1, 19, 0),
-            end            : new Date(y, m, d + 1, 22, 30),
-            allDay         : false,
-            backgroundColor: '#00a65a', //Success (green)
-            borderColor    : '#00a65a' //Success (green)
-          },
-          {
-            title          : 'Click for Google',
-            start          : new Date(y, m, 28),
-            end            : new Date(y, m, 29),
-            url            : 'https://www.google.com/',
-            backgroundColor: '#3c8dbc', //Primary (light-blue)
-            borderColor    : '#3c8dbc' //Primary (light-blue)
-          }
-        ],
-        editable  : true,
-        droppable : true, // this allows things to be dropped onto the calendar !!!
-        drop      : function(info) {
-          // is the "remove after drop" checkbox checked?
-          if (checkbox.checked) {
-            // if so, remove the element from the "Draggable Events" list
-            info.draggedEl.parentNode.removeChild(info.draggedEl);
-          }
-        }
-      });
-  
-      calendar.render();
-      // $('#calendar').fullCalendar()
-  
-      /* ADDING EVENTS */
-      var currColor = '#3c8dbc' //Red by default
-      // Color chooser button
-      $('#color-chooser > li > a').click(function (e) {
-        e.preventDefault()
-        // Save color
-        currColor = $(this).css('color')
-        // Add color effect to button
-        $('#add-new-event').css({
-          'background-color': currColor,
-          'border-color'    : currColor
-        })
-      })
-      $('#add-new-event').click(function (e) {
-        e.preventDefault()
-        // Get value and make sure it is not null
-        var val = $('#new-event').val()
-        if (val.length == 0) {
-          return
-        }
-  
-        // Create events
-        var event = $('<div />')
-        event.css({
-          'background-color': currColor,
-          'border-color'    : currColor,
-          'color'           : '#fff'
-        }).addClass('external-event')
-        event.text(val)
-        $('#external-events').prepend(event)
-  
-        // Add draggable funtionality
-        ini_events(event)
-  
-        // Remove event from text input
-        $('#new-event').val('')
-      })
-    })
-  </script>
+        </form>
+    </div>
+</section>
+@endsection
 
-  @endsection
-  @endsection
+@section('scripts')
+<!-- FullCalendar JS -->
+<script src="{{ asset('datakunjungan/plugins/fullcalendar/main.js') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',  // Tampilan kalender bulanan
+            headerToolbar: {
+                left: 'prev,next today',     // Tombol untuk navigasi bulan
+                center: 'title',             // Judul bulan
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Pilihan tampilan kalender
+            },
+            events: [
+                { title: 'All Day Event', start: '2024-11-01', backgroundColor: '#f56954', borderColor: '#f56954', allDay: true },
+                { title: 'Meeting', start: '2024-11-03T10:30:00', backgroundColor: '#0073b7', borderColor: '#0073b7', allDay: false },
+                { title: 'Lunch', start: '2024-11-05T12:00:00', end: '2024-11-05T14:00:00', backgroundColor: '#00c0ef', borderColor: '#00c0ef', allDay: false }
+            ],
+            editable: true,
+            droppable: true
+        });
+        calendar.render();
+    });
+</script>
+@endsection
