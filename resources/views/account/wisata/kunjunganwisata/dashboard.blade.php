@@ -101,13 +101,13 @@
                 </div>
       <!-- /.row -->
       <div class="row">
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-6 col-6">
         <!-- small box -->
-        <div class="small-box bg-success">
+        <div class="small-box bg-info">
             <div class="inner">
-            <h3>{{ $totalKeseluruhan['total_laki_laki'] }}</h3>
+            <h3>{{  $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'] }}</h3>
 
-            <p>Pengunjung Laki Laki Nusantara</p>
+            <p>Pengunjung Laki Laki</p>
             </div>
             <div class="icon">
             <i class="ion ion-male"></i>
@@ -115,73 +115,124 @@
         </div>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-6 col-6">
         <!-- small box -->
-        <div class="small-box bg-success">
+        <div class="small-box bg-info">
             <div class="inner">
-            <h3>{{ $totalKeseluruhan['total_perempuan'] }}</h3>
+            <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] +$totalKeseluruhan['total_perempuan'] }}</h3>
 
-            <p>Pengunjung Perempuan Nusantara</p>
+            <p>Pengunjung Perempuan</p>
             </div>
             <div class="icon">
             <i class="ion ion-female"></i>
             </div>
         </div>
         </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-            <div class="inner">
-            <h3>{{ $totalKeseluruhan['total_wisman_laki'] }}</h3>
-
-            <p>Pengunjung Laki Laki Mancanegara</p>
-            </div>
-            <div class="icon">
-            <i class="ion ion-male"></i>
-            </div>
-        </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning">
-            <div class="inner">
-            <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
-
-            <p>Pengunjung Perempuan Mancanegara</p>
-            </div>
-            <div class="icon">
-            <i class="ion ion-female"></i>
-            </div>
-        </div>
-        </div>
+       
+        
         <!-- ./col -->
     </div>
             </div>
             <!-- /.card-body-->
             <div class="card-footer bg-transparent">
               <div class="row">
+                @foreach ($kelompok as $namaKelompok)
                 <div class="col-4 text-center">
-                  <div id="sparkline-1"></div>
-                  <div class="text-white">Visitors</div>
+                    <div id="sparkline-1">
+                        {{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                            return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum(function($item) {
+                                return $item['jumlah_laki_laki'] + $item['jumlah_perempuan'];
+                            });
+                        }) }}
+                    </div>
+                    <div class="text-white">{{ $namaKelompok->kelompokkunjungan_name }}</div>
                 </div>
+            @endforeach
+            
+                
+                
+
                 <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-2"></div>
-                  <div class="text-white">Online</div>
-                </div>
-                <!-- ./col -->
-                <div class="col-4 text-center">
-                  <div id="sparkline-3"></div>
-                  <div class="text-white">Sales</div>
-                </div>
+                
                 <!-- ./col -->
               </div>
               <!-- /.row -->
             </div>
           </div>
           <!-- /.card -->
+        <div class="card">
+            <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Bulan</th>
+                            <th rowspan="2">Total</th>
+                            @foreach ($kelompok as $namaKelompok)
+                                <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                            @endforeach
+                            @foreach ($wismannegara as $negara)
+                                <th colspan="2">{{ $negara->wismannegara_name }}</th>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            @foreach ($kelompok as $namaKelompok)
+                                <th>L</th>
+                                <th>P</th>
+                            @endforeach
+                            @foreach ($wismannegara as $negara)
+                                <th>L</th>
+                                <th>P</th>
+                            @endforeach
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($kunjungan as $month => $dataBulan)
+                            <tr>
+                                <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                                <td>
+                                    {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
+                                </td>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                @endforeach
+                                @foreach ($wismannegara as $negara)
+                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
+                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total Keseluruhan</th>
+                            <th>
+                                {{ collect($kunjungan)->sum(function($dataBulan) {
+                                    return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
+                                }) }}
+                            </th>
+                            @foreach ($kelompok as $namaKelompok)
+                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                                }) }}</th>
+                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                                }) }}</th>
+                            @endforeach
+                            @foreach ($wismannegara as $negara)
+                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
+                                }) }}</th>
+                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
+                                }) }}</th>
+                            @endforeach
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
@@ -230,6 +281,7 @@
                 </table>
             </div>
         </div>
+
     </div>
 </section>
 @section('scripts')

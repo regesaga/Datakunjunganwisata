@@ -427,6 +427,7 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   // tambahkan rute lain untuk admin di sini0
 // --- data kunjungan wisata ------
 Route::get('indexkunjunganwisata', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.datakunjunganwisata.index');
+Route::get('/wisata/indexkunjunganwisatapertahun', [KunjunganWisataController::class, 'indexkunjunganwisatapertahun'])->name('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun');
 Route::get('wisata/dashboard', [KunjunganWisataController::class, 'dashboard'])->name('account.wisata.kunjunganwisata.dashboard');
 Route::get('wisata/perbulan', [KunjunganWisataController::class, 'filterbulan'])->name('account.wisata.kunjunganwisata.filterbulan');
 Route::get('wisata/wisnuperbulan', [KunjunganWisataController::class, 'filterwisnubulan'])->name('account.wisata.kunjunganwisata.filterwisnubulan');

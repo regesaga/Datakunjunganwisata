@@ -19,7 +19,18 @@
           <i class="nav-icon fas fa-th"></i>
 
           <p>
-            Index
+            Index bulanan
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+      
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+
+          <p>
+            Index tahunan
             <i class="right fas fa-angle-left"></i>
           </p>
         </a>
