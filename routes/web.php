@@ -78,7 +78,7 @@ Route::middleware('throttle:10,1')->group(function () {
   Route::get('/detailpaketwisata/{paketwisata}', [HomeController::class, 'showdetailpaketwisata'])->name('website.webdetailpaketwisata');
   Route::get('/detailarticel/{articel}', [HomeController::class, 'showdetailarticel'])->name('website.webdetailarticel');
   Route::get('/webdetailpetawisata/{encodedId}', [HomeController::class, 'showdetailpetawisata'])->name('website.webdetailpetawisata');
-  Route::get('/webdetailpetakuliner/{encodedId}', [HomeController::class, 'showdetailpetakuliner'])->name('website.webdetailpetakuliner');
+  Route::get('/webdetailpetakuliner/{kuliner}', [HomeController::class, 'showdetailpetakuliner'])->name('website.webdetailpetakuliner');
   Route::get('/webdetailpetaakomodasi/{encodedId}', [HomeController::class, 'showdetailpetaakomodasi'])->name('website.webdetailpetaakomodasi');
 });
 
@@ -427,7 +427,7 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
   // tambahkan rute lain untuk admin di sini0
 // --- data kunjungan wisata ------
 Route::get('indexkunjunganwisata', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.datakunjunganwisata.index');
-Route::get('dashboard', [KunjunganWisataController::class, 'dashboard'])->name('account.wisata.datakunjunganwisata.dashboard');
+Route::get('wisata/dashboard', [KunjunganWisataController::class, 'dashboard'])->name('account.wisata.kunjunganwisata.dashboard');
 Route::get('wisata/perbulan', [KunjunganWisataController::class, 'filterbulan'])->name('account.wisata.kunjunganwisata.filterbulan');
 Route::get('wisata/wisnuperbulan', [KunjunganWisataController::class, 'filterwisnubulan'])->name('account.wisata.kunjunganwisata.filterwisnubulan');
 Route::get('wisata/wismanperbulan', [KunjunganWisataController::class, 'filterwismanbulan'])->name('account.wisata.kunjunganwisata.filterwismanbulan');

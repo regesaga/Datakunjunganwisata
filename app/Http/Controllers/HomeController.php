@@ -245,93 +245,112 @@ class HomeController extends Controller
     public function showdetailpetawisata($encodedId)
     {
         $hash = new Hashids();
-        $wisataId = $hash->decode($encodedId)[0];
+        $decodedId = $hash->decode($encodedId);
+    
+        // Cek apakah hasil decode memiliki elemen pertama dan valid
+        if (empty($decodedId) || !isset($decodedId[0]) || !is_numeric($decodedId[0])) {
+            return redirect()->route('home');
+        }
+    
+        $wisataId = $decodedId[0];
         $wisata = Wisata::find($wisataId);
+    
+        // Jika wisata tidak ditemukan, redirect ke home
         if (is_null($wisata)) {
             return redirect()->route('home');
         }
+    
         // Peningkatan jumlah views setelah mengambil data wisata
         event(new WisataViewEvent($wisata));
-
+    
         $hargatiket = $wisata->hargatiket;
         $wisata->load('fasilitas', 'created_by');
         $latitude = $wisata->latitude;
         $longitude = $wisata->longitude;
         $weatherData = $this->getWeatherData($latitude, $longitude);
-        // dd($weatherData);
-        $weatherCode = $weatherData['weather'][0]['icon']; // Ambil kode cuaca dari data yang diterima
+        $weatherCode = $weatherData['weather'][0]['icon'];
         $imageName = $this->chooseWeatherImage($weatherCode);
         $temperatureKelvin = $weatherData['main']['temp'];
         $temperatureCelsius = $temperatureKelvin - 273.15;
         $windSpeedMeterPerSecond = $weatherData['wind']['speed'];
-        $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6; // 1 meter/detik = 3.6 kilometer/jam
+        $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6;
         $windSpeedMeterPerSecond = $windSpeedKilometerPerHour * 0.27777777778;
         $windSpeedMeterPerSecond = number_format($windSpeedMeterPerSecond, 2);
+    
+        $reviews = ReviewRatingWisata::where('wisata_id', $wisata->id)
+            ->where('status', 'active')
+            ->get();
+    
+        $userReview = null;
+        $wisatawan = Auth::guard('wisatawans')->user();
+        if ($wisatawan) {
+            $userReview = ReviewRatingWisata::where('wisata_id', $wisata->id)
+                ->where('wisatawan_id', $wisatawan->id)
+                ->where('status', 'active')
+                ->first();
+        }
+    
+        return view('website.webdetailwisata', compact(
+            'wisata', 'hargatiket', 'hash', 'weatherData', 'imageName', 
+            'temperatureCelsius', 'windSpeedMeterPerSecond', 'reviews', 'userReview'
+        ));
+    }
+    
+public function showdetailpetakuliner($encodedId)
+{
+    $hash = new Hashids();
+    $decodedId = $hash->decode($encodedId);
 
-       // Ambil ulasan untuk wisata ini
-       $reviews = ReviewRatingWisata::where('wisata_id', $wisata->id)
-       ->where('status', 'active')
-       ->get();
+    // Cek apakah hasil decode memiliki elemen pertama dan apakah ID valid
+    if (empty($decodedId) || !isset($decodedId[0]) || !is_numeric($decodedId[0])) {
+        return redirect()->route('home');
+    }
 
-   // Periksa apakah pengguna sudah memberikan ulasan
-   $userReview = null;
-   $wisatawan = Auth::guard('wisatawans')->user();
-   if ($wisatawan) {
-       $userReview = ReviewRatingWisata::where('wisata_id', $wisata->id)
-           ->where('wisatawan_id', $wisatawan->id)
-           ->where('status', 'active')
-           ->first();
-   }
+    $kulinerId = $decodedId[0];
+    $kuliner = Kuliner::find($kulinerId);
 
-   return view('website.webdetailwisata', compact('wisata', 'hargatiket', 'hash', 'weatherData', 'imageName', 'temperatureCelsius', 'windSpeedMeterPerSecond', 'reviews', 'userReview'));
+    // Jika kuliner tidak ditemukan, redirect ke home
+    if (is_null($kuliner)) {
+        return redirect()->route('home');
+    }
+
+    $kulinerproduk = $kuliner->kulinerproduk()->where('active', 1)->get();
+    $latitude = $kuliner->latitude;
+    $longitude = $kuliner->longitude;
+    $weatherData = $this->getWeatherData($latitude, $longitude);
+    $weatherCode = $weatherData['weather'][0]['icon'];
+    $imageName = $this->chooseWeatherImage($weatherCode);
+    $temperatureKelvin = $weatherData['main']['temp'];
+    $temperatureCelsius = $temperatureKelvin - 273.15;
+    $windSpeedMeterPerSecond = $weatherData['wind']['speed'];
+    $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6;
+    $windSpeedMeterPerSecond = $windSpeedKilometerPerHour * 0.27777777778;
+    $windSpeedMeterPerSecond = number_format($windSpeedMeterPerSecond, 2);
+
+    event(new KulinerViewEvent($kuliner));
+
+    $kecamatan = Kecamatan::all();
+    $reviews = ReviewRatingKuliner::where('kuliner_id', $kuliner->id)
+        ->where('status', 'active')
+        ->get();
+
+    $userReview = null;
+    $wisatawan = Auth::guard('wisatawans')->user();
+    if ($wisatawan) {
+        $userReview = ReviewRatingKuliner::where('kuliner_id', $kuliner->id)
+            ->where('wisatawan_id', $wisatawan->id)
+            ->where('status', 'active')
+            ->first();
+    }
+
+    return view('website.webdetailkuliner', compact(
+        'userReview', 'reviews', 'kuliner', 'kulinerproduk', 'kecamatan', 'hash', 
+        'weatherData', 'imageName', 'temperatureCelsius', 'windSpeedMeterPerSecond'
+    ));
 }
 
 
-    public function showdetailpetakuliner($encodedId)
-    {
-        $hash = new Hashids();
-        $kulinerId = $hash->decode($encodedId)[0];
-        $kuliner = Kuliner::find($kulinerId);
-        if(is_null($kuliner)){
-            return redirect()->route('home');
-        }
-        $kulinerproduk = $kuliner->kulinerproduk()->where('active', 1)->get();
-        $latitude = $kuliner->latitude;
-        $longitude = $kuliner->longitude;
-        $weatherData = $this->getWeatherData($latitude, $longitude);
-        $weatherCode = $weatherData['weather'][0]['icon']; // Ambil kode cuaca dari data yang diterima
-        $imageName = $this->chooseWeatherImage($weatherCode);
-        $temperatureKelvin = $weatherData['main']['temp'];
-        $temperatureCelsius = $temperatureKelvin - 273.15;
-        $windSpeedMeterPerSecond = $weatherData['wind']['speed'];
-        $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6; // 1 meter/detik = 3.6 kilometer/jam
-        $windSpeedMeterPerSecond = $windSpeedKilometerPerHour * 0.27777777778;
-        $windSpeedMeterPerSecond = number_format($windSpeedMeterPerSecond, 2);
-
-
-        // Peningkatan jumlah views setelah mengambil data kuliner
-        event(new KulinerViewEvent($kuliner));
-
-        $kecamatan = Kecamatan::all();
-          // Ambil ulasan untuk wisata ini
-          $reviews = ReviewRatingKuliner::where('kuliner_id', $kuliner->id)
-          ->where('status', 'active')
-          ->get();
-  
-      // Periksa apakah pengguna sudah memberikan ulasan
-             $userReview = null;
-             $wisatawan = Auth::guard('wisatawans')->user();
-             if ($wisatawan) {
-                 $userReview = ReviewRatingKuliner::where('kuliner_id', $kuliner->id)
-                     ->where('wisatawan_id', $wisatawan->id)
-                     ->where('status', 'active')
-                     ->first();
-             }
- 
-         return view('website.webdetailkuliner', compact('userReview','reviews','kuliner','kulinerproduk', 'kecamatan', 'hash', 'weatherData', 'imageName', 'temperatureCelsius','windSpeedMeterPerSecond'));
-     }
-
-
+   
     public function showdetailkuliner($kuliner)
 {
     $hash = new Hashids();
@@ -439,48 +458,60 @@ class HomeController extends Controller
    
 
 
-    public function showdetailpetaakomodasi($encodedId)
-    {
-        $hash = new Hashids();
-        $akomodasiId = $hash->decode($encodedId)[0];
-        $akomodasi = Akomodasi::find($akomodasiId);
-        $room = $akomodasi->room()->where('active', 1)->get();
-        $latitude = $akomodasi->latitude;
-        $longitude = $akomodasi->longitude;
-        $weatherData = $this->getWeatherData($latitude, $longitude);
-        $weatherCode = $weatherData['weather'][0]['icon']; // Ambil kode cuaca dari data yang diterima
-        $imageName = $this->chooseWeatherImage($weatherCode);
-        $temperatureKelvin = $weatherData['main']['temp'];
-        $temperatureCelsius = $temperatureKelvin - 273.15;
-        $windSpeedMeterPerSecond = $weatherData['wind']['speed'];
-        $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6; // 1 meter/detik = 3.6 kilometer/jam
-        $windSpeedMeterPerSecond = $windSpeedKilometerPerHour * 0.27777777778;
-        $windSpeedMeterPerSecond = number_format($windSpeedMeterPerSecond, 2);
-
-
-        // Peningkatan jumlah views setelah mengambil data akomodasi
-        event(new AkomodasiViewEvent($akomodasi));
-
-        $akomodasi->load('fasilitas', 'created_by');
-
-              // Ambil ulasan untuk wisata ini
-              $reviews = ReviewRatingAkomodasi::where('akomodasi_id', $akomodasi->id)
-              ->where('status', 'active')
-              ->get();
-      
-          // Periksa apakah pengguna sudah memberikan ulasan
-                 $userReview = null;
-                 $wisatawan = Auth::guard('wisatawans')->user();
-                 if ($wisatawan) {
-                     $userReview = ReviewRatingAkomodasi::where('akomodasi_id', $akomodasi->id)
-                         ->where('wisatawan_id', $wisatawan->id)
-                         ->where('status', 'active')
-                         ->first();
-                 }
-    
-            return view('website.webdetailakomodasi', compact('userReview','reviews','room','akomodasi', 'hash', 'weatherData', 'imageName', 'temperatureCelsius','windSpeedMeterPerSecond'));
-        }
-
+ public function showdetailpetaakomodasi($encodedId)
+ {
+     $hash = new Hashids();
+     $decodedId = $hash->decode($encodedId);
+ 
+     // Cek apakah hasil decode memiliki elemen pertama dan valid
+     if (empty($decodedId) || !isset($decodedId[0]) || !is_numeric($decodedId[0])) {
+         return redirect()->route('home');
+     }
+ 
+     $akomodasiId = $decodedId[0];
+     $akomodasi = Akomodasi::find($akomodasiId);
+ 
+     // Jika akomodasi tidak ditemukan, redirect ke home
+     if (is_null($akomodasi)) {
+         return redirect()->route('home');
+     }
+ 
+     $room = $akomodasi->room()->where('active', 1)->get();
+     $latitude = $akomodasi->latitude;
+     $longitude = $akomodasi->longitude;
+     $weatherData = $this->getWeatherData($latitude, $longitude);
+     $weatherCode = $weatherData['weather'][0]['icon'];
+     $imageName = $this->chooseWeatherImage($weatherCode);
+     $temperatureKelvin = $weatherData['main']['temp'];
+     $temperatureCelsius = $temperatureKelvin - 273.15;
+     $windSpeedMeterPerSecond = $weatherData['wind']['speed'];
+     $windSpeedKilometerPerHour = $windSpeedMeterPerSecond * 3.6;
+     $windSpeedMeterPerSecond = $windSpeedKilometerPerHour * 0.27777777778;
+     $windSpeedMeterPerSecond = number_format($windSpeedMeterPerSecond, 2);
+ 
+     event(new AkomodasiViewEvent($akomodasi));
+ 
+     $akomodasi->load('fasilitas', 'created_by');
+ 
+     $reviews = ReviewRatingAkomodasi::where('akomodasi_id', $akomodasi->id)
+         ->where('status', 'active')
+         ->get();
+ 
+     $userReview = null;
+     $wisatawan = Auth::guard('wisatawans')->user();
+     if ($wisatawan) {
+         $userReview = ReviewRatingAkomodasi::where('akomodasi_id', $akomodasi->id)
+             ->where('wisatawan_id', $wisatawan->id)
+             ->where('status', 'active')
+             ->first();
+     }
+ 
+     return view('website.webdetailakomodasi', compact(
+         'userReview', 'reviews', 'room', 'akomodasi', 'hash', 
+         'weatherData', 'imageName', 'temperatureCelsius', 'windSpeedMeterPerSecond'
+     ));
+ }
+ 
         
     
     public function showdetailakomodasi($akomodasi)
