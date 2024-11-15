@@ -8,7 +8,7 @@
             
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.kelompokkunjungan.create") }}">
+                <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.create") }}">
                     Tambah Nama Kelompok 
                 </a>
             </div>
@@ -42,15 +42,15 @@
                                     </td>
                                     <td>
                                         @can('kelompokkunjungan_show')
-                                            <a class="btn btn-xs btn-primary" href="{{ route('account.wisata.kelompokkunjungan.show', $kelompokkunjungan->id) }}">
+                                            <a class="btn btn-xs btn-primary" href="{{ route('admin.kelompokkunjungan.show', $kelompokkunjungan->id) }}">
                                                 {{ trans('view') }}
                                             </a>
                                         @endcan
-                                            <a class="btn btn-xs btn-info" href="{{ route('account.wisata.kelompokkunjungan.edit', $hash->encodeHex($kelompokkunjungan->id)) }}">
+                                            <a class="btn btn-xs btn-info" href="{{ route('admin.kelompokkunjungan.edit', $hash->encodeHex($kelompokkunjungan->id)) }}">
                                                 Ubah
                                             </a>
 
-                                            <form action="{{ route('account.wisata.kelompokkunjungan.destroy', $kelompokkunjungan->id) }}" method="POST" onsubmit="return confirm('{{ trans('areYouSure') }}');" style="display: inline-block;">
+                                            <form action="{{ route('admin.kelompokkunjungan.destroy', $kelompokkunjungan->id) }}" method="POST" onsubmit="return confirm('{{ trans('areYouSure') }}');" style="display: inline-block;">
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('Delete') }}">

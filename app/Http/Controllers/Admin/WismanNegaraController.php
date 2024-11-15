@@ -21,7 +21,7 @@ class WismanNegaraController extends Controller
         $hash=new Hashids();
         $wismannegara = WismanNegara::all();
         
-        return view('account.wisata.wismannegara.index', compact('wismannegara','hash'));
+        return view('admin.wismannegara.index', compact('wismannegara','hash'));
     }
 
 
@@ -35,21 +35,21 @@ class WismanNegaraController extends Controller
             'wismannegara_name' => $request->wismannegara_name
         ]);
         Alert::toast('Negara Created!', 'success');
-        return redirect()->route('account.wisata.wismannegara.index');
+        return redirect()->route('admin.wismannegara.index');
     }
 
 
     public function createwismannegara()
     {
 
-        return view('account.wisata.wismannegara.create');
+        return view('admin.wismannegara.create');
     }
 
     public function editwismannegara($wismannegara)
     {
         $hash=new Hashids();
         $wismannegara = WismanNegara::find($hash->decodeHex($wismannegara));
-        return view('account.wisata.wismannegara.edit', compact('wismannegara','hash'))->with([
+        return view('admin.wismannegara.edit', compact('wismannegara','hash'))->with([
             'wismannegara' => $wismannegara,
             'hash' => $hash
         ]);
@@ -63,7 +63,7 @@ class WismanNegaraController extends Controller
 
 
         Alert::toast('Negara di perbaharui!', 'success');
-        return redirect()->route('account.wisata.wismannegara.index');
+        return redirect()->route('admin.wismannegara.index');
     }
 
     public function destroy($id)
@@ -71,7 +71,7 @@ class WismanNegaraController extends Controller
         $wismannegara = WismanNegara::find($id);
         $wismannegara->delete();
         Alert::toast('Negara Dihapus!', 'success');
-        return redirect()->route('account.wisata.wismannegara.index');
+        return redirect()->route('admin.wismannegara.index');
     }
 
     public function massDestroy(MassDestroyWismanNegaraRequest $request)

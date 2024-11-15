@@ -5,7 +5,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <!-- Form Filter Tahun -->
-        <form method="GET" action="{{ route('admin.kelompokkunjungan.kunjunganwisata.indexkunjunganwisatapertahun') }}">
+        <form method="GET" action="{{ route('admin.kunjunganwisata.indexkunjunganwisatapertahun') }}">
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
@@ -23,7 +23,7 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route('admin.kelompokkunjungan.kunjunganwisata.createwisnu') }}">
+                <a class="btn btn-success" href="{{ route('admin.kunjunganwisata.createwisnu') }}">
                     Tambah Data
                 </a>
             </div>

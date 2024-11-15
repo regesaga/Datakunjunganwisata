@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\WisnuAkomodasi;
+use App\Models\CategoryAkomodasi;
 use App\Models\KelompokKunjungan;
 use App\Models\WismanAkomodasi;
 use App\Models\WismanNegara;
@@ -22,54 +23,75 @@ class AdminKunjunganAkomodasiController extends Controller
     {
         $hash = new Hashids();
         $company_id = auth()->user()->company->id;
-        $akomodasi = Akomodasi::where('company_id', $company_id)->first();
     
+        // Ambil kategori akomodasi untuk dropdown
+        $kategoriAkomodasi = CategoryAkomodasi::all();
+    
+        $categoryakomodasi_id = $request->input('categoryakomodasi_id', null);
         $bulan = $request->input('bulan', date('m'));
         $tahun = $request->input('tahun', date('Y'));
     
-        $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
-        $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
+        // Filter akomodasi berdasarkan kategori (tampilkan semua jika tidak ada kategori yang dipilih)
+        $akomodasi = Akomodasi::when($categoryakomodasi_id, function($query) use ($categoryakomodasi_id) {
+            return $query->where('categoryakomodasi_id', $categoryakomodasi_id);
+        })->get();
     
-        $wisnuKunjungan = WisnuAkomodasi::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+        // Tentukan start dan end date sesuai bulan dan tahun
+        $startDate = Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
+    
+        // Ambil data kunjungan Wisnu untuk bulan yang dipilih
+        $wisnuKunjungan = WisnuAkomodasi::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id', 'akomodasi_id')
             ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-            ->get()
-            ->groupBy('tanggal_kunjungan');
+            ->get();
     
-        $wismanKunjungan = WismanAkomodasi::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+        // Ambil data kunjungan Wisman untuk bulan yang dipilih
+        $wismanKunjungan = WismanAkomodasi::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id', 'akomodasi_id')
             ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-            ->get()
-            ->groupBy('tanggal_kunjungan');
+            ->get();
     
+        // Proses data kunjungan dan akomodasi
         $kunjungan = [];
-        $tanggal_kunjungan = null; // Definisikan variabel ini di awal
     
-        foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
-            $dataTanggal = collect($dataTanggal);
-            $tanggal_kunjungan = $tanggal; // Update nilai di dalam loop
-            $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
-            $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
-            $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
-            $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
-            $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
+        foreach ($akomodasi as $akomodasiItem) {
+            // Ambil data kunjungan untuk ID akomodasi tertentu
+            $wisnuData = $wisnuKunjungan->where('akomodasi_id', $akomodasiItem->id);
+            $wismanData = $wismanKunjungan->where('akomodasi_id', $akomodasiItem->id);
     
-            $kunjungan[$tanggal] = [
+            // Agregasi jumlah kunjungan Wisnu
+            $jumlahLakiLaki = $wisnuData->sum('jumlah_laki_laki');
+            $jumlahPerempuan = $wisnuData->sum('jumlah_perempuan');
+    
+            // Agregasi jumlah kunjungan Wisman
+            $jmlWismanLaki = $wismanData->sum('jml_wisman_laki');
+            $jmlWismanPerempuan = $wismanData->sum('jml_wisman_perempuan');
+    
+            // Kelompokkan data berdasarkan kelompok kunjungan dan negara
+            $kelompok = $wisnuData->groupBy('kelompok_kunjungan_id');
+            $wismanByNegara = $wismanData->groupBy('wismannegara_id');
+    
+            // Gabungkan data kunjungan untuk akomodasi
+            $kunjungan[] = [
+                'akomodasi' => $akomodasiItem,
                 'jumlah_laki_laki' => $jumlahLakiLaki,
                 'jumlah_perempuan' => $jumlahPerempuan,
-                'kelompok' => $dataTanggal,
+                'kelompok' => $kelompok,
                 'jml_wisman_laki' => $jmlWismanLaki ?: 0,
                 'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
                 'wisman_by_negara' => $wismanByNegara,
             ];
         }
     
-        $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
-            return $key;
+        // Sortir berdasarkan nama akomodasi
+        $kunjungan = collect($kunjungan)->sortBy(function($item) {
+            return $item['akomodasi']->namaakomodasi; // Mengurutkan berdasarkan nama akomodasi
         });
     
+        // Dapatkan kelompok kunjungan dan negara akomodasiwan mancanegara
         $kelompok = KelompokKunjungan::all();
         $wismannegara = WismanNegara::all();
     
-        return view('account.akomodasi.kunjunganakomodasi.index', compact('kunjungan', 'tanggal_kunjungan', 'akomodasi', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'));
+        return view('admin.kunjunganakomodasi.index', compact('kunjungan', 'kategoriAkomodasi', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun', 'categoryakomodasi_id'));
     }
     
     public function indexkunjunganakomodasipertahun(Request $request)
@@ -111,7 +133,7 @@ class AdminKunjunganAkomodasiController extends Controller
             $kelompok = KelompokKunjungan::all();
             $wismannegara = WismanNegara::all();
 
-            return view('account.akomodasi.kunjunganakomodasi.indexkunjunganakomodasipertahun', compact('kunjungan', 'akomodasi', 'kelompok', 'wismannegara', 'hash', 'tahun'));
+            return view('aadmin.kunjunganakomodasi.indexkunjunganakomodasipertahun', compact('kunjungan', 'akomodasi', 'kelompok', 'wismannegara', 'hash', 'tahun'));
         }
 
     
@@ -198,7 +220,7 @@ class AdminKunjunganAkomodasiController extends Controller
             $kelompokData = $kunjungan;
             
             // Kirim data ke view
-            return view('account.akomodasi.kunjunganakomodasi.dashboard', compact(
+            return view('aadmin.kunjunganakomodasi.dashboard', compact(
                 'kunjungan', 'kelompok', 'wismannegara', 'akomodasi', 'hash', 'year', 'totalKeseluruhan', 'kelompokData'
             ));
         }
@@ -214,7 +236,7 @@ class AdminKunjunganAkomodasiController extends Controller
         // Define the $tanggal variable, you can set it to the current date or any other logic
         $tanggal = now()->format('d-m-Y'); // This sets $tanggal to today's date in Y-m-d format
 
-        return view('account.akomodasi.kunjunganakomodasi.filterbyinput', compact('akomodasi', 'kelompok', 'wismannegara', 'tanggal'));
+        return view('aadmin.kunjunganakomodasi.filterbyinput', compact('akomodasi', 'kelompok', 'wismannegara', 'tanggal'));
     }
 
     public function filterbulan(Request $request)
@@ -282,7 +304,7 @@ class AdminKunjunganAkomodasiController extends Controller
         $wismannegara = WismanNegara::all();
     
         // Kirim year dan month ke view untuk keperluan display
-        return view('account.akomodasi.kunjunganakomodasi.filterbulan', compact('kunjungan','akomodasi','kelompok', 'wismannegara', 'hash', 'year', 'month'));
+        return view('aadmin.kunjunganakomodasi.filterbulan', compact('kunjungan','akomodasi','kelompok', 'wismannegara', 'hash', 'year', 'month'));
     }
     
     public function filtertahun(Request $request)
@@ -331,7 +353,7 @@ class AdminKunjunganAkomodasiController extends Controller
         ];
     
         // Kirim year, kunjungan, dan totalKeseluruhan ke view untuk keperluan display
-        return view('account.akomodasi.kunjunganakomodasi.filtertahun', compact('kunjungan', 'akomodasi', 'hash', 'year', 'totalKeseluruhan'));
+        return view('aadmin.kunjunganakomodasi.filtertahun', compact('kunjungan', 'akomodasi', 'hash', 'year', 'totalKeseluruhan'));
     }
     
 
@@ -388,7 +410,7 @@ class AdminKunjunganAkomodasiController extends Controller
             // Get kelompok and wisman negara
             $kelompok = KelompokKunjungan::all();
         
-            return view('account.akomodasi.kunjunganakomodasi.filterwisnubulan', compact('kunjungan','akomodasi','kelompok', 'hash', 'bulan', 'tahun'));
+            return view('aadmin.kunjunganakomodasi.filterwisnubulan', compact('kunjungan','akomodasi','kelompok', 'hash', 'bulan', 'tahun'));
         }
     }
 
@@ -447,7 +469,7 @@ class AdminKunjunganAkomodasiController extends Controller
             // Get kelompok and wisman negara
             $wismannegara = WismanNegara::all();
         
-            return view('account.akomodasi.kunjunganakomodasi.filterwismanbulan', compact('kunjungan','akomodasi', 'wismannegara', 'hash', 'bulan', 'tahun'));
+            return view('aadmin.kunjunganakomodasi.filterwismanbulan', compact('kunjungan','akomodasi', 'wismannegara', 'hash', 'bulan', 'tahun'));
         }
     }
 
@@ -462,7 +484,7 @@ class AdminKunjunganAkomodasiController extends Controller
             // Define the $tanggal variable, you can set it to the current date or any other logic
             $tanggal = now()->format('d-m-Y'); // This sets $tanggal to today's date in Y-m-d format
 
-            return view('account.akomodasi.kunjunganakomodasi.create', compact('akomodasi', 'kelompok', 'wismannegara', 'tanggal'));
+            return view('aadmin.kunjunganakomodasi.create', compact('akomodasi', 'kelompok', 'wismannegara', 'tanggal'));
         }
 
 
@@ -582,7 +604,7 @@ class AdminKunjunganAkomodasiController extends Controller
         $hash = new Hashids();
 
         // Pass data to the view
-        return view('account.akomodasi.kunjunganakomodasi.edit', compact('wisnuData', 'hash','aggregatedWismanData','aggregatedWisnuData','tanggal_kunjungan','wismanData', 'akomodasi', 'kelompok', 'wismannegara', 'hash'));
+        return view('aadmin.kunjunganakomodasi.edit', compact('wisnuData', 'hash','aggregatedWismanData','aggregatedWisnuData','tanggal_kunjungan','wismanData', 'akomodasi', 'kelompok', 'wismannegara', 'hash'));
     }
 
     public function updatewisnu(Request $request, $tanggal_kunjungan)
@@ -663,7 +685,7 @@ class AdminKunjunganAkomodasiController extends Controller
             DB::commit();
             
             // Alihkan ke halaman index dengan pesan sukses
-            return redirect()->route('account.akomodasi.kunjunganakomodasi.index')->with('success', 'Data kunjungan berhasil diperbarui.');
+            return redirect()->route('aadmin.kunjunganakomodasi.index')->with('success', 'Data kunjungan berhasil diperbarui.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -725,7 +747,7 @@ class AdminKunjunganAkomodasiController extends Controller
             // Commit transaksi
             DB::commit();
 
-            return redirect()->route('account.akomodasi.kunjunganakomodasi.index')
+            return redirect()->route('aadmin.kunjunganakomodasi.index')
                             ->with('success', 'Data kunjungan berhasil dihapus.');
         } catch (\Exception $e) {
             // Rollback transaksi jika ada kesalahan
@@ -739,7 +761,7 @@ class AdminKunjunganAkomodasiController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('account.akomodasi.kunjunganakomodasi.index')
+            return redirect()->route('aadmin.kunjunganakomodasi.index')
                             ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
         }
     }

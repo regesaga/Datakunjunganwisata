@@ -8,7 +8,7 @@
           
             <div class="card">
                         <div class="card-header">
-                            <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.wismannegara.create") }}">
+                            <a class="btn btn-success" href="{{ route("admin.wismannegara.create") }}">
                                 Tambah Negara
                             </a>
                         </div>
@@ -42,15 +42,15 @@
                                                 </td>
                                                 <td>
                                                     @can('wismannegara_show')
-                                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.kelompokkunjungan.wismannegara.show', $wismannegara->id) }}">
+                                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.wismannegara.show', $wismannegara->id) }}">
                                                             {{ trans('view') }}
                                                         </a>
                                                     @endcan
-                                                        <a class="btn btn-xs btn-info" href="{{ route('admin.kelompokkunjungan.wismannegara.edit', $hash->encodeHex($wismannegara->id)) }}">
+                                                        <a class="btn btn-xs btn-info" href="{{ route('admin.wismannegara.edit', $hash->encodeHex($wismannegara->id)) }}">
                                                             Ubah
                                                         </a>
 
-                                                        <form action="{{ route('admin.kelompokkunjungan.wismannegara.destroy', $wismannegara->id) }}" method="POST" onsubmit="return confirm('{{ trans('areYouSure') }}');" style="display: inline-block;">
+                                                        <form action="{{ route('admin.wismannegara.destroy', $wismannegara->id) }}" method="POST" onsubmit="return confirm('{{ trans('areYouSure') }}');" style="display: inline-block;">
                                                             <input type="hidden" name="_method" value="DELETE">
                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                             <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('Delete') }}">

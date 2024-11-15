@@ -9,7 +9,7 @@
 
     <div class="card-body">
         
-        <form method="POST" action="{{ route("admin.kelompokkunjungan.wismannegara.storewismannegara") }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route("admin.wismannegara.storewismannegara") }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <label class="required" for="name">Nama Negara</label>

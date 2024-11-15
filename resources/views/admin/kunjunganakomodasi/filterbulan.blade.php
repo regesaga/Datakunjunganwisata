@@ -8,7 +8,7 @@
         <!-- Filter Form -->
         <div class="card">
             <div class="card-header">
-                <form action="{{ route('admin.kelompokkunjungan.kunjunganakomodasi.filterbulan') }}" method="GET" class="mb-4">
+                <form action="{{ route('admin.kunjunganakomodasi.filterbulan') }}" method="GET" class="mb-4">
                     <div class="row">
                         <div class="col-lg-4">
                             <label for="year" class="form-label">Tahun</label>

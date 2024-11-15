@@ -410,42 +410,42 @@ public function dashboard(Request $request)
             // Buat rentang tanggal untuk bulan yang dipilih
             $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
             $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
-        
-          
-        
-            $wismanKunjungan = WismanKuliner::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
-                ->whereBetween('tanggal_kunjungan', [$startDate, $endDate]) // Filter berdasarkan rentang tanggal
-                ->get()
-                ->groupBy('tanggal_kunjungan');
+           
+            $wisnuKunjungan = WisnuKuliner::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        $wismanKunjungan = WismanKuliner::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+            ->get()
+            ->groupBy('tanggal_kunjungan');
         
             // Initialize an array to hold all visits data
             $kunjungan = [];
-        
+            $tanggal_kunjungan = null; 
             // Populate the kunjungan array with data for each date
-            foreach ($wismanKunjungan as $tanggal => $dataTanggal) {
+            foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
                 // Convert to collection for easier manipulation
                 $dataTanggal = collect($dataTanggal);
                 $tanggal_kunjungan = $tanggal;
                 // Get the total local visitors
-                $jmlWismanLaki = $dataTanggal->sum('jml_wisman_laki');
-                $jmlWismanPerempuan = $dataTanggal->sum('jml_wisman_perempuan');
-        
+                $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
+                $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
                 // Initialize an array to hold foreign visitor counts by country
                 $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
         
                 $kunjungan[$tanggal] = [
                     'jml_wisman_laki' => $jmlWismanLaki ?: 0, // Ensure default to 0
                     'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0, // Ensure default to 0
-                    'wisman_by_negara' => $dataTanggal, // Store foreign visitor data by country
+                    'wisman_by_negara' => $wismanByNegara, // Store foreign visitor data by country
                 ];
             }
         
-            // Convert to a collection for easier manipulation in the view
-            $kunjungan = collect($kunjungan);
+            
         
-            // Sort kunjungan by date (youngest to oldest)
-            $kunjungan = $kunjungan->sortBy(function($item, $key) {
-                return $key; // Sort by the key which is tanggal
+            $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
+                return $key;
             });
         
             // Get kelompok and wisman negara
@@ -454,7 +454,6 @@ public function dashboard(Request $request)
             return view('account.kuliner.kunjungankuliner.filterwismanbulan', compact('kunjungan','kuliner', 'wismannegara', 'hash', 'bulan', 'tahun'));
         }
     }
-
 // Menampilkan form input kunjungan
 public function createwisnu()
 {

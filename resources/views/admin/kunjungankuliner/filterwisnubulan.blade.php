@@ -6,7 +6,7 @@
         <h2>Laporan Kunjungan Wisatawan Nusantara</h2>
 
         <!-- Form Filter Bulan dan Tahun -->
-        <form method="GET" action="{{ route('admin.kelompokkunjungan.kunjungankuliner.filterwisnubulan') }}">
+        <form method="GET" action="{{ route('admin.kunjungankuliner.filterwisnubulan') }}">
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
@@ -34,7 +34,7 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.kunjungankuliner.createwisnu") }}">
+                <a class="btn btn-success" href="{{ route("admin.kunjungankuliner.createwisnu") }}">
                     Tambah Data
                 </a>
             </div>
@@ -66,16 +66,16 @@
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('admin.kelompokkunjungan.kunjungankuliner.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                <a class="btn btn-info btn-sm" href="{{ route('admin.kunjungankuliner.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
                                     <i class="fas fa-pencil-alt"></i> Ubah
                                 </a>
-                                <a href="{{ route('admin.kelompokkunjungan.kunjungankuliner.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}"
+                                <a href="{{ route('admin.kunjungankuliner.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}"
                                     class="btn btn-danger btn-sm"
                                     onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
                                      <i class="fas fa-trash"></i> Hapus
                                  </a>
                                  
-                                 <form id="delete-form" action="{{ route('admin.kelompokkunjungan.kunjungankuliner.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
+                                 <form id="delete-form" action="{{ route('admin.kunjungankuliner.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
                                      @csrf
                                      @method('DELETE')
                                  </form>

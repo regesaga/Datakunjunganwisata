@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <h2>Laporan Kunjungan Wisatawan Mancanegara</h2>
         <!-- Form Filter Bulan dan Tahun -->
-        <form method="GET" action="{{ route('admin.kelompokkunjungan.kunjunganwisata.filterwismanbulan') }}">
+        <form method="GET" action="{{ route('admin.kunjunganwisata.filterwismanbulan') }}">
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
@@ -33,7 +33,7 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.kunjunganwisata.createwisnu") }}">
+                <a class="btn btn-success" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
                     Tambah Data
                 </a>
             </div>
@@ -65,7 +65,7 @@
                                 {{ $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('admin.kelompokkunjungan.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                <a class="btn btn-info btn-sm" href="{{ route('admin.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
                                     <i class="fas fa-pencil-alt"></i> Ubah
                                 </a>
                                 <a class="btn btn-danger btn-sm" href="#">

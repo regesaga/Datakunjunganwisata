@@ -5,7 +5,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <!-- Form Filter Tahun -->
-        <form method="GET" action="{{ route('admin.kelompokkunjungan.kunjungankuliner.indexkunjungankulinerpertahun') }}">
+        <form method="GET" action="{{ route('admin.kunjungankuliner.indexkunjungankulinerpertahun') }}">
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
@@ -23,7 +23,7 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route('admin.kelompokkunjungan.kunjungankuliner.createwisnu') }}">
+                <a class="btn btn-success" href="{{ route('admin.kunjungankuliner.createwisnu') }}">
                     Tambah Data
                 </a>
             </div>
@@ -34,7 +34,7 @@
                         <th rowspan="2">Bulan</th>
                         <th rowspan="2">Total</th>
                         @foreach ($kelompok as $namaKelompok)
-                            <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                            <th colspan="2">{{ $namaKelompok->name }}</th>
                         @endforeach
                         @foreach ($wismannegara as $negara)
                             <th colspan="2">{{ $negara->wismannegara_name }}</th>

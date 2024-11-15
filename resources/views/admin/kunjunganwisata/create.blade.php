@@ -124,7 +124,7 @@
 <section class="content-header">
     <div class="container-fluid">
     
-        <form action="{{ route('admin.kelompokkunjungan.kunjunganwisata.storewisnu') }}" method="POST">
+        <form action="{{ route('admin.kunjunganwisata.storewisnu') }}" method="POST">
             @csrf
         <div class="form-header">
                 <h3>Tambah Laporan Kunjungan</h3>

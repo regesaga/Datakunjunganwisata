@@ -21,7 +21,7 @@ class KelompokKunjunganController extends Controller
         $hash=new Hashids();
         $kelompokKunjungan = KelompokKunjungan::all();
 
-        return view('account.wisata.kelompokkunjungan.index', compact('kelompokKunjungan','hash'));
+        return view('admin.kelompokkunjungan.index', compact('kelompokKunjungan','hash'));
     }
 
 
@@ -35,21 +35,21 @@ class KelompokKunjunganController extends Controller
             'kelompokkunjungan_name' => $request->kelompokkunjungan_name
         ]);
         Alert::toast('Kelompok Created!', 'success');
-        return redirect()->route('account.wisata.kelompokkunjungan.index');
+        return redirect()->route('admin.kelompokkunjungan.index');
     }
 
 
     public function createkelompokKunjungan()
     {
 
-        return view('account.wisata.kelompokkunjungan.create');
+        return view('admin.kelompokkunjungan.create');
     }
 
     public function editkelompokKunjungan($kelompokKunjungan)
     {
         $hash=new Hashids();
         $kelompokKunjungan = KelompokKunjungan::find($hash->decodeHex($kelompokKunjungan));
-        return view('account.wisata.kelompokKunjungan.edit', compact('kelompokKunjungan','hash'))->with([
+        return view('admin.kelompokKunjungan.edit', compact('kelompokKunjungan','hash'))->with([
             'kelompokKunjungan' => $kelompokKunjungan,
             'hash' => $hash
         ]);
@@ -63,7 +63,7 @@ class KelompokKunjunganController extends Controller
 
 
         Alert::toast('Kelompok di perbaharui!', 'success');
-        return redirect()->route('account.wisata.kelompokkunjungan.index');
+        return redirect()->route('admin.kelompokkunjungan.index');
     }
 
     public function destroykelompokkunjungan($id)
@@ -71,7 +71,7 @@ class KelompokKunjunganController extends Controller
         $kelompokKunjungan = KelompokKunjungan::find($id);
         $kelompokKunjungan->delete();
         Alert::toast('Kelompok Kunjungan Delete!', 'success');
-        return redirect()->route('account.wisata.kelompokkunjungan.index');
+        return redirect()->route('admin.kelompokkunjungan.index');
     }
 
     public function massDestroy(MassDestroyKelompokKunjunganRequest $request)

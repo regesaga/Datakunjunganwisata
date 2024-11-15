@@ -130,6 +130,27 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   // tambahkan rute lain untuk admin di sini0
+  Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('admin.kelompokkunjungan.index');
+  Route::get('create_kelompokkunjungan', [KelompokKunjunganController::class, 'createkelompokKunjungan'])->name('admin.kelompokkunjungan.create');
+  Route::post('storekelompokkunjungan', [KelompokKunjunganController::class, 'storekelompokKunjungan'])->name('admin.kelompokkunjungan.storekelompokkunjungan');
+  Route::get('showkelompokkunjungan/show/{kelompokkunjungan}', [KelompokKunjunganController::class, 'showkelompokkunjungan'])->name('admin.kelompokkunjungan.show');
+  Route::get('editkelompokKunjungan/edit/{kelompokkunjungan}', [KelompokKunjunganController::class, 'editkelompokKunjungan'])->name('admin.kelompokkunjungan.edit');
+  Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('admin.kelompokkunjungan.update');
+  Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('admin.kelompokkunjungan.massDestroy');
+  Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('admin.kelompokkunjungan.destroy');
+
+
+
+  Route::get('get_allwismannegara', [WismanNegaraController::class, 'getAllwismannegara'])->name('admin.wismannegara.index');
+  Route::get('create_wismannegara', [WismanNegaraController::class, 'createwismannegara'])->name('admin.wismannegara.create');
+  Route::post('storewismannegara', [WismanNegaraController::class, 'storewismannegara'])->name('admin.wismannegara.storewismannegara');
+  Route::get('showwismannegara/show/{wismannegara}', [WismanNegaraController::class, 'showwismannegara'])->name('admin.wismannegara.show');
+  Route::get('editwismannegara/edit/{wismannegara}', [WismanNegaraController::class, 'editwismannegara'])->name('admin.wismannegara.edit');
+  Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('admin.wismannegara.update');
+  Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
+  Route::delete('wismannegara/destroy', [WismanNegaraController::class, 'massDestroy'])->name('admin.wismannegara.massDestroy');
+  Route::delete('wismannegara/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
+
 
   // --- data kunjungan wisata ------
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
@@ -183,28 +204,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::delete('/kunjunganakomodasi/{akomodasi_id}/{tanggal_kunjungan}', [AdminKunjunganAkomodasiController::class, 'deletewisnu'])->name('admin.kunjunganakomodasi.delete');
 
 
-  Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('admin.kelompokkunjungan.index');
-  Route::get('create_kelompokkunjungan', [KelompokKunjunganController::class, 'createkelompokKunjungan'])->name('admin.kelompokkunjungan.create');
-  Route::post('storekelompokkunjungan', [KelompokKunjunganController::class, 'storekelompokKunjungan'])->name('admin.kelompokkunjungan.storekelompokkunjungan');
-  Route::get('showkelompokkunjungan/show/{kelompokkunjungan}', [KelompokKunjunganController::class, 'showkelompokkunjungan'])->name('admin.kelompokkunjungan.show');
-  Route::get('editkelompokKunjungan/edit/{kelompokkunjungan}', [KelompokKunjunganController::class, 'editkelompokKunjungan'])->name('admin.kelompokkunjungan.edit');
-  Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('admin.kelompokkunjungan.update');
-  Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('admin.kelompokkunjungan.massDestroy');
-  Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('admin.kelompokkunjungan.destroy');
-
-
-
-  Route::get('get_allwismannegara', [WismanNegaraController::class, 'getAllwismannegara'])->name('admin.wismannegara.index');
-  Route::get('create_wismannegara', [WismanNegaraController::class, 'createwismannegara'])->name('admin.wismannegara.create');
-  Route::post('storewismannegara', [WismanNegaraController::class, 'storewismannegara'])->name('admin.wismannegara.storewismannegara');
-  Route::get('showwismannegara/show/{wismannegara}', [WismanNegaraController::class, 'showwismannegara'])->name('admin.wismannegara.show');
-  Route::get('editwismannegara/edit/{wismannegara}', [WismanNegaraController::class, 'editwismannegara'])->name('admin.wismannegara.edit');
-  Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('admin.wismannegara.update');
-  Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
-  Route::delete('wismannegara/destroy', [WismanNegaraController::class, 'massDestroy'])->name('admin.wismannegara.massDestroy');
-  Route::delete('wismannegara/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
-
-
+  
 
   // --- data kunjungan wisata ------
 
