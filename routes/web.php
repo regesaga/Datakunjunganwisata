@@ -16,6 +16,7 @@ use App\Http\Controllers\Author\KulinerAuthorController;
 use App\Http\Controllers\Author\EkrafAuthorController;
 use App\Http\Controllers\Author\KunjunganKulinerController;
 use App\Http\Controllers\Author\KunjunganWisataController;
+use App\Http\Controllers\Author\KunjunganAkomodasiController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\KelompokKunjunganController;
 use App\Http\Controllers\Admin\WismanNegaraController;
@@ -711,6 +712,48 @@ Route::delete('/kunjungankuliner/{kuliner_id}/{tanggal_kunjungan}', [KunjunganKu
 });
 
 Route::middleware(['auth', 'akomodasi'])->prefix('akomodasi')->group(function () {
+    // --- data kunjungan wisata ------
+Route::get('indexkunjunganakomodasi', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('account.akomodasi.datakunjunganakomodasi.index');
+Route::get('/akomodasi/indexkunjunganakomodasipertahun', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasipertahun'])->name('account.akomodasi.kunjunganakomodasi.indexkunjunganakomodasipertahun');
+Route::get('akomodasi/dashboard', [KunjunganAkomodasiController::class, 'dashboard'])->name('account.akomodasi.kunjunganakomodasi.dashboard');
+Route::get('akomodasi/perbulan', [KunjunganAkomodasiController::class, 'filterbulan'])->name('account.akomodasi.kunjunganakomodasi.filterbulan');
+Route::get('akomodasi/wisnuperbulan', [KunjunganAkomodasiController::class, 'filterwisnubulan'])->name('account.akomodasi.kunjunganakomodasi.filterwisnubulan');
+Route::get('akomodasi/wismanperbulan', [KunjunganAkomodasiController::class, 'filterwismanbulan'])->name('account.akomodasi.kunjunganakomodasi.filterwismanbulan');
+Route::get('akomodasi/pertahun', [KunjunganAkomodasiController::class, 'filtertahun'])->name('account.akomodasi.kunjunganakomodasi.filtertahun');
+Route::get('akomodasi/byinput', [KunjunganAkomodasiController::class, 'filterbyinput'])->name('account.akomodasi.kunjunganakomodasi.filterbyinput');
+Route::get('/akomodasi/kunjungan', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('account.akomodasi.kunjunganakomodasi.index');
+Route::get('/akomodasi/create', [KunjunganAkomodasiController::class, 'createwisnu'])->name('account.akomodasi.kunjunganakomodasi.createwisnu');
+Route::get('/akomodasi/confirm/{akomodasi_id}/{tanggal_kunjungan}',  [KunjunganAkomodasiController::class, 'confirm'])->name('account.akomodasi.kunjunganakomodasi.confirm');
+Route::post('/akomodasi/storekunjunganakomodasi', [KunjunganAkomodasiController::class, 'storewisnu'])->name('account.akomodasi.kunjunganakomodasi.storewisnu');
+Route::get('akomodasi/kunjungan/{akomodasi_id}/{tanggal_kunjungan}/edit', [KunjunganAkomodasiController::class, 'editwisnu'])->name('account.akomodasi.kunjunganakomodasi.edit');
+Route::put('/akomodasi/update/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'updatewisnu'])->name('account.akomodasi.kunjunganakomodasi.update');
+Route::delete('/kunjunganakomodasi/{akomodasi_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'deletewisnu'])->name('account.akomodasi.kunjunganakomodasi.delete');
+
+
+
+  Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('account.akomodasi.kelompokkunjungan.index');
+  Route::get('create_kelompokkunjungan', [KelompokKunjunganController::class, 'createkelompokKunjungan'])->name('account.akomodasi.kelompokkunjungan.create');
+  Route::post('storekelompokkunjungan', [KelompokKunjunganController::class, 'storekelompokKunjungan'])->name('account.akomodasi.kelompokkunjungan.storekelompokkunjungan');
+  Route::get('showkelompokkunjungan/show/{kelompokkunjungan}', [KelompokKunjunganController::class, 'showkelompokkunjungan'])->name('account.akomodasi.kelompokkunjungan.show');
+  Route::get('editkelompokKunjungan/edit/{kelompokkunjungan}', [KelompokKunjunganController::class, 'editkelompokKunjungan'])->name('account.akomodasi.kelompokkunjungan.edit');
+  Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('account.akomodasi.kelompokkunjungan.update');
+  Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('account.akomodasi.kelompokkunjungan.massDestroy');
+  Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('account.akomodasi.kelompokkunjungan.destroy');
+
+
+
+  Route::get('get_allwismannegara', [WismanNegaraController::class, 'getAllwismannegara'])->name('account.akomodasi.wismannegara.index');
+  Route::get('create_wismannegara', [WismanNegaraController::class, 'createwismannegara'])->name('account.akomodasi.wismannegara.create');
+  Route::post('storewismannegara', [WismanNegaraController::class, 'storewismannegara'])->name('account.akomodasi.wismannegara.storewismannegara');
+  Route::get('showwismannegara/show/{wismannegara}', [WismanNegaraController::class, 'showwismannegara'])->name('account.akomodasi.wismannegara.show');
+  Route::get('editwismannegara/edit/{wismannegara}', [WismanNegaraController::class, 'editwismannegara'])->name('account.akomodasi.wismannegara.edit');
+  Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('account.akomodasi.wismannegara.update');
+  Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('account.akomodasi.wismannegara.storeMedia');
+  Route::delete('wismannegara/destroy', [WismanNegaraController::class, 'massDestroy'])->name('account.akomodasi.wismannegara.massDestroy');
+  Route::delete('wismannegara/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('account.akomodasi.wismannegara.destroy');
+
+  
+
   // tambahkan rute lain untuk admin di sini0
   Route::get('getwisatawan', [AkomodasiAuthorController::class, 'getwisatawan'])->name('account.akomodasi.getwisatawan');;
 

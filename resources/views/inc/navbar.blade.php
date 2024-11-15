@@ -127,6 +127,13 @@
                     <i class="fas fa-receipt"></i> Fasilitas
                   </a>
                 </li>
+                @if(isset($akomodasi))
+                  <li class="list-group-item list-group-item-action {{ request()->segment(2) == 'cek' ? 'active': ''}}">
+                    <a href="{{ route('account.akomodasi.kunjunganakomodasi.dashboard') }}" class="account-nav-link">
+                      <i class="fas fa-search"></i> Data Kunjungan
+                    </a>
+                  </li>
+                  @endif
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown dropdown-left">
