@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Author;
+namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\WisnuKuliner;
@@ -16,7 +16,7 @@ use Hashids\Hashids;
 use Carbon\Carbon; 
 
 
-class KunjunganKulinerController extends Controller
+class AdminKunjunganKulinerController extends Controller
 {
     public function indexkunjungankuliner(Request $request)
     {

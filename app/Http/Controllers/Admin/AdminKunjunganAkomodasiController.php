@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Author;
+namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\WisnuAkomodasi;
@@ -16,7 +16,7 @@ use Hashids\Hashids;
 use Carbon\Carbon; 
 
 
-class KunjunganAkomodasiController extends Controller
+class AdminKunjunganAkomodasiController extends Controller
 {
     public function indexkunjunganakomodasi(Request $request)
     {
@@ -743,7 +743,6 @@ class KunjunganAkomodasiController extends Controller
                             ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
         }
     }
-
 
 
 }

@@ -392,7 +392,7 @@ public function dashboard(Request $request)
             // Get kelompok and wisman negara
             $kelompok = KelompokKunjungan::all();
         
-            return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun','tanggal_kunjungan'));
+            return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun'));
         }
     }
 
@@ -451,7 +451,7 @@ public function dashboard(Request $request)
             // Get kelompok and wisman negara
             $wismannegara = WismanNegara::all();
         
-            return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun','tanggal_kunjungan'));
+            return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun'));
         }
     }
 

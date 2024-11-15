@@ -246,6 +246,15 @@
                    Support By
                 </a>
             </li>
+
+            <li class="nav-item">
+                            
+                <a href="{{route('admin.kunjunganwisata.dashboard')}}" class="nav-link ? 'active' : '' ">
+                    <i class="far fa-th nav-icon"></i>
+
+                   Data Kunjungan
+                </a>
+            </li>
            
         </ul>
     </nav>

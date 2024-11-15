@@ -11,7 +11,7 @@
         <!-- Map card -->
         <div class="card bg-gradient-primary">
             <div class="card-header">
-                <form action="{{ route('account.wisata.kunjunganwisata.dashboard') }}" method="GET" class="mb-4">
+                <form action="{{ route('admin.kelompokkunjungan.kunjungankuliner.dashboard') }}" method="GET" class="mb-4">
                     <div class="row">
                         <div class="col-lg-2">
                             <select id="year" name="year" class="form-control select2" style="width: 100%;">
