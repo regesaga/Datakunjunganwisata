@@ -23,6 +23,11 @@ public function wismanWisata()
 }
 
 
+// Di model WismanNegara
+public function wismanKuliner()
+{
+    return $this->belongsToMany(WismanKuliner::class, 'wisman_negara_wisman_kuliner', 'wismannegara_id', 'wisman_kuliner_id');
+}
 
 
 }

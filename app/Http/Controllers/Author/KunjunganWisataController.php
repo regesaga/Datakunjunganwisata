@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Author;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\WisnuWisata;

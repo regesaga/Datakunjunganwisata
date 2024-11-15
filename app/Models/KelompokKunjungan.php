@@ -17,5 +17,10 @@ class KelompokKunjungan extends Model
         return $this->belongsToMany(WisnuWisata::class);
     }
 
+    public function wisnukuliner()
+    {
+        return $this->belongsToMany(WisnuKuliner::class);
+    }
+
     
 }
