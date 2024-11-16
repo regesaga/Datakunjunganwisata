@@ -213,16 +213,16 @@ class AdminController extends Controller
                 $user = User::find($authUser->id);
                 $user->password = Hash::make($newP);
                 if ($user->save()) {
-                    Alert::toast('Password Changed!', 'success');
-                    return redirect()->route('admin.user-account');
+                    Alert::toast('Password Berhasil di Ubah!', 'success');
+                    return redirect()->route('admin.changePassword');
                 } else {
-                    Alert::toast('Something went wrong!', 'warning');
+                    Alert::toast('Ada Kesalahan!', 'warning');
                 }
             } else {
-                Alert::toast('Passwords do not match!', 'info');
+                Alert::toast('Passwords Tidaksama!', 'info');
             }
         } else {
-            Alert::toast('Incorrect Password!', 'info');
+            Alert::toast('Password Salah!', 'info');
         }
         return redirect()->back();
     }

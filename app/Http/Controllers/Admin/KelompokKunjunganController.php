@@ -66,12 +66,13 @@ class KelompokKunjunganController extends Controller
         return redirect()->route('admin.kelompokkunjungan.index');
     }
 
-    public function destroykelompokkunjungan($id)
-    {
-        $kelompokKunjungan = KelompokKunjungan::find($id);
+    public function destroykelompokkunjungan(Request $request,$kelompokKunjungan)
+    { 
+        $hash=new Hashids();
+        $kelompokKunjungan = KelompokKunjungan::find($hash->decodeHex($kelompokKunjungan));
         $kelompokKunjungan->delete();
-        Alert::toast('Kelompok Kunjungan Delete!', 'success');
-        return redirect()->route('admin.kelompokkunjungan.index');
+        Alert::toast('Kelompok Kunjungan diHapus!', 'success');
+        return back();
     }
 
     public function massDestroy(MassDestroyKelompokKunjunganRequest $request)

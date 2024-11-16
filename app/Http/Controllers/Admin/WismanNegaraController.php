@@ -29,7 +29,7 @@ class WismanNegaraController extends Controller
     public function storewismannegara(Request $request)
     {
         $request->validate([
-            'wismannegara_name' => 'required|min:5'
+            'wismannegara_name' => 'required|min:4'
         ]);
         WismanNegara::create([
             'wismannegara_name' => $request->wismannegara_name
@@ -66,12 +66,15 @@ class WismanNegaraController extends Controller
         return redirect()->route('admin.wismannegara.index');
     }
 
-    public function destroy($id)
+
+
+    public function destroywismannegara(Request $request, $wismannegara)
     {
-        $wismannegara = WismanNegara::find($id);
+        $hash=new Hashids();
+        $wismannegara = WismanNegara::find($hash->decodeHex($wismannegara));
         $wismannegara->delete();
         Alert::toast('Negara Dihapus!', 'success');
-        return redirect()->route('admin.wismannegara.index');
+        return back();
     }
 
     public function massDestroy(MassDestroyWismanNegaraRequest $request)

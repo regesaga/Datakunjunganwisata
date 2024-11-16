@@ -136,8 +136,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('showkelompokkunjungan/show/{kelompokkunjungan}', [KelompokKunjunganController::class, 'showkelompokkunjungan'])->name('admin.kelompokkunjungan.show');
   Route::get('editkelompokKunjungan/edit/{kelompokkunjungan}', [KelompokKunjunganController::class, 'editkelompokKunjungan'])->name('admin.kelompokkunjungan.edit');
   Route::put('kelompokKunjunganupdate/{kelompokkunjungan}', [KelompokKunjunganController::class, 'kelompokKunjunganupdate'])->name('admin.kelompokkunjungan.update');
-  Route::delete('kelompokkunjungan/destroy', [KelompokKunjunganController::class, 'massDestroy'])->name('admin.kelompokkunjungan.massDestroy');
-  Route::delete('kelompokkunjungan/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('admin.kelompokkunjungan.destroy');
+  Route::delete('kelompokkunjungan/destroy/{kelompokkunjungan}', [KelompokKunjunganController::class, 'massDestroy'])->name('admin.kelompokkunjungan.massDestroy');
+  Route::delete('kelompokkunjungan/delete/{kelompokkunjungan}', [KelompokKunjunganController::class, 'destroykelompokkunjungan'])->name('admin.kelompokkunjungan.destroy');
 
 
 
@@ -148,8 +148,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('editwismannegara/edit/{wismannegara}', [WismanNegaraController::class, 'editwismannegara'])->name('admin.wismannegara.edit');
   Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('admin.wismannegara.update');
   Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
-  Route::delete('wismannegara/destroy', [WismanNegaraController::class, 'massDestroy'])->name('admin.wismannegara.massDestroy');
-  Route::delete('wismannegara/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
+  Route::delete('wismannegara/delete/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
 
 
   // --- data kunjungan wisata ------
