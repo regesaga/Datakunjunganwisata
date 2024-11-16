@@ -33,9 +33,7 @@
               </h3>
               <!-- card tools -->
               <div class="card-tools">
-                <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                  <i class="far fa-calendar-alt"></i>
-                </button>
+
                 <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                   <i class="fas fa-minus"></i>
                 </button>
@@ -47,17 +45,15 @@
                 <div class="row">
                     <div class="col-lg-4 col-6">
                     <!-- small box -->
-                    <div class="small-box bg-success">
+                    <div class="small-box bg-info">
                         <div class="inner">
-                            <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
-                                $totalKeseluruhan['total_perempuan']  }}</h3>
-                            <p>Jumlah Pengunjung Nusantara</p>
-                           
+                        <h3>{{  $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'] }}</h3>
+            
+                        <p>Pengunjung Laki Laki</p>
                         </div>
                         <div class="icon">
-                        <i class="ion ion-bag"></i>
+                        <i class="ion ion-male"></i>
                         </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                     </div>
                     <!-- ./col -->
@@ -81,19 +77,17 @@
                     <!-- ./col -->
                     <div class="col-lg-4 col-6">
                     <!-- small box -->
-                    <div class="small-box bg-warning">
+                    <div class="small-box bg-info">
                         <div class="inner">
-                            <h3> {{ 
-                                $totalKeseluruhan['total_wisman_laki'] + 
-                                $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
-                
-                            <p>Jumlah Pengunjung Mancanegara</p>
+                        <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] +$totalKeseluruhan['total_perempuan'] }}</h3>
+            
+                        <p>Pengunjung Perempuan</p>
                         </div>
                         <div class="icon">
-                        <i class="ion ion-person-add"></i>
+                        <i class="ion ion-female"></i>
                         </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
+                   
                     </div>
                     <!-- ./col -->
                   
@@ -103,29 +97,37 @@
       <div class="row">
         <div class="col-lg-6 col-6">
         <!-- small box -->
-        <div class="small-box bg-info">
+        <div class="small-box bg-success">
             <div class="inner">
-            <h3>{{  $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'] }}</h3>
-
-            <p>Pengunjung Laki Laki</p>
+                <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
+                    $totalKeseluruhan['total_perempuan']  }}</h3>
+                <p>Jumlah Pengunjung Nusantara</p>
+               
             </div>
             <div class="icon">
-            <i class="ion ion-male"></i>
+            <i class="ion ion-bag"></i>
             </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
+        
         </div>
         <!-- ./col -->
         <div class="col-lg-6 col-6">
         <!-- small box -->
-        <div class="small-box bg-info">
+            
+        <div class="small-box bg-warning">
+           
             <div class="inner">
-            <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] +$totalKeseluruhan['total_perempuan'] }}</h3>
-
-            <p>Pengunjung Perempuan</p>
+                <h3> {{ 
+                    $totalKeseluruhan['total_wisman_laki'] + 
+                    $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
+    
+                <p>Jumlah Pengunjung Mancanegara</p>
             </div>
             <div class="icon">
-            <i class="ion ion-female"></i>
+            <i class="ion ion-person-add"></i>
             </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
         </div>
        
@@ -149,8 +151,6 @@
                 </div>
             @endforeach
             
-                
-                
 
                 <!-- ./col -->
                 
@@ -161,28 +161,41 @@
           </div>
           <!-- /.card -->
         <div class="card">
+            <div class="card-header border-0">
+                <h3 class="card-title">
+                  Tabel Rekap Kunjungan Akomodasiwan Tahun {{ $year }}
+                </h3>
+                <!-- card tools -->
+                <div class="card-tools">
+  
+                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+                <!-- /.card-tools -->
+              </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th rowspan="2">Bulan</th>
-                            <th rowspan="2">Total</th>
-                            @foreach ($kelompok as $namaKelompok)
-                                <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
-                            @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th colspan="2">{{ $negara->wismannegara_name }}</th>
-                            @endforeach
+                            <th rowspan="3">Bulan</th>
+                            <th rowspan="3">Total</th>
+                            <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Akomodasi Nusantara</th>
+                            <th colspan="2" style="text-align: center;">Akomodasi Mancanegara</th>
                         </tr>
                         <tr>
                             @foreach ($kelompok as $namaKelompok)
-                                <th>L</th>
-                                <th>P</th>
+                                <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                             @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th>L</th>
-                                <th>P</th>
+                            <th colspan="2" style="text-align: center;">Total Akomodasi Mancanegara</th>
+                        </tr>
+                        <tr>
+                            @foreach ($kelompok as $namaKelompok)
+                                <th style="text-align: center;">L</th>
+                                <th style="text-align: center;">P</th>
                             @endforeach
+                            <th style="text-align: center;">Laki - Laki</th>
+                            <th style="text-align: center;">Perempuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -196,10 +209,8 @@
                                     <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
                                     <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
                                 @endforeach
-                                @foreach ($wismannegara as $negara)
-                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
-                                @endforeach
+                                <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -219,14 +230,8 @@
                                     return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
                                 }) }}</th>
                             @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
-                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                                }) }}</th>
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
-                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
-                                }) }}</th>
-                            @endforeach
+                            <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
+                            <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -234,6 +239,19 @@
         </div>
 
         <div class="card">
+            <div class="card-header border-0">
+                <h3 class="card-title">
+                  Tabel Rekap Menurut Jenis Kelamin Kunjungan Akomodasiwan Tahun {{ $year }}
+                </h3>
+                <!-- card tools -->
+                <div class="card-tools">
+  
+                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+                <!-- /.card-tools -->
+              </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>

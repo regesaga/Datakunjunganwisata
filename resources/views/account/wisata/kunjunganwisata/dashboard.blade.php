@@ -151,8 +151,6 @@
                 </div>
             @endforeach
             
-                
-                
 
                 <!-- ./col -->
                 
@@ -163,6 +161,19 @@
           </div>
           <!-- /.card -->
         <div class="card">
+            <div class="card-header border-0">
+                <h3 class="card-title">
+                  Tabel Rekap Kunjungan Wisatawan Tahun {{ $year }}
+                </h3>
+                <!-- card tools -->
+                <div class="card-tools">
+  
+                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+                <!-- /.card-tools -->
+              </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
@@ -228,6 +239,19 @@
         </div>
 
         <div class="card">
+            <div class="card-header border-0">
+                <h3 class="card-title">
+                  Tabel Rekap Menurut Jenis Kelamin Kunjungan Wisatawan Tahun {{ $year }}
+                </h3>
+                <!-- card tools -->
+                <div class="card-tools">
+  
+                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </div>
+                <!-- /.card-tools -->
+              </div>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
