@@ -37,6 +37,8 @@
 
             <!-- Tabel Data Kunjungan -->
             <div class="card-body">
+                <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
+                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -85,6 +87,7 @@
         </div>
     </div>
 </section>
+@endsection
 
 @section('scripts')
 <!-- DataTables  & Plugins -->
@@ -103,11 +106,50 @@
 
 <script>
     $(function () {
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+
         $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+            ordering: false,
+            paging: false,
+
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script>
+    document.getElementById('export-to-pdf').addEventListener('click', function () {
+        var element = document.getElementById('example1');
+        var opt = {
+            margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
+            filename:     'Kunjungan_Wisata_' + new Date().toISOString() + '.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
+            jsPDF:        { 
+                unit: 'mm', 
+                format: 'letter',  // Format A4
+                orientation: 'landscape'  // Mengatur orientasi menjadi landscape agar lebih lebar
+            }
+        };
+
+        // Menambahkan pengaturan CSS untuk menghindari pemotongan
+        html2pdf().from(element).set(opt).save();
+    });
+</script>
+
+
+<script>
+    // Fungsi untuk mengekspor tabel ke file Excel
+    document.getElementById('export-to-excel').addEventListener('click', function () {
+        var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
+        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
+        XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+    });
+</script>
 @endsection
-@endsection
+

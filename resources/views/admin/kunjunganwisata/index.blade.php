@@ -50,8 +50,8 @@
                     Tambah Data
                 </a>
             </div>
-            <h3 style="text-align: center;">Rekapan Kunjungan Bulan  {{ DateTime::createFromFormat('!m', $bulan)->format('F') }} Tahun {{ $tahun }}</h3>
-            <h2 style="text-align: center;">{{ $kategoriWisata->find($categorywisata_id)->category_name ?? 'Semua Tempat Wisata' }} </h2>
+            <h3 style="text-align: center; text-transform: uppercase;">Rekapan Kunjungan Bulan  {{ DateTime::createFromFormat('!m', $bulan)->format('F') }} Tahun {{ $tahun }}</h3>
+            <h2 style="text-align: center; text-transform: uppercase;">{{ $kategoriWisata->find($categorywisata_id)->category_name ?? 'Semua Tempat Wisata' }} </h2>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>

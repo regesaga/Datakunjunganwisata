@@ -33,9 +33,7 @@
               </h3>
               <!-- card tools -->
               <div class="card-tools">
-                <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                  <i class="far fa-calendar-alt"></i>
-                </button>
+
                 <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                   <i class="fas fa-minus"></i>
                 </button>
@@ -116,7 +114,9 @@
         <!-- ./col -->
         <div class="col-lg-6 col-6">
         <!-- small box -->
+            
         <div class="small-box bg-warning">
+           
             <div class="inner">
                 <h3> {{ 
                     $totalKeseluruhan['total_wisman_laki'] + 
@@ -167,24 +167,24 @@
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th rowspan="2">Bulan</th>
-                            <th rowspan="2">Total</th>
-                            @foreach ($kelompok as $namaKelompok)
-                                <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
-                            @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th colspan="2">{{ $negara->wismannegara_name }}</th>
-                            @endforeach
+                            <th rowspan="3">Bulan</th>
+                            <th rowspan="3">Total</th>
+                            <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisata Nusantara</th>
+                            <th colspan="2" style="text-align: center;">Wisata Mancanegara</th>
                         </tr>
                         <tr>
                             @foreach ($kelompok as $namaKelompok)
-                                <th>L</th>
-                                <th>P</th>
+                                <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                             @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th>L</th>
-                                <th>P</th>
+                            <th colspan="2" style="text-align: center;">Total Wisata Mancanegara</th>
+                        </tr>
+                        <tr>
+                            @foreach ($kelompok as $namaKelompok)
+                                <th style="text-align: center;">L</th>
+                                <th style="text-align: center;">P</th>
                             @endforeach
+                            <th style="text-align: center;">Laki - Laki</th>
+                            <th style="text-align: center;">Perempuan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -198,10 +198,8 @@
                                     <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
                                     <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
                                 @endforeach
-                                @foreach ($wismannegara as $negara)
-                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                    <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
-                                @endforeach
+                                <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -221,14 +219,8 @@
                                     return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
                                 }) }}</th>
                             @endforeach
-                            @foreach ($wismannegara as $negara)
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
-                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                                }) }}</th>
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
-                                    return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
-                                }) }}</th>
-                            @endforeach
+                            <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
+                            <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
                         </tr>
                     </tfoot>
                 </table>

@@ -315,17 +315,7 @@
         </a>
       
       </li>
-      <li class="nav-item">
-        <a href="{{ route('account.wisata.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-
-          <p>
-            Index bulanan
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
       
-      </li>
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
@@ -390,6 +380,17 @@
             </i>
            Tambah Data
         </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+
+          <p>
+            Index Ubah Data
+            <i class="fas fa-edit nav-icon"></i>
+          </p>
+        </a>
+      
       </li>
       
 
