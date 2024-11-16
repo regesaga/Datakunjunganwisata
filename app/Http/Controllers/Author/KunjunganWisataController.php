@@ -22,30 +22,42 @@ class KunjunganWisataController extends Controller
     {
         $hash = new Hashids();
         $company_id = auth()->user()->company->id;
+        
+        // Ambil data Wisata berdasarkan company_id
         $wisata = Wisata::where('company_id', $company_id)->first();
+        
+        if (!$wisata) {
+            return redirect()->back()->withErrors(['error' => 'Wisata tidak ditemukan untuk pengguna ini.']);
+        }
     
+        $wisata_id = $wisata->id; // Mendapatkan wisata_id dari data Wisata
+    
+        // Filter bulan dan tahun dari request atau default saat ini
         $bulan = $request->input('bulan', date('m'));
         $tahun = $request->input('tahun', date('Y'));
     
+        // Periode waktu untuk bulan yang dipilih
         $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
         $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
     
+        // Ambil data WisnuWisata berdasarkan wisata_id
         $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->where('wisata_id', $wisata_id) // Filter berdasarkan wisata_id
             ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
             ->get()
             ->groupBy('tanggal_kunjungan');
     
+        // Ambil data WismanWisata berdasarkan wisata_id
         $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->where('wisata_id', $wisata_id) // Filter berdasarkan wisata_id
             ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
             ->get()
             ->groupBy('tanggal_kunjungan');
     
+        // Olah data kunjungan
         $kunjungan = [];
-        $tanggal_kunjungan = null; // Definisikan variabel ini di awal
-    
         foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
             $dataTanggal = collect($dataTanggal);
-            $tanggal_kunjungan = $tanggal; // Update nilai di dalam loop
             $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
             $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
             $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
@@ -62,146 +74,155 @@ class KunjunganWisataController extends Controller
             ];
         }
     
-        $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
+        $kunjungan = collect($kunjungan)->sortBy(function ($item, $key) {
             return $key;
         });
+    
+        // Ambil data pendukung
+        $kelompok = KelompokKunjungan::all();
+        $wismannegara = WismanNegara::all();
+    
+        return view('account.wisata.kunjunganwisata.index', compact(
+            'kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'
+        ));
+    }
+        
+    public function indexkunjunganwisatapertahun(Request $request)
+    {
+        $hash = new Hashids();
+        $company_id = auth()->user()->company->id;
+        $wisata = Wisata::where('company_id', $company_id)->first();
+    
+        if (!$wisata) {
+            return redirect()->back()->with('error', 'Wisata tidak ditemukan.');
+        }
+    
+        // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
+        $tahun = $request->input('tahun', date('Y'));
+    
+        // Buat array untuk menyimpan data kunjungan per bulan
+        $kunjungan = [];
+    
+        for ($month = 1; $month <= 12; $month++) {
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$month}-01")->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$month}-01")->endOfMonth();
+    
+            // Ambil data Wisnu hanya untuk wisata terkait
+            $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+                ->where('wisata_id', $wisata->id)
+                ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                ->get()
+                ->groupBy('kelompok_kunjungan_id');
+    
+            // Ambil data Wisman hanya untuk wisata terkait
+            $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+                ->where('wisata_id', $wisata->id)
+                ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                ->get()
+                ->groupBy('wismannegara_id');
+    
+            $kunjungan[$month] = [
+                'jumlah_laki_laki' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_laki_laki')),
+                'jumlah_perempuan' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_perempuan')),
+                'kelompok' => $wisnuKunjungan,
+                'jml_wisman_laki' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_laki')),
+                'jml_wisman_perempuan' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_perempuan')),
+                'wisman_by_negara' => $wismanKunjungan,
+            ];
+        }
     
         $kelompok = KelompokKunjungan::all();
         $wismannegara = WismanNegara::all();
     
-        return view('account.wisata.kunjunganwisata.index', compact('kunjungan', 'tanggal_kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'));
+        return view('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun', compact('kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'tahun'));
     }
     
-    public function indexkunjunganwisatapertahun(Request $request)
-        {
-            $hash = new Hashids();
-            $company_id = auth()->user()->company->id;
-            $wisata = Wisata::where('company_id', $company_id)->first();
-
-            // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
-            $tahun = $request->input('tahun', date('Y'));
-
-            // Buat array untuk menyimpan data kunjungan per bulan
-            $kunjungan = [];
-
-            for ($month = 1; $month <= 12; $month++) {
-                $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$month}-01")->startOfMonth();
-                $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$month}-01")->endOfMonth();
-
-                $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-                    ->get()
-                    ->groupBy('kelompok_kunjungan_id');
-
-                $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
-                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-                    ->get()
-                    ->groupBy('wismannegara_id');
-
-                $kunjungan[$month] = [
-                    'jumlah_laki_laki' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_laki_laki')),
-                    'jumlah_perempuan' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_perempuan')),
-                    'kelompok' => $wisnuKunjungan,
-                    'jml_wisman_laki' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_laki')),
-                    'jml_wisman_perempuan' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_perempuan')),
-                    'wisman_by_negara' => $wismanKunjungan,
-                ];
-            }
-
-            $kelompok = KelompokKunjungan::all();
-            $wismannegara = WismanNegara::all();
-
-            return view('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun', compact('kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'tahun'));
-        }
-
-    
-
-
-    public function dashboard(Request $request)
-        {
-            $company_id = auth()->user()->company->id;
-            $wisata = Wisata::where('company_id', $company_id)->first();
-            $hash = new Hashids();
+            public function dashboard(Request $request)
+            {
+                $company_id = auth()->user()->company->id;
+                $wisata = Wisata::where('company_id', $company_id)->first(); // Mendapatkan wisata terkait
+                $hash = new Hashids();
             
-            // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
-            $year = $request->input('year', date('Y'));
-        
-            // Ambil data kunjungan Wisnu
-            $wisnu = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-                ->whereYear('tanggal_kunjungan', $year)
-                ->get()
-                ->groupBy('tanggal_kunjungan');
-        
-            // Buat array untuk menyimpan data kunjungan per bulan
-            $kunjungan = [];
-            for ($month = 1; $month <= 12; $month++) {
-                $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->startOfMonth();
-                $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->endOfMonth();
-        
-                // Hitung total kunjungan untuk setiap kategori
-                $totalLakiLaki = WisnuWisata::whereYear('tanggal_kunjungan', $year)
-                    ->whereMonth('tanggal_kunjungan', $month)
-                    ->sum('jumlah_laki_laki');
-        
-                $totalPerempuan = WisnuWisata::whereYear('tanggal_kunjungan', $year)
-                    ->whereMonth('tanggal_kunjungan', $month)
-                    ->sum('jumlah_perempuan');
-        
-                $totalWismanLaki = WismanWisata::whereYear('tanggal_kunjungan', $year)
-                    ->whereMonth('tanggal_kunjungan', $month)
-                    ->sum('jml_wisman_laki');
-        
-                $totalWismanPerempuan = WismanWisata::whereYear('tanggal_kunjungan', $year)
-                    ->whereMonth('tanggal_kunjungan', $month)
-                    ->sum('jml_wisman_perempuan');
-                
-                // Ambil data Wisnu dan Wisman berdasarkan bulan
-                $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-                    ->get()
-                    ->groupBy('kelompok_kunjungan_id');
-        
-                $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
-                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-                    ->get()
-                    ->groupBy('wismannegara_id');
-        
-                // Simpan data kunjungan per bulan ke dalam array
-                $kunjungan[$month] = [
-                    'total_laki_laki' => $totalLakiLaki,
-                    'total_perempuan' => $totalPerempuan,
-                    'total_wisman_laki' => $totalWismanLaki,
-                    'total_wisman_perempuan' => $totalWismanPerempuan,
-        
-                    'jumlah_laki_laki' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_laki_laki')),
-                    'jumlah_perempuan' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_perempuan')),
-                    'kelompok' => $wisnuKunjungan,
-                    'jml_wisman_laki' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_laki')),
-                    'jml_wisman_perempuan' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_perempuan')),
-                    'wisman_by_negara' => $wismanKunjungan,
-                ];
-            }
-        
-            // Ambil data kelompok kunjungan dan negara wisatawan
-            $kelompok = KelompokKunjungan::all();
-            $wismannegara = WismanNegara::all();
-        
-            // Hitung total keseluruhan per tahun dari semua data
-            $totalKeseluruhan = [
-                'total_laki_laki' => array_sum(array_column($kunjungan, 'total_laki_laki')),
-                'total_perempuan' => array_sum(array_column($kunjungan, 'total_perempuan')),
-                'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
-                'total_wisman_perempuan' => array_sum(array_column($kunjungan, 'total_wisman_perempuan')),
-            ];
-        
-            // Mengelompokkan data berdasarkan kelompok dan menghitung total jumlah laki-laki dan perempuan
-            $kelompokData = $kunjungan;
+                if (!$wisata) {
+                    return redirect()->back()->with('error', 'Wisata tidak ditemukan untuk perusahaan Anda.');
+                }
             
-            // Kirim data ke view
-            return view('account.wisata.kunjunganwisata.dashboard', compact(
-                'kunjungan', 'kelompok', 'wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan', 'kelompokData'
-            ));
-        }
+                $wisata_id = $wisata->id; // Dapatkan wisata_id untuk filtering data
+            
+                // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
+                $year = $request->input('year', date('Y'));
+            
+                // Buat array untuk menyimpan data kunjungan per bulan
+                $kunjungan = [];
+                for ($month = 1; $month <= 12; $month++) {
+                    $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->startOfMonth();
+                    $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$month}-01")->endOfMonth();
+            
+                    // Hitung total kunjungan untuk setiap kategori, filter berdasarkan wisata_id
+                    $totalLakiLaki = WisnuWisata::where('wisata_id', $wisata_id)
+                        ->whereYear('tanggal_kunjungan', $year)
+                        ->whereMonth('tanggal_kunjungan', $month)
+                        ->sum('jumlah_laki_laki');
+            
+                    $totalPerempuan = WisnuWisata::where('wisata_id', $wisata_id)
+                        ->whereYear('tanggal_kunjungan', $year)
+                        ->whereMonth('tanggal_kunjungan', $month)
+                        ->sum('jumlah_perempuan');
+            
+                    $totalWismanLaki = WismanWisata::where('wisata_id', $wisata_id)
+                        ->whereYear('tanggal_kunjungan', $year)
+                        ->whereMonth('tanggal_kunjungan', $month)
+                        ->sum('jml_wisman_laki');
+            
+                    $totalWismanPerempuan = WismanWisata::where('wisata_id', $wisata_id)
+                        ->whereYear('tanggal_kunjungan', $year)
+                        ->whereMonth('tanggal_kunjungan', $month)
+                        ->sum('jml_wisman_perempuan');
+            
+                    // Ambil data kunjungan
+                    $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+                        ->where('wisata_id', $wisata_id)
+                        ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                        ->get()
+                        ->groupBy('kelompok_kunjungan_id');
+            
+                    $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+                        ->where('wisata_id', $wisata_id)
+                        ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                        ->get()
+                        ->groupBy('wismannegara_id');
+            
+                    // Simpan data kunjungan per bulan ke dalam array
+                    $kunjungan[$month] = [
+                        'total_laki_laki' => $totalLakiLaki,
+                        'total_perempuan' => $totalPerempuan,
+                        'total_wisman_laki' => $totalWismanLaki,
+                        'total_wisman_perempuan' => $totalWismanPerempuan,
+                        'jumlah_laki_laki' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_laki_laki')),
+                        'jumlah_perempuan' => $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_perempuan')),
+                        'kelompok' => $wisnuKunjungan,
+                        'jml_wisman_laki' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_laki')),
+                        'jml_wisman_perempuan' => $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_perempuan')),
+                        'wisman_by_negara' => $wismanKunjungan,
+                    ];
+                }
+            
+                // Ambil data kelompok kunjungan dan negara wisatawan
+                $kelompok = KelompokKunjungan::all();
+                $wismannegara = WismanNegara::all();
+            
+                // Hitung total keseluruhan per tahun dari semua data
+                $totalKeseluruhan = [
+                    'total_laki_laki' => array_sum(array_column($kunjungan, 'total_laki_laki')),
+                    'total_perempuan' => array_sum(array_column($kunjungan, 'total_perempuan')),
+                    'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
+                    'total_wisman_perempuan' => array_sum(array_column($kunjungan, 'total_wisman_perempuan')),
+                ];
+            
+                return view('account.wisata.kunjunganwisata.dashboard', compact(
+                    'kunjungan', 'kelompok', 'wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan'
+                ));
+            }
 
 
         public function filterbyinput(Request $request)
@@ -223,18 +244,25 @@ class KunjunganWisataController extends Controller
         $wisata = Wisata::where('company_id', $company_id)->first();
         $hash = new Hashids();
     
+        // Jika wisata tidak ditemukan, kembalikan error
+        if (!$wisata) {
+            return redirect()->back()->with('error', 'Wisata tidak ditemukan.');
+        }
+    
         // Ambil tahun dan bulan dari request, default ke tahun dan bulan saat ini jika tidak ada input
         $year = $request->input('year', date('Y'));
         $month = $request->input('month', date('m'));
     
-        // Fetch data from the database dengan filter tahun dan bulan
+        // Fetch data dari database dengan filter tahun, bulan, dan wisata_id
         $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->where('wisata_id', $wisata->id) // Filter berdasarkan wisata_id
             ->whereYear('tanggal_kunjungan', $year)
             ->whereMonth('tanggal_kunjungan', $month)
             ->get()
             ->groupBy('tanggal_kunjungan');
     
         $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->where('wisata_id', $wisata->id) // Filter berdasarkan wisata_id
             ->whereYear('tanggal_kunjungan', $year)
             ->whereMonth('tanggal_kunjungan', $month)
             ->get()
@@ -282,8 +310,9 @@ class KunjunganWisataController extends Controller
         $wismannegara = WismanNegara::all();
     
         // Kirim year dan month ke view untuk keperluan display
-        return view('account.wisata.kunjunganwisata.filterbulan', compact('kunjungan','wisata','kelompok', 'wismannegara', 'hash', 'year', 'month'));
+        return view('account.wisata.kunjunganwisata.filterbulan', compact('kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'year', 'month'));
     }
+    
     
     public function filtertahun(Request $request)
     {
@@ -291,25 +320,36 @@ class KunjunganWisataController extends Controller
         $wisata = Wisata::where('company_id', $company_id)->first();
         $hash = new Hashids();
     
+        // Pastikan ada data wisata terkait
+        if (!$wisata) {
+            return redirect()->back()->with('error', 'Wisata tidak ditemukan untuk perusahaan Anda.');
+        }
+    
+        $wisata_id = $wisata->id;
+    
         // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
         $year = $request->input('year', date('Y'));
     
         // Buat array untuk menyimpan data kunjungan per bulan
         $kunjungan = [];
         for ($month = 1; $month <= 12; $month++) {
-            $totalLakiLaki = WisnuWisata::whereYear('tanggal_kunjungan', $year)
+            $totalLakiLaki = WisnuWisata::where('wisata_id', $wisata_id)
+                ->whereYear('tanggal_kunjungan', $year)
                 ->whereMonth('tanggal_kunjungan', $month)
                 ->sum('jumlah_laki_laki');
     
-            $totalPerempuan = WisnuWisata::whereYear('tanggal_kunjungan', $year)
+            $totalPerempuan = WisnuWisata::where('wisata_id', $wisata_id)
+                ->whereYear('tanggal_kunjungan', $year)
                 ->whereMonth('tanggal_kunjungan', $month)
                 ->sum('jumlah_perempuan');
     
-            $totalWismanLaki = WismanWisata::whereYear('tanggal_kunjungan', $year)
+            $totalWismanLaki = WismanWisata::where('wisata_id', $wisata_id)
+                ->whereYear('tanggal_kunjungan', $year)
                 ->whereMonth('tanggal_kunjungan', $month)
                 ->sum('jml_wisman_laki');
     
-            $totalWismanPerempuan = WismanWisata::whereYear('tanggal_kunjungan', $year)
+            $totalWismanPerempuan = WismanWisata::where('wisata_id', $wisata_id)
+                ->whereYear('tanggal_kunjungan', $year)
                 ->whereMonth('tanggal_kunjungan', $month)
                 ->sum('jml_wisman_perempuan');
     
@@ -334,122 +374,129 @@ class KunjunganWisataController extends Controller
         return view('account.wisata.kunjunganwisata.filtertahun', compact('kunjungan', 'wisata', 'hash', 'year', 'totalKeseluruhan'));
     }
     
+    
 
     public function filterwisnubulan(Request $request)
-    {
-        {
-            $hash = new Hashids();
-            $company_id = auth()->user()->company->id;
-            $wisata = Wisata::where('company_id', $company_id)->first();
-        
-            // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
-            $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
-            $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
-        
-            // Buat rentang tanggal untuk bulan yang dipilih
-            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
-            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
-        
-            // Fetch data berdasarkan rentang tanggal
-            $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-                ->whereBetween('tanggal_kunjungan', [$startDate, $endDate]) // Filter berdasarkan rentang tanggal
-                ->get()
-                ->groupBy('tanggal_kunjungan');
-        
-            // Initialize an array to hold all visits data
-            $kunjungan = [];
-        
-            // Populate the kunjungan array with data for each date
-            foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
-                // Convert to collection for easier manipulation
-                $dataTanggal = collect($dataTanggal);
-                $tanggal_kunjungan = $tanggal;
-                // Get the total local visitors
-                $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
-                $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
-        
-               
-        
-                $kunjungan[$tanggal] = [
-                    'jumlah_laki_laki' => $jumlahLakiLaki,
-                    'jumlah_perempuan' => $jumlahPerempuan,
-                    'kelompok' => $dataTanggal, // Store the collection for later use
-                ];
-            }
-        
-            // Convert to a collection for easier manipulation in the view
-            $kunjungan = collect($kunjungan);
-        
-            // Sort kunjungan by date (youngest to oldest)
-            $kunjungan = $kunjungan->sortBy(function($item, $key) {
-                return $key; // Sort by the key which is tanggal
-            });
-        
-            // Get kelompok and wisman negara
-            $kelompok = KelompokKunjungan::all();
-        
-            return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun'));
-        }
-    }
-
-    public function filterwismanbulan(Request $request)
-    {
-        {
-            $hash = new Hashids();
-            $company_id = auth()->user()->company->id;
-            $wisata = Wisata::where('company_id', $company_id)->first();
-        
-            // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
-            $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
-            $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
-        
-            // Buat rentang tanggal untuk bulan yang dipilih
-            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
-            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
-           
-            $wisnuKunjungan = WisnuWisata::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-            ->get()
-            ->groupBy('tanggal_kunjungan');
+{
+    $hash = new Hashids();
+    $company_id = auth()->user()->company->id;
     
-        $wismanKunjungan = WismanWisata::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
-            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-            ->get()
-            ->groupBy('tanggal_kunjungan');
-        
-            // Initialize an array to hold all visits data
-            $kunjungan = [];
-            $tanggal_kunjungan = null; 
-            // Populate the kunjungan array with data for each date
-            foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
-                // Convert to collection for easier manipulation
-                $dataTanggal = collect($dataTanggal);
-                $tanggal_kunjungan = $tanggal;
-                // Get the total local visitors
-                $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
-                $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
-                // Initialize an array to hold foreign visitor counts by country
-                $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
-        
-                $kunjungan[$tanggal] = [
-                    'jml_wisman_laki' => $jmlWismanLaki ?: 0, // Ensure default to 0
-                    'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0, // Ensure default to 0
-                    'wisman_by_negara' => $wismanByNegara, // Store foreign visitor data by country
-                ];
-            }
-        
-            
-        
-            $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
-                return $key;
-            });
-        
-            // Get kelompok and wisman negara
-            $wismannegara = WismanNegara::all();
-        
-            return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun'));
-        }
+    // Fetch wisata based on company_id and ensure we get the wisata_id
+    $wisata = Wisata::where('company_id', $company_id)->first(); 
+    
+    // Check if wisata is found
+    if (!$wisata) {
+        return response()->json(['error' => 'Wisata not found for this company'], 404);
     }
+    
+    $wisata_id = $wisata->id; // Get the wisata_id
+    
+    // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
+    $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
+    $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
+    
+    // Buat rentang tanggal untuk bulan yang dipilih
+    $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
+    $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
+    
+    // Fetch data berdasarkan rentang tanggal dan wisata_id
+    $wisnuKunjungan = WisnuWisata::where('wisata_id', $wisata_id)
+        ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+        ->select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+        ->get()
+        ->groupBy('tanggal_kunjungan');
+
+    $kunjungan = [];
+    foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
+        // Convert to collection for easier manipulation
+        $dataTanggal = collect($dataTanggal);
+        // Get the total local visitors
+        $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
+        $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
+    
+        $kunjungan[$tanggal] = [
+            'jumlah_laki_laki' => $jumlahLakiLaki,
+            'jumlah_perempuan' => $jumlahPerempuan,
+            'kelompok' => $dataTanggal, // Store the collection for later use
+        ];
+    }
+    
+    // Sort kunjungan by date (youngest to oldest)
+    $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
+        return $key; // Sort by the key which is tanggal
+    });
+
+    // Get kelompok and wisman negara
+    $kelompok = KelompokKunjungan::all();
+    
+    return view('account.wisata.kunjunganwisata.filterwisnubulan', compact('kunjungan','wisata','kelompok', 'hash', 'bulan', 'tahun'));
+}
+
+public function filterwismanbulan(Request $request)
+{
+    $hash = new Hashids();
+    $company_id = auth()->user()->company->id;
+    
+    // Fetch wisata based on company_id and ensure we get the wisata_id
+    $wisata = Wisata::where('company_id', $company_id)->first(); 
+    
+    // Check if wisata is found
+    if (!$wisata) {
+        return response()->json(['error' => 'Wisata not found for this company'], 404);
+    }
+    
+    $wisata_id = $wisata->id; // Get the wisata_id
+    
+    // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
+    $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
+    $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
+    
+    // Buat rentang tanggal untuk bulan yang dipilih
+    $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
+    $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
+    
+    // Fetch data berdasarkan rentang tanggal dan wisata_id
+    $wisnuKunjungan = WisnuWisata::where('wisata_id', $wisata_id)
+        ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+        ->select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+        ->get()
+        ->groupBy('tanggal_kunjungan');
+
+    $wismanKunjungan = WismanWisata::where('wisata_id', $wisata_id)
+        ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+        ->select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+        ->get()
+        ->groupBy('tanggal_kunjungan');
+
+    $kunjungan = [];
+    foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
+        // Convert to collection for easier manipulation
+        $dataTanggal = collect($dataTanggal);
+        $tanggal_kunjungan = $tanggal;
+        // Get the total local visitors
+        $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
+        $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
+        
+        // Group by country for foreign visitors
+        $wismanByNegara = $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id');
+    
+        $kunjungan[$tanggal] = [
+            'jml_wisman_laki' => $jmlWismanLaki ?: 0, // Ensure default to 0
+            'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0, // Ensure default to 0
+            'wisman_by_negara' => $wismanByNegara, // Store foreign visitor data by country
+        ];
+    }
+    
+    $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
+        return $key;
+    });
+
+    // Get wisman negara (foreign countries)
+    $wismannegara = WismanNegara::all();
+    
+    return view('account.wisata.kunjunganwisata.filterwismanbulan', compact('kunjungan','wisata', 'wismannegara', 'hash', 'bulan', 'tahun'));
+}
+
 
 // Menampilkan form input kunjungan
 public function createwisnu()
@@ -551,12 +598,15 @@ public function editwisnu($wisata_id, $tanggal_kunjungan)
 
     $company_id = auth()->user()->company->id;
     $wisata = Wisata::where('company_id', $company_id)->first();
-    $wisnuData = WisnuWisata::where('tanggal_kunjungan', $tanggal_kunjungan)
-                            ->with('kelompokkunjungan')
-                            ->get();
-    $wismanData = WismanWisata::where('tanggal_kunjungan', $tanggal_kunjungan)
-                            ->with('wismannegara')
-                            ->get();
+    $wisnuData = WisnuWisata::where('wisata_id', $wisata_id)
+    ->where('tanggal_kunjungan', $tanggal_kunjungan)
+    ->with('kelompokkunjungan')
+    ->get();
+
+$wismanData = WismanWisata::where('wisata_id', $wisata_id)
+      ->where('tanggal_kunjungan', $tanggal_kunjungan)
+      ->with('wismannegara')
+      ->get();
     // Aggregate the data for WISMAN based on wismannegara_id
     $aggregatedWismanData = $wismanData->groupBy('wismannegara_id')->map(function($group) {
         return [
