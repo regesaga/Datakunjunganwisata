@@ -9,7 +9,7 @@
            
         <!-- Tabel Data Kunjungan Per Bulan -->
         <!-- Map card -->
-        <div class="card bg-gradient-primary">
+        <div class="card">
             <div class="card-header">
                 <form action="{{ route('account.kuliner.kunjungankuliner.dashboard') }}" method="GET" class="mb-4">
                     <div class="row">
@@ -40,6 +40,7 @@
               </div>
               <!-- /.card-tools -->
             </div>
+            
             <div class="card-body">
               <!-- Small boxes (Stat box) -->
                 <div class="row">
@@ -71,7 +72,6 @@
                         <div class="icon">
                         <i class="ion ion-woman"> <i class="ion ion-man"> </i></i>
                         </div>
-                        <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                     </div>
                     <!-- ./col -->
@@ -93,217 +93,425 @@
                   
                     <!-- ./col -->
                 </div>
+            <div id="chart"></div>
+
       <!-- /.row -->
-      <div class="row">
-        <div class="col-lg-6 col-6">
-        <!-- small box -->
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
-                    $totalKeseluruhan['total_perempuan']  }}</h3>
-                <p>Jumlah Pengunjung Nusantara</p>
-               
+        <div class="row">
+            <div class="col">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
+                        $totalKeseluruhan['total_perempuan']  }}</h3>
+                    <p>Jumlah Pengunjung Nusantara</p>
+                
+                </div>
+                <div class="icon">
+                <i class="ion ion-bag"></i>
+                </div>
             </div>
-            <div class="icon">
-            <i class="ion ion-bag"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
-        
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-6 col-6">
-        <!-- small box -->
-            
-        <div class="small-box bg-warning">
-           
-            <div class="inner">
-                <h3> {{ 
-                    $totalKeseluruhan['total_wisman_laki'] + 
-                    $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
-    
-                <p>Jumlah Pengunjung Mancanegara</p>
-            </div>
-            <div class="icon">
-            <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-        </div>
-       
-        
-        <!-- ./col -->
-    </div>
-            </div>
-            <!-- /.card-body-->
-            <div class="card-footer bg-transparent">
-              <div class="row">
-                @foreach ($kelompok as $namaKelompok)
-                <div class="col-4 text-center">
-                    <div id="sparkline-1">
-                        {{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                            return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum(function($item) {
-                                return $item['jumlah_laki_laki'] + $item['jumlah_perempuan'];
-                            });
-                        }) }}
+
+        <div class="row">
+            @foreach ($kelompok as $namaKelompok)
+                <div class="col">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum(function($item) {
+                                    return $item['jumlah_laki_laki'] + $item['jumlah_perempuan'];
+                                });
+                            }) }}</h3>
+                
+                            <p>{{ $namaKelompok->kelompokkunjungan_name }}</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-person-add"></i>
+                        </div>
                     </div>
-                    <div class="text-white">{{ $namaKelompok->kelompokkunjungan_name }}</div>
                 </div>
             @endforeach
+        </div>
+        <!-- Donut Chart -->
+            <div class="row">
+                <div class="col">
+                    <div id="donut-chart"></div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3> {{ 
+                            $totalKeseluruhan['total_wisman_laki'] + 
+                            $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
             
-
-                <!-- ./col -->
-                
-                <!-- ./col -->
-              </div>
-              <!-- /.row -->
-            </div>
-          </div>
-          <!-- /.card -->
-        <div class="card">
-            <div class="card-header border-0">
-                <h3 class="card-title">
-                  Tabel Rekap Kunjungan Kulinerwan Tahun {{ $year }}
-                </h3>
-                <!-- card tools -->
-                <div class="card-tools">
-  
-                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
+                        <p>Jumlah Pengunjung Mancanegara</p>
+                    </div>
+                    <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                    </div>
+                        <table id="example1" class="table table-striped">
+                                    @foreach ($wismannegara as $negara)
+                                        <tr>
+                                        <td> {{ $negara->wismannegara_name }}</td>
+                                        <td style="text-align: right;">{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                                            return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum(function ($item) {
+                                                return $item['jml_wisman_laki'] + $item['jml_wisman_perempuan'];
+                                            });
+                                        }) }}</td>
+                                        </tr>
+                                    @endforeach
+                        
+                        </table>
                 </div>
-                <!-- /.card-tools -->
-              </div>
-            <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th rowspan="3">Bulan</th>
-                            <th rowspan="3">Total</th>
-                            <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Kuliner Nusantara</th>
-                            <th colspan="2" style="text-align: center;">Kuliner Mancanegara</th>
-                        </tr>
-                        <tr>
-                            @foreach ($kelompok as $namaKelompok)
-                                <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
-                            @endforeach
-                            <th colspan="2" style="text-align: center;">Total Kuliner Mancanegara</th>
-                        </tr>
-                        <tr>
-                            @foreach ($kelompok as $namaKelompok)
-                                <th style="text-align: center;">L</th>
-                                <th style="text-align: center;">P</th>
-                            @endforeach
-                            <th style="text-align: center;">Laki - Laki</th>
-                            <th style="text-align: center;">Perempuan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($kunjungan as $month => $dataBulan)
+            </div>
+        </div>
+        <div id="chartbar"></div>
+
+        
+                <!-- /.card-body-->
+               
+       
+            <!-- /.card -->
+
+
+
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">
+                    Tabel Rekap Kunjungan Wisatawan Tahun {{ $year }}
+                    </h3>
+                    <!-- card tools -->
+                    <div class="card-tools">
+    
+                    <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <div class="card-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
-                                <td>
-                                    {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
-                                </td>
+                                <th rowspan="3">Bulan</th>
+                                <th rowspan="3">Total</th>
+                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Kuliner Nusantara</th>
+                                <th colspan="2" style="text-align: center;">Kuliner Mancanegara</th>
+                            </tr>
+                            <tr>
                                 @foreach ($kelompok as $namaKelompok)
-                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                    <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                                 @endforeach
-                                <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
-                                <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                <th colspan="2" style="text-align: center;">Total Kuliner Mancanegara</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Total Keseluruhan</th>
-                            <th>
-                                {{ collect($kunjungan)->sum(function($dataBulan) {
-                                    return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
-                                }) }}
-                            </th>
-                            @foreach ($kelompok as $namaKelompok)
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
-                                }) }}</th>
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
-                                }) }}</th>
-                            @endforeach
-                            <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header border-0">
-                <h3 class="card-title">
-                  Tabel Rekap Menurut Jenis Kelamin Kunjungan Kulinerwan Tahun {{ $year }}
-                </h3>
-                <!-- card tools -->
-                <div class="card-tools">
-  
-                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                </div>
-                <!-- /.card-tools -->
-              </div>
-            <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Bulan</th>
-                            <th>Total Laki-Laki Domestik</th>
-                            <th>Total Perempuan Domestik</th>
-                            <th>Total Laki-Laki Mancanegara</th>
-                            <th>Total Perempuan Mancanegara</th>
-                            <th>Sub Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(range(1, 12) as $month)
                             <tr>
-                                <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
-                                <td>{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
-                                <td>
-                                    {{ ($kunjungan[$month]['total_laki_laki'] ?? 0) + 
-                                       ($kunjungan[$month]['total_perempuan'] ?? 0) + 
-                                       ($kunjungan[$month]['total_wisman_laki'] ?? 0) + 
-                                       ($kunjungan[$month]['total_wisman_perempuan'] ?? 0) }}
-                                </td>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <th style="text-align: center;">L</th>
+                                    <th style="text-align: center;">P</th>
+                                @endforeach
+                                <th style="text-align: center;">Laki - Laki</th>
+                                <th style="text-align: center;">Perempuan</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Total Keseluruhan</th>
-                            <th>{{ $totalKeseluruhan['total_laki_laki'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_perempuan'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
-                            <th>
-                                {{ $totalKeseluruhan['total_laki_laki'] + 
-                                   $totalKeseluruhan['total_perempuan'] + 
-                                   $totalKeseluruhan['total_wisman_laki'] + 
-                                   $totalKeseluruhan['total_wisman_perempuan'] }}
-                            </th>
-                        </tr>
-                    </tfoot>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($kunjungan as $month => $dataBulan)
+                                <tr>
+                                    <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                                    <td>
+                                        {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
+                                    </td>
+                                    @foreach ($kelompok as $namaKelompok)
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                    @endforeach
+                                    <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                    <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total Keseluruhan</th>
+                                <th>
+                                    {{ collect($kunjungan)->sum(function($dataBulan) {
+                                        return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
+                                    }) }}
+                                </th>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                                    }) }}</th>
+                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                                    }) }}</th>
+                                @endforeach
+                                <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
+                                <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
-        </div>
+            <div class="card">
+                <div class="card-header border-0">
+                    <h3 class="card-title">
+                    Tabel Rekap Menurut Jenis Kelamin Kunjungan Wisatawan Tahun {{ $year }}
+                    </h3>
+                    <!-- card tools -->
+                    <div class="card-tools">
+    
+                    <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <div class="card-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Total Laki-Laki Domestik</th>
+                                <th>Total Perempuan Domestik</th>
+                                <th>Total Laki-Laki Mancanegara</th>
+                                <th>Total Perempuan Mancanegara</th>
+                                <th>Sub Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(range(1, 12) as $month)
+                                <tr>
+                                    <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                                    <td>{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
+                                    <td>{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
+                                    <td>{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
+                                    <td>{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
+                                    <td>
+                                        {{ ($kunjungan[$month]['total_laki_laki'] ?? 0) + 
+                                        ($kunjungan[$month]['total_perempuan'] ?? 0) + 
+                                        ($kunjungan[$month]['total_wisman_laki'] ?? 0) + 
+                                        ($kunjungan[$month]['total_wisman_perempuan'] ?? 0) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total Keseluruhan</th>
+                                <th>{{ $totalKeseluruhan['total_laki_laki'] }}</th>
+                                <th>{{ $totalKeseluruhan['total_perempuan'] }}</th>
+                                <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
+                                <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
+                                <th>
+                                    {{ $totalKeseluruhan['total_laki_laki'] + 
+                                    $totalKeseluruhan['total_perempuan'] + 
+                                    $totalKeseluruhan['total_wisman_laki'] + 
+                                    $totalKeseluruhan['total_wisman_perempuan'] }}
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
 
+        </div>
     </div>
+
 </section>
 @section('scripts')
 <!-- DataTables  & Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var options = {
+        series: [{
+            data: [
+                @foreach($negaraData as $data)
+                    {{ $data['value'] }},
+                @endforeach
+            ]
+        }],
+        chart: {
+            type: 'bar',
+            height: 200
+        },
+        plotOptions: {
+            bar: {
+                barHeight: '100%',
+                distributed: true,
+                horizontal: true,
+                dataLabels: {
+                    position: 'bottom'
+                }
+            }
+        },
+        colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
+            '#f48024', '#69d2e7'
+        ],
+        dataLabels: {
+            enabled: true,
+            textAnchor: 'start',
+            style: {
+                colors: ['#fff']
+            },
+            formatter: function (val, opt) {
+                return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val;
+            },
+            offsetX: 0,
+            dropShadow: {
+                enabled: true
+            }
+        },
+        stroke: {
+            width: 1,
+            colors: ['#fff']
+        },
+        xaxis: {
+            categories: [
+                @foreach($negaraData as $data)
+                    '{{ $data['name'] }}',
+                @endforeach
+            ],
+        },
+        yaxis: {
+            labels: {
+                show: false
+            }
+        },
+        title: {
+            align: 'center',
+            floating: true
+        },
+        subtitle: {
+            align: 'center',
+        },
+        tooltip: {
+            theme: 'dark',
+            x: {
+                show: false
+            },
+            y: {
+                title: {
+                    formatter: function () {
+                        return ''
+                    }
+                }
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chartbar"), options);
+    chart.render();
+</script>
+<script>
+    var options = {
+        series: [
+            @foreach ($kelompokData as $data)
+                {{ $data['value'] }},
+            @endforeach
+        ],
+        chart: {
+            width: 380,
+            type: 'donut',
+        },
+        labels: [
+            @foreach ($kelompokData as $data)
+                "{{ $data['name'] }}",
+            @endforeach
+        ],
+        plotOptions: {
+            pie: {
+                startAngle: -90,
+                endAngle: 270
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        fill: {
+            type: 'gradient',
+        },
+        legend: {
+            formatter: function(val, opts) {
+                return val + " - " + opts.w.globals.series[opts.seriesIndex];
+            }
+        },
+       
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
+    chart.render();
+</script>
+
+    <script>
+        var options = {
+            series: [{
+                name: 'Laki-Laki',
+                data: @json($totalKunjunganLaki)  // Data total kunjungan
+            }, {
+                name: 'Total Kunjungan',
+                data: @json($totalKunjungan)  // Data total laki-laki
+            }, {
+                name: 'Perempuan',
+                data: @json($totalKunjunganPerempuan)  // Data total perempuan
+            }],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
+            },
+            yaxis: {
+                title: {
+                    text: 'Jumlah Kunjungan'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val;
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+
 
 @endsection
 @endsection
