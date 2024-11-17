@@ -11,12 +11,14 @@
                     <label for="wisata_id" class="form-label">Wisata</label>
                     <select name="wisata_id" class="form-control select2">
                         @foreach($wisata as $item)
-                            <option value="{{ $item->id }}" {{ request('wisata_id') == $item->id ? 'selected' : '' }}>
+                            <option value="{{ $hash->encode($item->id) }}" 
+                                {{ request('wisata_id') == $hash->encode($item->id) ? 'selected' : '' }}>
                                 {{ $item->namawisata }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+        
                 <div class="col-lg-3">
                     <label for="tahun" class="form-label">Tahun</label>
                     <select id="tahun" name="tahun" class="form-control select2">
@@ -25,12 +27,14 @@
                         @endfor
                     </select>
                 </div>
-
+        
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
+        
+        
 
         <div class="card mt-3">
             <div class="card-header">
@@ -65,15 +69,20 @@
                 <tbody>
                     @foreach ($kunjungan as $month => $dataBulan)
                         <tr>
-                        <td>
-                                <a href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
-                                    'wisataId' => $wisata_id, 
-                                    'bulan' => $month,
-                                    'tahun' => $tahun
-                                ]) }}">
+                            <td>
+                                @if($wisata_id)
+    <a href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
+        'wisata_id' => $hash->encode($wisata_id), 
+        'bulan' => $month,
+        'tahun' => $tahun
+    ]) }}">
+        {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+    </a>
+@else
                                     {{ DateTime::createFromFormat('!m', $month)->format('F') }}
-                                </a>
+                                @endif
                             </td>
+                            
 
                             <td>
                                 {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
