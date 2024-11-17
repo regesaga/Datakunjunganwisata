@@ -4,17 +4,28 @@
 
 <section class="content-header">
     <div class="container-fluid">
-        <!-- Form Filter Tahun -->
+        <!-- Form Filter Tahun dan Wisata -->
         <form method="GET" action="{{ route('admin.kunjunganwisata.indexkunjunganwisatapertahun') }}">
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-3">
+                    <label for="wisata_id" class="form-label">Wisata</label>
+                    <select name="wisata_id" class="form-control select2">
+                        @foreach($wisata as $item)
+                            <option value="{{ $item->id }}" {{ request('wisata_id') == $item->id ? 'selected' : '' }}>
+                                {{ $item->namawisata }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-3">
                     <label for="tahun" class="form-label">Tahun</label>
-                    <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
+                    <select id="tahun" name="tahun" class="form-control select2">
                         @for($y = date('Y'); $y >= 2020; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
                 </div>
+
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
@@ -54,7 +65,16 @@
                 <tbody>
                     @foreach ($kunjungan as $month => $dataBulan)
                         <tr>
-                            <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                        <td>
+                                <a href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
+                                    'wisataId' => $wisata_id, 
+                                    'bulan' => $month,
+                                    'tahun' => $tahun
+                                ]) }}">
+                                    {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+                                </a>
+                            </td>
+
                             <td>
                                 {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                             </td>
@@ -99,10 +119,5 @@
         </div>
     </div>
 </section>
-@endsection
 
-@section('scripts')
-<script src="{{ asset('datakunjungan/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 @endsection

@@ -71,34 +71,7 @@
           </a>
         
         </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganwisata.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              By Input
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganwisata.filterbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              perbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganwisata.filtertahun') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              pertahun
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+       
         <li class="nav-item">
           <a href="{{ route('admin.kunjunganwisata.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
             <i class="nav-icon fas fa-th"></i>

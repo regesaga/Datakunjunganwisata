@@ -153,13 +153,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
   // --- data kunjungan wisata ------
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
+  Route::get('/kunjungan-wisata/{wisataId}/edit/{bulan?}/{tahun?}', [AdminKunjunganWisataController::class, 'indexeditkunjunganwisata'])->name('admin.kunjunganwisata.indexeditkunjunganwisata');
   Route::get('/wisata/indexkunjunganwisatapertahun', [AdminKunjunganWisataController::class, 'indexkunjunganwisatapertahun'])->name('admin.kunjunganwisata.indexkunjunganwisatapertahun');
   Route::get('wisata/dashboard', [AdminKunjunganWisataController::class, 'dashboard'])->name('admin.kunjunganwisata.dashboard');
-  Route::get('wisata/perbulan', [AdminKunjunganWisataController::class, 'filterbulan'])->name('admin.kunjunganwisata.filterbulan');
   Route::get('wisata/wisnuperbulan', [AdminKunjunganWisataController::class, 'filterwisnubulan'])->name('admin.kunjunganwisata.filterwisnubulan');
   Route::get('wisata/wismanperbulan', [AdminKunjunganWisataController::class, 'filterwismanbulan'])->name('admin.kunjunganwisata.filterwismanbulan');
-  Route::get('wisata/pertahun', [AdminKunjunganWisataController::class, 'filtertahun'])->name('admin.kunjunganwisata.filtertahun');
-  Route::get('wisata/byinput', [AdminKunjunganWisataController::class, 'filterbyinput'])->name('admin.kunjunganwisata.filterbyinput');
   Route::get('/wisata/kunjungan', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
   Route::get('/wisata/create', [AdminKunjunganWisataController::class, 'createwisnu'])->name('admin.kunjunganwisata.createwisnu');
   Route::get('/wisata/confirm/{wisata_id}/{tanggal_kunjungan}',  [AdminKunjunganWisataController::class, 'confirm'])->name('admin.kunjunganwisata.confirm');
