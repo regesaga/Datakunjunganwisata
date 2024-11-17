@@ -218,10 +218,48 @@ class KunjunganWisataController extends Controller
                     'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
                     'total_wisman_perempuan' => array_sum(array_column($kunjungan, 'total_wisman_perempuan')),
                 ];
+
+                 // Ambil nama bulan dan total kunjungan per bulan
+                $bulan = [];
+                $totalKunjungan = [];
             
-                return view('account.wisata.kunjunganwisata.dashboard', compact(
-                    'kunjungan', 'kelompok', 'wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan'
-                ));
+                foreach ($kunjungan as $month => $dataBulan) {
+                    $bulan[] = \Carbon\Carbon::createFromFormat('!m', $month)->format('F');  // Nama bulan
+                    $totalKunjungan[] = $dataBulan['total_laki_laki'] + $dataBulan['total_perempuan'] + 
+                                        $dataBulan['total_wisman_laki'] + $dataBulan['total_wisman_perempuan'];  // Total kunjungan
+                    $totalKunjunganLaki[] = $dataBulan['total_laki_laki'] + $dataBulan['total_wisman_laki'] ;  // Total  LakiLaki
+                    $totalKunjunganPerempuan[] = $dataBulan['total_perempuan'] + $dataBulan['total_wisman_perempuan'] ;  // Total  LakiLaki
+                }
+                // Hitung jumlah per kelompok
+                    $kelompokData = [];
+                    foreach ($kelompok as $kelompokItem) {
+                        $kelompokData[] = [
+                            'name' => $kelompokItem->kelompokkunjungan_name,
+                            'value' => collect($kunjungan)->sum(function($dataBulan) use ($kelompokItem) {
+                                return $dataBulan['kelompok']->get($kelompokItem->id, collect())->sum(function($item) {
+                                    return $item['jumlah_laki_laki'] + $item['jumlah_perempuan'];
+                                });
+                            })
+                        ];
+                    }
+
+                    // Persiapkan data untuk grafik bar
+                    $negaraData = [];
+                    foreach ($wismannegara as $negara) {
+                        $negaraData[] = [
+                            'name' => $negara->wismannegara_name,
+                            'value' => collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                                return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum(function($item) {
+                                    return $item['jml_wisman_laki'] + $item['jml_wisman_perempuan'];
+                                });
+                            })
+                        ];
+                    }
+            
+            
+                    return view('account.wisata.kunjunganwisata.dashboard', compact(
+                        'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan', 'negaraData'
+                    ));
             }
 
 
