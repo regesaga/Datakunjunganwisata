@@ -18,6 +18,7 @@ use App\Http\Controllers\Author\KunjunganKulinerController;
 use App\Http\Controllers\Author\KunjunganWisataController;
 use App\Http\Controllers\Author\KunjunganAkomodasiController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminDatakunjunganController;
 use App\Http\Controllers\Admin\AdminKunjunganWisataController;
 use App\Http\Controllers\Admin\AdminKunjunganAkomodasiController;
 use App\Http\Controllers\Admin\AdminKunjunganKulinerController;
@@ -149,7 +150,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::put('wismannegaraupdate/{wismannegara}', [WismanNegaraController::class, 'wismannegaraupdate'])->name('admin.wismannegara.update');
   Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
   Route::delete('wismannegara/delete/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
-
+  Route::get('Datakunjungan', [AdminDatakunjunganController::class, 'index'])->name('admin.datakunjungan.index');
 
   // --- data kunjungan wisata ------
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');

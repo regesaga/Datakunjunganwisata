@@ -12,15 +12,25 @@ class KelompokKunjungan extends Model
     
     protected $fillable = ['kelompokkunjungan_name'];
 
-    public function wisnuwisata()
-    {
-        return $this->belongsToMany(WisnuWisata::class);
-    }
+ // One-to-many relationship with WisnuWisata
+ public function wisnuwisata()
+ {
+     return $this->hasMany(WisnuWisata::class, 'kelompok_kunjungan_id');
+ }
 
-    public function wisnukuliner()
-    {
-        return $this->belongsToMany(WisnuKuliner::class);
-    }
+ // One-to-many relationship with WisnuKuliner
+ public function wisnukuliner()
+ {
+     return $this->hasMany(WisnuKuliner::class, 'kelompok_kunjungan_id');
+ }
+
+ // One-to-many relationship with WisnuAkomodasi (add this if necessary)
+ public function wisnuakomodasi()
+ {
+     return $this->hasMany(WisnuAkomodasi::class, 'kelompok_kunjungan_id');
+ }
+
+    
 
     
 }
