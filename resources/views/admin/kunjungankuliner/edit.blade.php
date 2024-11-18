@@ -128,7 +128,7 @@
             @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
             <div class="form-header">
                 <h1>Edit Data Kunjungan</h1>
-                <h2>{{ $wisata->namawisata }}</h2>
+                <h2>{{ $kuliner->namakuliner }}</h2>
                 @if (session('warning'))
                 <div class="alert alert-warning">
                     {{ session('warning') }} 
@@ -155,7 +155,7 @@
             </div>
         
             <div class="col-lg-12">
-                <input type="hidden" name="wisata_id" value="{{ $hash->encode($wisata->id) }}" required>
+                <input type="hidden" name="kuliner_id" value="{{ $hash->encode($kuliner->id) }}" required>
                 <div class="visitor-section">
                     <div class="row">
                         <div class="col-md-6">

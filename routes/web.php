@@ -160,7 +160,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('wisata/wismanperbulan', [AdminKunjunganWisataController::class, 'filterwismanbulan'])->name('admin.kunjunganwisata.filterwismanbulan');
   Route::get('/wisata/kunjungan', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
   Route::get('/wisata/create', [AdminKunjunganWisataController::class, 'createwisnu'])->name('admin.kunjunganwisata.createwisnu');
-  Route::get('/wisata/confirm/{wisata_id}/{tanggal_kunjungan}',  [AdminKunjunganWisataController::class, 'confirm'])->name('admin.kunjunganwisata.confirm');
   Route::post('/wisata/storekunjunganwisata', [AdminKunjunganWisataController::class, 'storewisnu'])->name('admin.kunjunganwisata.storewisnu');
   Route::get('wisata/kunjungan/{wisata_id}/{tanggal_kunjungan}/edit', [AdminKunjunganWisataController::class, 'editwisnu'])->name('admin.kunjunganwisata.edit');
   Route::put('/wisata/update/{tanggal_kunjungan}', [AdminKunjunganWisataController::class, 'updatewisnu'])->name('admin.kunjunganwisata.update');
@@ -168,16 +167,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
   //--- data kunjungan Kuliner ------
  Route::get('indexkunjungankuliner', [AdminKunjunganKulinerController::class, 'indexkunjungankuliner'])->name('admin.kunjungankuliner.index');
+ Route::get('/kunjungan-kuliner/{kuliner_id}', [AdminKunjunganKulinerController::class, 'indexeditkunjungankuliner'])->name('admin.kunjungankuliner.indexeditkunjungankuliner');
  Route::get('/kuliner/indexkunjungankulinerpertahun', [AdminKunjunganKulinerController::class, 'indexkunjungankulinerpertahun'])->name('admin.kunjungankuliner.indexkunjungankulinerpertahun');
  Route::get('kuliner/dashboard', [AdminKunjunganKulinerController::class, 'dashboard'])->name('admin.kunjungankuliner.dashboard');
- Route::get('kuliner/perbulan', [AdminKunjunganKulinerController::class, 'filterbulan'])->name('admin.kunjungankuliner.filterbulan');
  Route::get('kuliner/wisnuperbulan', [AdminKunjunganKulinerController::class, 'filterwisnubulan'])->name('admin.kunjungankuliner.filterwisnubulan');
  Route::get('kuliner/wismanperbulan', [AdminKunjunganKulinerController::class, 'filterwismanbulan'])->name('admin.kunjungankuliner.filterwismanbulan');
- Route::get('kuliner/pertahun', [AdminKunjunganKulinerController::class, 'filtertahun'])->name('admin.kunjungankuliner.filtertahun');
- Route::get('kuliner/byinput', [AdminKunjunganKulinerController::class, 'filterbyinput'])->name('admin.kunjungankuliner.filterbyinput');
  Route::get('/kuliner/kunjungan', [AdminKunjunganKulinerController::class, 'indexkunjungankuliner'])->name('admin.kunjungankuliner.index');
  Route::get('/kuliner/create', [AdminKunjunganKulinerController::class, 'createwisnu'])->name('admin.kunjungankuliner.createwisnu');
- Route::get('/kuliner/confirm/{kuliner_id}/{tanggal_kunjungan}',  [AdminKunjunganKulinerController::class, 'confirm'])->name('admin.kunjungankuliner.confirm');
  Route::post('/kuliner/storekunjungankuliner', [AdminKunjunganKulinerController::class, 'storewisnu'])->name('admin.kunjungankuliner.storewisnu');
  Route::get('kuliner/kunjungan/{kuliner_id}/{tanggal_kunjungan}/edit', [AdminKunjunganKulinerController::class, 'editwisnu'])->name('admin.kunjungankuliner.edit');
  Route::put('/kuliner/update/{tanggal_kunjungan}', [AdminKunjunganKulinerController::class, 'updatewisnu'])->name('admin.kunjungankuliner.update');
@@ -185,16 +181,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
   //--- data kunjungan Akomodasi  ------
   Route::get('indexkunjunganakomodasi', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('admin.kunjunganakomodasi.index');
+ Route::get('/kunjungan-akomodasi/{akomodasi_id}', [AdminKunjunganAkomodasiController::class, 'indexeditkunjunganakomodasi'])->name('admin.kunjunganakomodasi.indexeditkunjunganakomodasi');
   Route::get('/akomodasi/indexkunjunganakomodasipertahun', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasipertahun'])->name('admin.kunjunganakomodasi.indexkunjunganakomodasipertahun');
   Route::get('akomodasi/dashboard', [AdminKunjunganAkomodasiController::class, 'dashboard'])->name('admin.kunjunganakomodasi.dashboard');
-  Route::get('akomodasi/perbulan', [AdminKunjunganAkomodasiController::class, 'filterbulan'])->name('admin.kunjunganakomodasi.filterbulan');
   Route::get('akomodasi/wisnuperbulan', [AdminKunjunganAkomodasiController::class, 'filterwisnubulan'])->name('admin.kunjunganakomodasi.filterwisnubulan');
   Route::get('akomodasi/wismanperbulan', [AdminKunjunganAkomodasiController::class, 'filterwismanbulan'])->name('admin.kunjunganakomodasi.filterwismanbulan');
-  Route::get('akomodasi/pertahun', [AdminKunjunganAkomodasiController::class, 'filtertahun'])->name('admin.kunjunganakomodasi.filtertahun');
-  Route::get('akomodasi/byinput', [AdminKunjunganAkomodasiController::class, 'filterbyinput'])->name('admin.kunjunganakomodasi.filterbyinput');
   Route::get('/akomodasi/kunjungan', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('admin.kunjunganakomodasi.index');
   Route::get('/akomodasi/create', [AdminKunjunganAkomodasiController::class, 'createwisnu'])->name('admin.kunjunganakomodasi.createwisnu');
-  Route::get('/akomodasi/confirm/{akomodasi_id}/{tanggal_kunjungan}',  [AdminKunjunganAkomodasiController::class, 'confirm'])->name('admin.kunjunganakomodasi.confirm');
   Route::post('/akomodasi/storekunjunganakomodasi', [AdminKunjunganAkomodasiController::class, 'storewisnu'])->name('admin.kunjunganakomodasi.storewisnu');
   Route::get('akomodasi/kunjungan/{akomodasi_id}/{tanggal_kunjungan}/edit', [AdminKunjunganAkomodasiController::class, 'editwisnu'])->name('admin.kunjunganakomodasi.edit');
   Route::put('/akomodasi/update/{tanggal_kunjungan}', [AdminKunjunganAkomodasiController::class, 'updatewisnu'])->name('admin.kunjunganakomodasi.update');

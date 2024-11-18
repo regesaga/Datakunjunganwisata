@@ -4,22 +4,37 @@
 
 <section class="content-header">
     <div class="container-fluid">
-        <!-- Form Filter Tahun -->
+        <!-- Form Filter Tahun dan Akomodasi -->
         <form method="GET" action="{{ route('admin.kunjunganakomodasi.indexkunjunganakomodasipertahun') }}">
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-3">
+                    <label for="akomodasi_id" class="form-label">Akomodasi</label>
+                    <select name="akomodasi_id" class="form-control select2">
+                        @foreach($akomodasi as $item)
+                            <option value="{{ $hash->encode($item->id) }}" 
+                                {{ request('akomodasi_id') == $hash->encode($item->id) ? 'selected' : '' }}>
+                                {{ $item->namaakomodasi }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+        
+                <div class="col-lg-3">
                     <label for="tahun" class="form-label">Tahun</label>
-                    <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
+                    <select id="tahun" name="tahun" class="form-control select2">
                         @for($y = date('Y'); $y >= 2020; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
                 </div>
+        
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
+        
+        
 
         <div class="card mt-3">
             <div class="card-header">
@@ -54,7 +69,21 @@
                 <tbody>
                     @foreach ($kunjungan as $month => $dataBulan)
                         <tr>
-                            <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                            <td>
+                                @if($akomodasi_id)
+    <a href="{{ route('admin.kunjunganakomodasi.indexeditkunjunganakomodasi', [
+        'akomodasi_id' => $hash->encode($akomodasi_id), 
+        'bulan' => $month,
+        'tahun' => $tahun
+    ]) }}">
+        {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+    </a>
+@else
+                                    {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+                                @endif
+                            </td>
+                            
+
                             <td>
                                 {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                             </td>
@@ -99,10 +128,5 @@
         </div>
     </div>
 </section>
-@endsection
 
-@section('scripts')
-<script src="{{ asset('datakunjungan/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 @endsection

@@ -125,34 +125,7 @@
           </a>
         
         </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjungankuliner.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              By Input
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjungankuliner.filterbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              perbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjungankuliner.filtertahun') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              pertahun
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+       
         <li class="nav-item">
           <a href="{{ route('admin.kunjungankuliner.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
             <i class="nav-icon fas fa-th"></i>
@@ -207,34 +180,8 @@
           </a>
         
         </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganakomodasi.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              By Input
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
 
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganakomodasi.filterbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              perbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganakomodasi.filtertahun') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              pertahun
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+       
         <li class="nav-item">
           <a href="{{ route('admin.kunjunganakomodasi.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
             <i class="nav-icon fas fa-th"></i>
@@ -300,34 +247,7 @@
         </a>
       
       </li>
-      <li class="nav-item">
-        <a href="{{ route('account.wisata.kunjunganwisata.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            By Input
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="{{ route('account.wisata.kunjunganwisata.filterbulan') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            perbulan
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('account.wisata.kunjunganwisata.filtertahun') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            pertahun
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
+     
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
@@ -420,34 +340,7 @@
         </a>
       
       </li>
-      <li class="nav-item">
-        <a href="{{ route('account.kuliner.kunjungankuliner.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            By Input
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="{{ route('account.kuliner.kunjungankuliner.filterbulan') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            perbulan
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('account.kuliner.kunjungankuliner.filtertahun') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            pertahun
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
+     
       <li class="nav-item">
         <a href="{{ route('account.kuliner.kunjungankuliner.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
@@ -527,34 +420,6 @@
           </p>
         </a>
       
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('account.akomodasi.kunjunganakomodasi.filterbyinput') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            By Input
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a href="{{ route('account.akomodasi.kunjunganakomodasi.filterbulan') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            perbulan
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{{ route('account.akomodasi.kunjunganakomodasi.filtertahun') }}" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon fas fa-th"></i>
-          <p>
-            pertahun
-            <span class="right badge badge-danger">New</span>
-          </p>
-        </a>
       </li>
       <li class="nav-item">
         <a href="{{ route('account.akomodasi.kunjunganakomodasi.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">

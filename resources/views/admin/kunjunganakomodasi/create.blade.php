@@ -128,8 +128,15 @@
             @csrf
         <div class="form-header">
                 <h3>Tambah Laporan Kunjungan</h3>
-            <h2>{{$wisata->namawisata}}</h2>
-            
+                <div class="col-lg-2">
+                <select name="akomodasi_id" class="form-control select2">
+                    @foreach($akomodasi as $item)
+                        <option value="{{ $item->id }}" {{ request('akomodasi_id') == $item->id ? 'selected' : '' }}>
+                            <h2><b>{{ $item->namaakomodasi }}</b></h2>
+                        </option>
+                    @endforeach
+                </select>
+                </div>      
           
             <div class="form-date">
                 <label for="tanggal">Tanggal:</label>
@@ -156,7 +163,8 @@
 @endif
     
             <div class="col-lg-12">
-                        <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
+                
+                
                         <div class="visitor-section">
                             <div class="row">
                                 <div class="col-md-6">

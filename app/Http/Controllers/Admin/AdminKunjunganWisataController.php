@@ -446,7 +446,7 @@ public function createwisnu()
     {
         $company_id = auth()->user()->company->id;
         $kelompok = KelompokKunjungan::all();
-        $wisata = Wisata::where('company_id', $company_id)->first();
+        $wisata = Wisata::all();
         $wismannegara = WismanNegara::all();
 
         // Define the $tanggal variable, you can set it to the current date or any other logic
@@ -530,49 +530,76 @@ public function storewisnu(Request $request)
 
 // Menampilkan form edit kunjungan
 public function editwisnu($wisata_id, $tanggal_kunjungan)
-    {
-        $hash = new Hashids();
-        // Dekripsi `wisata_id`
-        $wisata_id = $hash->decode($wisata_id)[0] ?? null;
+{
+    $hash = new Hashids();
 
-        if (!$wisata_id) {
-            abort(404); // Jika `wisata_id` tidak valid, return 404
-        }
+    // Dekripsi `wisata_id`
+    $decodedWisataId = $hash->decode($wisata_id);
 
-        $company_id = auth()->user()->company->id;
-        $wisata = Wisata::find($wisata_id);
-        $wisnuData = WisnuWisata::where('tanggal_kunjungan', $tanggal_kunjungan)
-                                ->with('kelompokkunjungan')
-                                ->get();
-        $wismanData = WismanWisata::where('tanggal_kunjungan', $tanggal_kunjungan)
-                                ->with('wismannegara')
-                                ->get();
-        // Aggregate the data for WISMAN based on wismannegara_id
-        $aggregatedWismanData = $wismanData->groupBy('wismannegara_id')->map(function($group) {
-            return [
-                'wismannegara_id' => $group->first()->wismannegara_id,
-                'jml_wisman_laki' => $group->sum('jml_wisman_laki'),
-                'jml_wisman_perempuan' => $group->sum('jml_wisman_perempuan'),
-            ];
-        });
 
-        // Aggregate the data for WISNU based on kelompok_kunjungan_id
-        $aggregatedWisnuData = $wisnuData->groupBy('kelompok_kunjungan_id')->map(function($group) {
-            return [
-                'kelompok_kunjungan_id' => $group->first()->kelompok_kunjungan_id,
-                'kelompok_kunjungan_name' => optional($group->first()->kelompokkunjungan)->kelompokkunjungan_name,
-                'jumlah_laki_laki' => $group->sum('jumlah_laki_laki'),
-                'jumlah_perempuan' => $group->sum('jumlah_perempuan'),
-            ];
-        }); 
-
-        // Get other data
-        $kelompok = KelompokKunjungan::all();
-        $wismannegara = WismanNegara::all();
-
-        // Pass data to the view
-        return view('admin.kunjunganwisata.edit', compact('wisnuData', 'hash','aggregatedWismanData','aggregatedWisnuData','tanggal_kunjungan','wismanData', 'wisata', 'kelompok', 'wismannegara', 'hash'));
+    if (!$decodedWisataId) {
+        abort(404, 'Wisata ID tidak valid');
     }
+
+    // Ambil `company_id` pengguna yang sedang login
+    $company_id = auth()->user()->company->id;
+
+    // Ambil data wisata
+    $wisata = Wisata::where('id', $decodedWisataId)
+        ->first();
+
+    if (!$wisata) {
+        abort(404, 'Data wisata tidak ditemukan');
+    }
+
+    // Query data WISNU terkait wisata dan tanggal kunjungan
+    $wisnuData = WisnuWisata::where('wisata_id', $decodedWisataId)
+        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+        ->with('kelompokkunjungan') // Eager loading relasi
+        ->get();
+
+    // Query data WISMAN terkait wisata dan tanggal kunjungan
+    $wismanData = WismanWisata::where('wisata_id', $decodedWisataId)
+        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+        ->with('wismannegara') // Eager loading relasi
+        ->get();
+
+    // Aggregate data WISMAN berdasarkan `wismannegara_id`
+    $aggregatedWismanData = $wismanData->groupBy('wismannegara_id')->map(function ($group) {
+        return [
+            'wismannegara_id' => $group->first()->wismannegara_id,
+            'jml_wisman_laki' => $group->sum('jml_wisman_laki'),
+            'jml_wisman_perempuan' => $group->sum('jml_wisman_perempuan'),
+        ];
+    });
+
+    // Aggregate data WISNU berdasarkan `kelompok_kunjungan_id`
+    $aggregatedWisnuData = $wisnuData->groupBy('kelompok_kunjungan_id')->map(function ($group) {
+        return [
+            'kelompok_kunjungan_id' => $group->first()->kelompok_kunjungan_id,
+            'kelompok_kunjungan_name' => optional($group->first()->kelompokkunjungan)->kelompokkunjungan_name,
+            'jumlah_laki_laki' => $group->sum('jumlah_laki_laki'),
+            'jumlah_perempuan' => $group->sum('jumlah_perempuan'),
+        ];
+    });
+
+    // Ambil data kelompok kunjungan dan negara wisman
+    $kelompok = KelompokKunjungan::all();
+    $wismannegara = WismanNegara::all();
+
+    // Pass data ke view
+    return view('admin.kunjunganwisata.edit', compact(
+        'wisnuData',
+        'hash',
+        'aggregatedWismanData',
+        'aggregatedWisnuData',
+        'tanggal_kunjungan',
+        'wismanData',
+        'wisata',
+        'kelompok',
+        'wismannegara'
+    ));
+}
 
 public function updatewisnu(Request $request, $tanggal_kunjungan)
     {
