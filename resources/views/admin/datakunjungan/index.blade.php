@@ -61,7 +61,6 @@
                             <div class="icon">
                                 <i class="ion ion-woman"> <i class="ion ion-man"> </i></i>
                             </div>
-                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <div class="col-lg-4 col-6">
@@ -77,6 +76,42 @@
                     </div>
                 </div>
                 <div id="chart"></div>
+                <div class="row">
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $totalKeseluruhan['totalkunjunganKuliner'] }}</h3>
+                                <p>Pengunjung Kuliner</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-male"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $totalKeseluruhan['totalkunjunganWisata']}}</h3>
+                                <p>Pengunjung Wisata</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-woman"> <i class="ion ion-man"> </i></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $totalKeseluruhan['totalkunjunganAkomodasi']}}</h3>
+                                <p>Pengunjung Akomodasi</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-female"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="chartkunjungan"></div>
 
                 <div class="row">
                     <div class="col">
@@ -157,7 +192,60 @@
 <!-- DataTables  & Plugins -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<script>
+    var options = {
+        series: [{
+            name: 'Wisata',
+            data: @json($totalWisataAll)  // Data total 
+        }, {
+            name: 'Kuliner',
+            data: @json($totalKulinerAll)  // Data total laki-laki
+        }, {
+            name: 'Akomodasi',
+            data: @json($totalAkomodasiAll)  // Data total perempuan
+        }],
+        chart: {
+            type: 'bar',
+            height: 350
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
+        },
+        yaxis: {
+            title: {
+                text: 'Jumlah Kunjungan'
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val;
+                }
+            }
+        }
+    };
 
+    var chart = new ApexCharts(document.querySelector("#chartkunjungan"), options);
+    chart.render();
+</script>
 <script>
     var options = {
         series: [{

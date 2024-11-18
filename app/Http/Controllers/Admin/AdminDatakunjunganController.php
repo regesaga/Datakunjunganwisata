@@ -45,6 +45,22 @@ class AdminDatakunjunganController extends Controller
         $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-01-01")->startOfYear();
         $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-12-31")->endOfYear();
 
+// Fungsi helper untuk menghitung total kunjungan by objek
+$totalWisata = $this->sumKunjungan('wisnuwisata', $year, $month, 'jumlah_laki_laki')
+    + $this->sumKunjungan('wisnuwisata', $year, $month, 'jumlah_perempuan')
+    + $this->sumKunjungan('wismanwisata', $year, $month, 'jml_wisman_laki')
+    + $this->sumKunjungan('wismanwisata', $year, $month, 'jml_wisman_perempuan');
+   
+    $totalKuliner = $this->sumKunjungan('wisnukuliner', $year, $month, 'jumlah_laki_laki')
+    + $this->sumKunjungan('wisnukuliner', $year, $month, 'jumlah_perempuan')
+    + $this->sumKunjungan('wismankuliner', $year, $month, 'jml_wisman_laki')
+    + $this->sumKunjungan('wismankuliner', $year, $month, 'jml_wisman_perempuan');
+
+    $totalAkomodasi = $this->sumKunjungan('wisnuakomodasi', $year, $month, 'jumlah_laki_laki')
+    + $this->sumKunjungan('wisnuakomodasi', $year, $month, 'jumlah_perempuan')
+    + $this->sumKunjungan('wismanakomodasi', $year, $month, 'jml_wisman_laki')
+    + $this->sumKunjungan('wismanakomodasi', $year, $month, 'jml_wisman_perempuan');
+
 
         // Fungsi helper untuk menghitung total kunjungan
         $totalLakiLakiWisnu = $this->sumKunjungan('wisnuwisata', $year, $month, 'jumlah_laki_laki')
@@ -98,6 +114,9 @@ class AdminDatakunjunganController extends Controller
 
         // Simpan data kunjungan per bulan
         $kunjungan[$month] = [
+            'totalkunjunganWisata' => $totalWisata,
+            'totalkunjunganKuliner' => $totalKuliner,
+            'totalkunjunganAkomodasi' => $totalAkomodasi,
             'total_laki_laki' => $totalLakiLakiWisnu,
             'total_perempuan' => $totalPerempuanWisnu,
             'total_wisman_laki' => $totalWismanLaki,
@@ -120,6 +139,9 @@ class AdminDatakunjunganController extends Controller
 
     // Hitung total keseluruhan per tahun
     $totalKeseluruhan = [
+        'totalkunjunganWisata' => array_sum(array_column($kunjungan, 'totalkunjunganWisata')),
+        'totalkunjunganKuliner' => array_sum(array_column($kunjungan, 'totalkunjunganKuliner')),
+        'totalkunjunganAkomodasi' => array_sum(array_column($kunjungan, 'totalkunjunganAkomodasi')),
         'total_laki_laki' => array_sum(array_column($kunjungan, 'total_laki_laki')),
         'total_perempuan' => array_sum(array_column($kunjungan, 'total_perempuan')),
         'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
@@ -163,6 +185,10 @@ foreach ($wisnuKunjungan as $kelompokId => $dataKelompok) {
                             $dataBulan['total_wisman_laki'] + $dataBulan['total_wisman_perempuan'];  // Total kunjungan
         $totalKunjunganLaki[] = $dataBulan['total_laki_laki'] + $dataBulan['total_wisman_laki'] ;  // Total  LakiLaki
         $totalKunjunganPerempuan[] = $dataBulan['total_perempuan'] + $dataBulan['total_wisman_perempuan'] ;  // Total  LakiLaki
+        $totalWisataAll[] = $dataBulan['totalkunjunganWisata'];  // Total  LakiLaki
+        $totalKulinerAll[] = $dataBulan['totalkunjunganKuliner'];  // Total  LakiLaki
+        $totalAkomodasiAll[] = $dataBulan['totalkunjunganAkomodasi'];  // Total  LakiLaki
+  
     }
 
 
@@ -190,7 +216,7 @@ foreach ($wismannegara as $negara) {
 
 
     return view('admin.datakunjungan.index', compact(
-        'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan', 'negaraData'
+        'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll', 'negaraData'
     ));
 }
 
