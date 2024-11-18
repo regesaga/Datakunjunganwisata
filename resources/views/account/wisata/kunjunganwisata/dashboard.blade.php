@@ -94,6 +94,7 @@
                     <!-- ./col -->
                 </div>
             <div id="chart"></div>
+            <div id="charttrend"></div>
 
       <!-- /.row -->
         <div class="row">
@@ -170,6 +171,7 @@
             </div>
         </div>
         <div id="chartbar"></div>
+        <div id="chartstok"></div>
 
         
                 <!-- /.card-body-->
@@ -219,7 +221,20 @@
                         </thead>
                         <tbody>
                             @foreach ($kunjungan as $month => $dataBulan)
-                                <tr>
+                                @php
+                                    // Cek apakah semua nilai pada bulan tersebut adalah 0
+                                    $isZero = ($dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan']) == 0;
+                                    foreach ($kelompok as $namaKelompok) {
+                                        if ($dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
+                                            $isZero = false;
+                                            break;
+                                        }
+                                    }
+                                    if ($dataBulan['jml_wisman_laki'] > 0 || $dataBulan['jml_wisman_perempuan'] > 0) {
+                                        $isZero = false;
+                                    }
+                                @endphp
+                                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
                                     <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
                                     <td>
                                         {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
@@ -233,6 +248,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                        
                         <tfoot>
                             <tr>
                                 <th>Total Keseluruhan</th>
@@ -256,10 +272,11 @@
                     </table>
                 </div>
             </div>
+
             <div class="card">
                 <div class="card-header border-0">
                     <h3 class="card-title">
-                    Tabel Rekap Menurut Jenis Kelamin Kunjungan Wisatawan Tahun {{ $year }}
+                    Tabel Rekap Kunjungan Wisatawan per tanggal Tahun {{ $year }}
                     </h3>
                     <!-- card tools -->
                     <div class="card-tools">
@@ -274,49 +291,82 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Bulan</th>
-                                <th>Total Laki-Laki Domestik</th>
-                                <th>Total Perempuan Domestik</th>
-                                <th>Total Laki-Laki Mancanegara</th>
-                                <th>Total Perempuan Mancanegara</th>
-                                <th>Sub Total</th>
+                                <th rowspan="3">Tanggal</th>
+                                <th rowspan="3">Total</th>
+                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisata Nusantara</th>
+                                <th colspan="2" style="text-align: center;">Wisata Mancanegara</th>
+                            </tr>
+                            <tr>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                                @endforeach
+                                <th colspan="2" style="text-align: center;">Total Wisata Mancanegara</th>
+                            </tr>
+                            <tr>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <th style="text-align: center;">L</th>
+                                    <th style="text-align: center;">P</th>
+                                @endforeach
+                                <th style="text-align: center;">Laki - Laki</th>
+                                <th style="text-align: center;">Perempuan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach(range(1, 12) as $month)
-                                <tr>
-                                    <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
-                                    <td>{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
+                            @foreach ($bytgl as $tanggal => $dataBulan)
+                                @php
+                                    // Cek apakah semua nilai pada tanggal tersebut adalah 0
+                                    $isZero = ($dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan']) == 0;
+                                    foreach ($kelompok as $namaKelompok) {
+                                        if ($dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
+                                            $isZero = false;
+                                            break;
+                                        }
+                                    }
+                                    if ($dataBulan['jml_wisman_laki'] > 0 || $dataBulan['jml_wisman_perempuan'] > 0) {
+                                        $isZero = false;
+                                    }
+                                @endphp
+                                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
+                                    <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                                     <td>
-                                        {{ ($kunjungan[$month]['total_laki_laki'] ?? 0) + 
-                                        ($kunjungan[$month]['total_perempuan'] ?? 0) + 
-                                        ($kunjungan[$month]['total_wisman_laki'] ?? 0) + 
-                                        ($kunjungan[$month]['total_wisman_perempuan'] ?? 0) }}
+                                        {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                                     </td>
+                                    @foreach ($kelompok as $namaKelompok)
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                    @endforeach
+                                    <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                    <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
+                        
                         <tfoot>
                             <tr>
                                 <th>Total Keseluruhan</th>
-                                <th>{{ $totalKeseluruhan['total_laki_laki'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_perempuan'] }}</th>
+                                <th>
+                                    {{ collect($kunjungan)->sum(function($dataBulan) {
+                                        return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
+                                    }) }}
+                                </th>
+                                @foreach ($kelompok as $namaKelompok)
+                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                                    }) }}</th>
+                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                                    }) }}</th>
+                                @endforeach
                                 <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
                                 <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
-                                <th>
-                                    {{ $totalKeseluruhan['total_laki_laki'] + 
-                                    $totalKeseluruhan['total_perempuan'] + 
-                                    $totalKeseluruhan['total_wisman_laki'] + 
-                                    $totalKeseluruhan['total_wisman_perempuan'] }}
-                                </th>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
+
+
+            
 
         </div>
     </div>
@@ -512,6 +562,137 @@
         chart.render();
     </script>
 
+    <script>
+    var options = {
+        series: [{
+            name: 'Total Kunjungan',
+            data: @json($totalKunjungan) // Replace with your PHP variable for data
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        title: {
+            text: 'Trends Kunjungan berdasarkan Bulan',
+            align: 'left'
+        },
+        grid: {
+            row: {
+                colors: ['#f3f3f3', 'transparent'], // Alternating row colors
+                opacity: 0.5
+            }
+        },
+        xaxis: {
+            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#charttrend"), options);
+    chart.render();
+</script>
+<script>
+    // Convert PHP data to JavaScript
+    const dataByDate = @json($bytgl);
+
+    const dates = [];
+    const lakiLaki = [];
+    const perempuan = [];
+    const wismanLaki = [];
+    const wismanPerempuan = [];
+
+    // Prepare data for the chart
+    for (const [date, data] of Object.entries(dataByDate)) {
+        dates.push(date);  // Use the date for the x-axis
+        lakiLaki.push(data.jumlah_laki_laki);
+        perempuan.push(data.jumlah_perempuan);
+        wismanLaki.push(data.jml_wisman_laki);
+        wismanPerempuan.push(data.jml_wisman_perempuan);
+    }
+
+    // Chart options using ApexCharts
+    var options = {
+        series: [{
+            name: 'Kunjungan',
+            data: lakiLaki
+        }, {
+            name: 'Perempuan',
+            data: perempuan
+        }, {
+            name: 'Wisman Laki-Laki',
+            data: wismanLaki
+        }, {
+            name: 'Wisman Perempuan',
+            data: wismanPerempuan
+        }],
+        chart: {
+            type: 'area',
+            stacked: false,
+            height: 350,
+            zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+            },
+            toolbar: {
+                autoSelected: 'zoom'
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        markers: {
+            size: 0,
+        },
+        title: {
+            text: 'Visitor Statistics',
+            align: 'left'
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100]
+            },
+        },
+        yaxis: {
+            labels: {
+                formatter: function (val) {
+                    return val.toFixed(0);  // No need to divide by million, adjust if needed
+                },
+            },
+            title: {
+                text: 'Visitor Count'
+            },
+        },
+        xaxis: {
+            categories: dates,
+            type: 'category',
+        },
+        tooltip: {
+            shared: false,
+            y: {
+                formatter: function (val) {
+                    return val.toFixed(0);
+                }
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chartstok"), options);
+    chart.render();
+</script>
 
 @endsection
 @endsection
