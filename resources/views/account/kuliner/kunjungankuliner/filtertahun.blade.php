@@ -123,7 +123,7 @@
         var element = document.getElementById('example1');
         var opt = {
             margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
-            filename:     'Kunjungan_Kuliner_' + new Date().toISOString() + '.pdf',
+            filename:     'Kunjungan_Wisata_' + new Date().toISOString() + '.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
             jsPDF:        { 
@@ -142,8 +142,8 @@
     // Fungsi untuk mengekspor tabel ke file Excel
     document.getElementById('export-to-excel').addEventListener('click', function () {
         var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
-        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Kuliner' }); // Konversi tabel menjadi buku Excel
-        XLSX.writeFile(sheet, 'Kunjungan_Kuliner_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
+        XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
     });
 </script>
 @endsection

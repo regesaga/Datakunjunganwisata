@@ -31,6 +31,12 @@
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
+                    <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                        <h2 style="text-align: center; text-transform: uppercase;">
+                            Rekap Data Kunjungan {{$wisata->namawisata}} perbulan Tahun {{ $tahun }}
+                        </h2>
+                        </th>
+                    </tr>
                     <tr>
                         <th rowspan="3">Bulan</th>
                         <th rowspan="3">Total</th>
@@ -120,10 +126,16 @@
                 <!-- /.card-tools -->
             </div>
             <div class="card-body">
-                <button class="btn btn-primary" id="download-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                <button class="btn btn-primary" id="download-to-excel">Download Excel</button> <!-- Tombol Export -->
+                <button class="btn btn-danger" id="download-to-pdf">Download PDF</button> <!-- Tombol Export PDF -->
                 <table id="example2" class="table table-bordered table-striped">
                     <thead>
+                        <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                            <h2 style="text-align: center; text-transform: uppercase;">
+                                Rekap Data Kunjungan {{$wisata->namawisata}} per tanggal Tahun {{ $tahun }}
+                            </h2>
+                            </th>
+                        </tr>
                         <tr>
                             <th rowspan="3">Tanggal</th>
                             <th rowspan="3">Total</th>
@@ -247,6 +259,21 @@
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
     </script>
+      <script>
+        $(function () {
+            const currentDate = new Date();
+            const formattedDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+    
+            $("#example2").DataTable({
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false,
+                ordering: false,
+                paging: false,
+    
+            }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
@@ -269,23 +296,42 @@
             html2pdf().from(element).set(opt).save();
         });
     </script>
-    
+<script>
+    document.getElementById('download-to-pdf').addEventListener('click', function () {
+        var element = document.getElementById('example2');
+        var opt = {
+            margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
+            filename:     'Kunjungan_Wisata_dalamsatutahun' + new Date().toISOString() + '.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
+            jsPDF:        { 
+                unit: 'mm', 
+                format: 'letter',  // Format A4
+                orientation: 'landscape'  // Mengatur orientasi menjadi landscape agar lebih lebar
+            }
+        };
+
+        // Menambahkan pengaturan CSS untuk menghindari pemotongan
+        html2pdf().from(element).set(opt).save();
+    });
+</script>
     <script>
         // Fungsi untuk mengekspor tabel ke file Excel
         document.getElementById('export-to-excel').addEventListener('click', function () {
-            var table = document.getElementById('example2'); // Ambil tabel berdasarkan ID
+            var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
             var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
             XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
         });
     </script>
 
-{{-- <script>
-    // Fungsi untuk mengekspor tabel ke file Excel
-    document.getElementById('download-excel').addEventListener('click', function () {
+<!-- JavaScript untuk mengunduh tabel ke Excel -->
+<script>
+    document.getElementById('download-to-excel').addEventListener('click', function () {
         var table = document.getElementById('example2'); // Ambil tabel berdasarkan ID
         var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata Dalam Satu Tahun' }); // Konversi tabel menjadi buku Excel
-        XLSX.writeFile(sheet, 'Kunjungan_Wisata_dalamsatutahun' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+        var filename = 'Kunjungan_Wisata_dalamsatutahun_' + new Date().toISOString() + '.xlsx'; // Nama file dengan timestamp
+        XLSX.writeFile(sheet, filename); // Unduh file Excel
     });
-</script> --}}
+</script>
     @endsection
     

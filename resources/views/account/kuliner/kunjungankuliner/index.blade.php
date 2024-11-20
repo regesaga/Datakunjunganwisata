@@ -79,35 +79,54 @@
                 </thead>
                 <tbody>
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
-                        <tr>
+                        @php
+                            // Periksa apakah semua nilai untuk satu tanggal adalah 0
+                            $isZero = ($dataTanggal['jumlah_laki_laki'] == 0 && 
+                                       $dataTanggal['jumlah_perempuan'] == 0 && 
+                                       $dataTanggal['jml_wisman_laki'] == 0 && 
+                                       $dataTanggal['jml_wisman_perempuan'] == 0 &&
+                                       $dataTanggal['kelompok']->every(function($kelompok) {
+                                           return $kelompok->sum('jumlah_laki_laki') == 0 && $kelompok->sum('jumlah_perempuan') == 0;
+                                       }) &&
+                                       $dataTanggal['wisman_by_negara']->every(function($wismanNegara) {
+                                           return $wismanNegara->sum('jml_wisman_laki') == 0 && $wismanNegara->sum('jml_wisman_perempuan') == 0;
+                                       }));
+                        @endphp
+                        
+                        <tr class="{{ $isZero ? 'bg-warning' : '' }}">
                             <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                             <td>
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.edit', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                    <i class="fas fa-pencil-alt"></i> Ubah
-                                </a>
-                                <a href="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                    class="btn btn-danger btn-sm"
-                                    onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                     <i class="fas fa-trash"></i> Hapus
-                                 </a>
-                                 
-                                 <form id="delete-form" action="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
-                                     @csrf
-                                     @method('DELETE')
-                                 </form>
-                                 
-                                
-                                
+                                @if ($isZero)
+                                    <!-- Show "Belum Input" when row is highlighted -->
+                                    <span class="text-muted">Belum Input</span>
+                                    <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.createbytanggal', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                        Tambah Data
+                                    </a>
+                                @else
+                                    <!-- Show the buttons if the row is not highlighted -->
+                                    <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.edit', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                        <i class="fas fa-pencil-alt"></i> Ubah
+                                    </a>
+                                    <a href="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </a>
+                                    <form id="delete-form" action="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                @endif
                             </td>
-
+                    
                             @foreach ($kelompok as $namaKelompok)
                                 <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
                                 <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
                             @endforeach
-
+                    
                             @foreach ($wismannegara as $negara)
                                 <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
                                 <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
@@ -115,6 +134,7 @@
                         </tr>
                     @endforeach
                 </tbody>
+                
 
                 <tfoot>
                     <tr>

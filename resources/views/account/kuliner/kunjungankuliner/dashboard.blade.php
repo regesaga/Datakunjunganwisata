@@ -94,6 +94,9 @@
                     <!-- ./col -->
                 </div>
             <div id="chart"></div>
+            <div id="charttrend"></div>
+        <div id="chartstok"></div>
+
 
       <!-- /.row -->
         <div class="row">
@@ -199,14 +202,14 @@
                             <tr>
                                 <th rowspan="3">Bulan</th>
                                 <th rowspan="3">Total</th>
-                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Kuliner Nusantara</th>
-                                <th colspan="2" style="text-align: center;">Kuliner Mancanegara</th>
+                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisatawan Nusantara</th>
+                                <th colspan="2" style="text-align: center;">Wisatawan Mancanegara</th>
                             </tr>
                             <tr>
                                 @foreach ($kelompok as $namaKelompok)
                                     <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                                 @endforeach
-                                <th colspan="2" style="text-align: center;">Total Kuliner Mancanegara</th>
+                                <th colspan="2" style="text-align: center;">Total Wisatawan Mancanegara</th>
                             </tr>
                             <tr>
                                 @foreach ($kelompok as $namaKelompok)
@@ -219,7 +222,20 @@
                         </thead>
                         <tbody>
                             @foreach ($kunjungan as $month => $dataBulan)
-                                <tr>
+                                @php
+                                    // Cek apakah semua nilai pada bulan tersebut adalah 0
+                                    $isZero = ($dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan']) == 0;
+                                    foreach ($kelompok as $namaKelompok) {
+                                        if ($dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
+                                            $isZero = false;
+                                            break;
+                                        }
+                                    }
+                                    if ($dataBulan['jml_wisman_laki'] > 0 || $dataBulan['jml_wisman_perempuan'] > 0) {
+                                        $isZero = false;
+                                    }
+                                @endphp
+                                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
                                     <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
                                     <td>
                                         {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
@@ -233,6 +249,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                        
                         <tfoot>
                             <tr>
                                 <th>Total Keseluruhan</th>
@@ -256,67 +273,9 @@
                     </table>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header border-0">
-                    <h3 class="card-title">
-                    Tabel Rekap Menurut Jenis Kelamin Kunjungan Wisatawan Tahun {{ $year }}
-                    </h3>
-                    <!-- card tools -->
-                    <div class="card-tools">
-    
-                    <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    </div>
-                    <!-- /.card-tools -->
-                </div>
-                <div class="card-body">
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Bulan</th>
-                                <th>Total Laki-Laki Domestik</th>
-                                <th>Total Perempuan Domestik</th>
-                                <th>Total Laki-Laki Mancanegara</th>
-                                <th>Total Perempuan Mancanegara</th>
-                                <th>Sub Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach(range(1, 12) as $month)
-                                <tr>
-                                    <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
-                                    <td>{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
-                                    <td>{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
-                                    <td>
-                                        {{ ($kunjungan[$month]['total_laki_laki'] ?? 0) + 
-                                        ($kunjungan[$month]['total_perempuan'] ?? 0) + 
-                                        ($kunjungan[$month]['total_wisman_laki'] ?? 0) + 
-                                        ($kunjungan[$month]['total_wisman_perempuan'] ?? 0) }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Total Keseluruhan</th>
-                                <th>{{ $totalKeseluruhan['total_laki_laki'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_perempuan'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
-                                <th>
-                                    {{ $totalKeseluruhan['total_laki_laki'] + 
-                                    $totalKeseluruhan['total_perempuan'] + 
-                                    $totalKeseluruhan['total_wisman_laki'] + 
-                                    $totalKeseluruhan['total_wisman_perempuan'] }}
-                                </th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
+
+
+            
 
         </div>
     </div>
@@ -511,6 +470,125 @@
         var chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
     </script>
+
+    <script>
+    var options = {
+        series: [{
+            name: 'Total Kunjungan',
+            data: @json($totalKunjungan) // Replace with your PHP variable for data
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        title: {
+            text: 'Trends Kunjungan berdasarkan Bulan',
+            align: 'left'
+        },
+        grid: {
+            row: {
+                colors: ['#f3f3f3', 'transparent'], // Alternating row colors
+                opacity: 0.5
+            }
+        },
+        xaxis: {
+            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#charttrend"), options);
+    chart.render();
+</script>
+<script>
+    // Convert PHP data to JavaScript
+    const dataByDate = @json($bytgl); // Data per tanggal
+
+    const dates = [];
+    const totalKunjungan = [];
+
+    // Prepare data for the chart
+    for (const [date, data] of Object.entries(dataByDate)) {
+        dates.push(date);  // Add date to the x-axis
+        totalKunjungan.push(
+            data.jumlah_laki_laki + data.jumlah_perempuan + data.jml_wisman_laki + data.jml_wisman_perempuan
+        );  // Calculate total visitors for each date
+    }
+
+    // Chart options using ApexCharts
+    var options = {
+        series: [{
+            name: 'Kunjungan',
+            data: totalKunjungan
+        }],
+        chart: {
+            type: 'area',
+            stacked: false,
+            height: 350,
+            zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+            },
+            toolbar: {
+                autoSelected: 'zoom'
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        markers: {
+            size: 0,
+        },
+        title: {
+            text: 'Tren Kunjungan Dalam Satutahun',
+            align: 'left'
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100]
+            },
+        },
+        yaxis: {
+            labels: {
+                formatter: function (val) {
+                    return val.toFixed(0);  // Show integer value for visitors
+                },
+            },
+            title: {
+                text: 'Tren Kunjungan'
+            },
+        },
+        xaxis: {
+            categories: dates,
+            type: 'category',
+        },
+        tooltip: {
+            shared: false,
+            y: {
+                formatter: function (val) {
+                    return val.toFixed(0);  // Show integer value for tooltip
+                }
+            }
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chartstok"), options);
+    chart.render();
+</script>
 
 
 @endsection
