@@ -511,10 +511,13 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
     Route::get('/wisata/create', [KunjunganWisataController::class, 'createwisnu'])->name('account.wisata.kunjunganwisata.createwisnu');
     Route::get('/wisata/createbytanggal/{wisata_id}', [KunjunganWisataController::class, 'createbytanggal'])->name('account.wisata.kunjunganwisata.createbytanggal');
     Route::post('/wisata/storekunjunganwisatabytanggal', [KunjunganWisataController::class, 'storewisnubytanggal'])->name('account.wisata.kunjunganwisata.storewisnubytanggal');
+    Route::post('/wisata/storewisnuindex', [KunjunganWisataController::class, 'storewisnuindex'])->name('account.wisata.kunjunganwisata.storewisnuindex');
     Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');
     Route::get('wisata/kunjungan/{wisata_id}/{tanggal_kunjungan}/edit', [KunjunganWisataController::class, 'editwisnu'])->name('account.wisata.kunjunganwisata.edit');
     Route::put('/wisata/update/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updatewisnu'])->name('account.wisata.kunjunganwisata.update');
-    Route::delete('/kunjunganwisata/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnu'])->name('account.wisata.kunjunganwisata.delete');
+    Route::delete('/wisnubulan/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnubulan'])->name('account.wisata.kunjunganwisata.deletewisnubulan');
+    Route::delete('/kunjunganwisataa/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnu'])->name('account.wisata.kunjunganwisata.delete');
+    Route::delete('/kunjunganwisata/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnutahunan'])->name('account.wisata.kunjunganwisata.hapus');
 
 
 

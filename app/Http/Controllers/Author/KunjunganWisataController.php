@@ -686,6 +686,96 @@ public function createbytanggal($wisata_id, Request $request)
     return view('account.wisata.kunjunganwisata.createbytanggal', compact('wisata', 'kelompok', 'hash','wismannegara','tanggal_kunjungan'));
 }
 
+// Menyimpan data kunjungan
+public function storewisnuindex(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'wisata_id' => 'required|integer',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'nullable|array',
+        'jml_wisman_laki' => 'nullable|array',
+        'jml_wisman_perempuan' => 'nullable|array',
+        'jml_wisman_laki.*' => 'nullable|integer|min:0',
+        'jml_wisman_perempuan.*' => 'nullable|integer|min:0',
+    ]);
+
+    // Mulai transaksi
+    DB::beginTransaction();
+    Log::info('Starting storewisnu method');
+
+    try {
+        // Hapus data sebelumnya berdasarkan wisata_id dan tanggal kunjungan
+        $deletedWisnu = WisnuWisata::where('wisata_id', $request->wisata_id)
+                                     ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                     ->delete();
+
+        $deletedWisman = WismanWisata::where('wisata_id', $request->wisata_id)
+                                       ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                       ->delete();
+
+        Log::info('Previous WISNU and WISMAN data deleted', [
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+        // Loop untuk data WISNU
+        foreach ($request->jumlah_laki_laki as $kelompok => $jumlah_laki) {
+            $jumlah_perempuan = $request->jumlah_perempuan[$kelompok] ?? 0; // Default ke 0 jika tidak ada
+
+            WisnuWisata::create([
+                'wisata_id' => $request->wisata_id,
+                'kelompok_kunjungan_id' => $kelompok,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Loop untuk data WISMAN (Wisatawan Mancanegara) hanya jika data tersedia
+        if ($request->filled('wismannegara_id')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                $jumlah_wisman_laki = $request->jml_wisman_laki[$index] ?? 0; // Default ke 0 jika tidak ada
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index] ?? 0; // Default ke 0 jika tidak ada
+
+                WismanWisata::create([
+                    'wisata_id' => $request->wisata_id,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // Commit transaksi
+        DB::commit();
+
+        // Kembalikan respons JSON
+        return response()->json(['success' => true, 'message' => 'Data kunjungan berhasil disimpan.']);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        // Mencatat detail kesalahan dengan data yang akan disimpan
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([' success' => false, 'message' => 'Gagal menyimpan data kunjungan. Silakan coba lagi. Kesalahan: ' . $e->getMessage()], 500);
+    }
+}
+
 
 // Menyimpan data kunjungan
 public function storewisnubytanggal(Request $request)
@@ -753,8 +843,9 @@ public function storewisnubytanggal(Request $request)
                 ]);
             }
         }
-
-        return redirect()->back()->with('success', 'Data kunjungan berhasil disimpan.');
+        
+        return redirect()
+        ->route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun')->with('success', 'Data kunjungan berhasil disimpan.');
     } catch (\Exception $e) {
         // Log error
         Log::error('Failed to save kunjungan to database.', [
@@ -907,11 +998,11 @@ public function updatewisnu(Request $request, $tanggal_kunjungan)
         'jumlah_perempuan' => 'required|array',
         'jumlah_laki_laki.*' => 'required|integer|min:0',
         'jumlah_perempuan.*' => 'required|integer|min:0',
-        'wismannegara_id' => 'required|array',
-        'jml_wisman_laki' => 'required|array',
-        'jml_wisman_perempuan' => 'required|array',
-        'jml_wisman_laki.*' => 'required|integer|min:0',
-        'jml_wisman_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'array',
+        'jml_wisman_laki' => 'array',
+        'jml_wisman_perempuan' => 'array',
+        'jml_wisman_laki.*' => 'integer|min:0',
+        'jml_wisman_perempuan.*' => 'integer|min:0',
     ]);
 
     // Mulai transaksi
@@ -947,26 +1038,26 @@ public function updatewisnu(Request $request, $tanggal_kunjungan)
             ]);
         }
 
-        // Loop untuk data WISMAN
+       // Loop untuk data WISMAN (Wisatawan Mancanegara) hanya jika data tersedia
+       if ($request->filled('wismannegara_id') && $request->filled('jml_wisman_laki') && $request->filled('jml_wisman_perempuan')) {
         foreach ($request->wismannegara_id as $index => $negara) {
             $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
             $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
-
             WismanWisata::create([
                 'wisata_id' => $decodedWisataId,
                 'wismannegara_id' => $negara,
-                'tanggal_kunjungan' => $request->tanggal_kunjungan,
                 'jml_wisman_laki' => $jumlah_wisman_laki,
                 'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
-                'updated_at' => now(),
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
             ]);
         }
+    }
 
         // Commit transaksi
         DB::commit();
         
         // Alihkan ke halaman index dengan pesan sukses
-        return redirect()->route('account.wisata.kunjunganwisata.index')->with('success', 'Data kunjungan berhasil diperbarui.');
+        return redirect()->route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun')->with('success', 'Data kunjungan berhasil diperbarui.');
 
     } catch (\Exception $e) {
         DB::rollBack();
@@ -1047,8 +1138,115 @@ public function deletewisnu($wisata_id, $tanggal_kunjungan)
     }
 }
 
+public function deletewisnutahunan($wisata_id, $tanggal_kunjungan)
+{
+    $hash = new Hashids();
+    
+    // Dekripsi `wisata_id`
+    $wisata_id = $hash->decode($wisata_id)[0] ?? null;
 
+    if (!$wisata_id) {
+        abort(404); // Jika `wisata_id` tidak valid, return 404
+    }
 
+    try {
+        // Mulai transaksi
+        DB::beginTransaction();
+        
+        // Hapus data WISNU berdasarkan wisata_id dan tanggal_kunjungan
+        $deletedWisnu = WisnuWisata::where('wisata_id', $wisata_id)
+                                    ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                    ->delete();
+
+        // Hapus data WISMAN berdasarkan wisata_id dan tanggal_kunjungan
+        $deletedWisman = WismanWisata::where('wisata_id', $wisata_id)
+                                      ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                      ->delete();
+
+        // Log jumlah data yang dihapus
+        Log::info('Deleted WISNU and WISMAN data', [
+            'wisata_id' => $wisata_id,
+            'tanggal_kunjungan' => $tanggal_kunjungan,
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+        // Commit transaksi
+        DB::commit();
+
+        return redirect()->route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun')
+                         ->with('success', 'Data kunjungan berhasil dihapus.');
+    } catch (\Exception $e) {
+        // Rollback transaksi jika ada kesalahan
+        DB::rollBack();
+
+        // Log error
+        Log::error('Failed to delete kunjungan data.', [
+            'error_message' => $e->getMessage(),
+            'wisata_id' => $wisata_id,
+            'tanggal_kunjungan' => $tanggal_kunjungan,
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return redirect()->route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun')
+                         ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
+    }
+}
+
+    public function deletewisnubulan($wisata_id, $tanggal_kunjungan)
+    {
+        $hash = new Hashids();
+        
+        // Dekripsi `wisata_id`
+        $wisata_id = $hash->decode($wisata_id)[0] ?? null;
+
+        if (!$wisata_id) {
+            abort(404); // Jika `wisata_id` tidak valid, return 404
+        }
+
+        try {
+            // Mulai transaksi
+            DB::beginTransaction();
+            
+            // Hapus data WISNU berdasarkan wisata_id dan tanggal_kunjungan
+            $deletedWisnu = WisnuWisata::where('wisata_id', $wisata_id)
+                                        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                        ->delete();
+
+            // Hapus data WISMAN berdasarkan wisata_id dan tanggal_kunjungan
+            $deletedWisman = WismanWisata::where('wisata_id', $wisata_id)
+                                        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                        ->delete();
+
+            // Log jumlah data yang dihapus
+            Log::info('Deleted WISNU and WISMAN data', [
+                'wisata_id' => $wisata_id,
+                'tanggal_kunjungan' => $tanggal_kunjungan,
+                'deleted_wisnu_count' => $deletedWisnu,
+                'deleted_wisman_count' => $deletedWisman,
+            ]);
+
+            // Commit transaksi
+            DB::commit();
+
+            return redirect()->route('account.wisata.kunjunganwisata.filterwisnubulan')
+                            ->with('success', 'Data kunjungan berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Rollback transaksi jika ada kesalahan
+            DB::rollBack();
+
+            // Log error
+            Log::error('Failed to delete kunjungan data.', [
+                'error_message' => $e->getMessage(),
+                'wisata_id' => $wisata_id,
+                'tanggal_kunjungan' => $tanggal_kunjungan,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('account.wisata.kunjunganwisata.filterwisnubulan')
+                            ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
+        }
+    }
 
 
 

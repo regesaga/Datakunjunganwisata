@@ -7,14 +7,23 @@
       </li>
      
     </ul>
-   
+       <div class="navbar-nav-right d-flex align-items-center justify-content-between" id="navbar-collapse">
+        <div class="navbar-nav">
+            <div class="nav-item mb-0">
+                <span class="fw-semibold fs-7">Hai, Selamat <span id="selamat"></span></span>
+            </div>
+        </div>
+    </div>
+    
    
      
     
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Notifications Dropdown Menu -->
-    
+      <div class="nav-item">
+        <span class="badge badge-warning "id="dateTime" ></span>
+      </div>
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
@@ -75,12 +84,25 @@
      
     </ul>
    
+    <div class="navbar-nav-right d-flex align-items-center justify-content-between" id="navbar-collapse">
+      <div class="navbar-nav">
+          <div class="nav-item mb-0">
+              <span class="fw-semibold fs-7">Hai, Selamat <span id="selamat"></span></span>
+          </div>
+      </div>
+  </div>
+  
+ 
    
+  
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <!-- Notifications Dropdown Menu -->
+    <div class="nav-item">
+      <span class="badge badge-warning "id="dateTime" ></span>
+    </div>
      
     
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
     
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
@@ -133,21 +155,32 @@
   </nav>
   @endrole
 @role('kuliner')
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
-  <!-- Left navbar links -->
-  <ul class="navbar-nav">
-    <li class="nav-item">
-      <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-    </li>
-   
-  </ul>
- 
- 
-   
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    
+    </ul>
   
+    <div class="navbar-nav-right d-flex align-items-center justify-content-between" id="navbar-collapse">
+      <div class="navbar-nav">
+          <div class="nav-item mb-0">
+              <span class="fw-semibold fs-7">Hai, Selamat <span id="selamat"></span></span>
+          </div>
+      </div>
+  </div>
+
+
+  
+
   <!-- Right navbar links -->
   <ul class="navbar-nav ml-auto">
     <!-- Notifications Dropdown Menu -->
+    <div class="nav-item">
+      <span class="badge badge-warning "id="dateTime" ></span>
+    </div>
   
     <li class="nav-item dropdown">
       <a class="nav-link" data-toggle="dropdown" href="#">
@@ -206,12 +239,24 @@
    
   </ul>
  
+  <div class="navbar-nav-right d-flex align-items-center justify-content-between" id="navbar-collapse">
+    <div class="navbar-nav">
+        <div class="nav-item mb-0">
+            <span class="fw-semibold fs-7">Hai, Selamat <span id="selamat"></span></span>
+        </div>
+    </div>
+</div>
+
+
  
-   
-  
-  <!-- Right navbar links -->
-  <ul class="navbar-nav ml-auto">
-    <!-- Notifications Dropdown Menu -->
+
+<!-- Right navbar links -->
+<ul class="navbar-nav ml-auto">
+  <!-- Notifications Dropdown Menu -->
+  <div class="nav-item">
+    <span class="badge badge-warning "id="dateTime" ></span>
+  </div>
+ 
   
     <li class="nav-item dropdown">
       <a class="nav-link" data-toggle="dropdown" href="#">

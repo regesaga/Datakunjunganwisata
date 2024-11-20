@@ -184,12 +184,12 @@
 
             <div class="card">
                 <div class="card-header border-0">
-                    <h3 class="card-title">
-                    Tabel Rekap Kunjungan Wisatawan Tahun {{ $year }}
-                    </h3>
                     <!-- card tools -->
                     <div class="card-tools">
-    
+               
+                            <button class="btn btn-success" id="export-to-excel">Download Excel</button> <!-- Tombol Export -->
+                            <button class="btn btn-danger" id="export-to-pdf">Download PDF</button> <!-- Tombol Export PDF -->
+            
                     <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-minus"></i>
                     </button>
@@ -197,8 +197,14 @@
                     <!-- /.card-tools -->
                 </div>
                 <div class="card-body">
-                    <table id="example1" class="table table-bordered table-striped">
+                    <table id="TabelKunjunganBulan" class="table table-bordered table-striped">
                         <thead>
+                            <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                                <h2 style="text-align: center; text-transform: uppercase;">
+                                    Rekap Data Kunjungan {{$wisata->namawisata}} perbulan Tahun {{ $year }}
+                                </h2>
+                                </th>
+                            </tr>
                             <tr>
                                 <th rowspan="3">Bulan</th>
                                 <th rowspan="3">Total</th>
@@ -590,6 +596,34 @@
     chart.render();
 </script>
 
-
+<script>
+        document.getElementById('export-to-pdf').addEventListener('click', function () {
+            var element = document.getElementById('TabelKunjunganBulan');
+            var opt = {
+                margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
+                filename:     'Kunjungan_Wisata_' + new Date().toISOString() + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
+                jsPDF:        { 
+                    unit: 'mm', 
+                    format: 'letter',  // Format A4
+                    orientation: 'landscape'  // Mengatur orientasi menjadi landscape agar lebih lebar
+                }
+            };
+    
+            // Menambahkan pengaturan CSS untuk menghindari pemotongan
+            html2pdf().from(element).set(opt).save();
+        });
+    </script>
+    <script>
+        document.getElementById('export-to-excel').addEventListener('click', function () {
+            var table = document.getElementById('TabelKunjunganBulan'); // Ambil tabel berdasarkan ID
+            var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
+            XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
 @endsection
 @endsection
