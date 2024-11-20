@@ -102,6 +102,9 @@
                                 @if ($isZero)
                                     <!-- Show "Belum Input" when row is highlighted -->
                                     <span class="text-muted">Belum Input</span>
+                                    <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.createbytanggal', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                        Tambah Data
+                                    </a>
                                 @else
                                     <!-- Show the buttons if the row is not highlighted -->
                                     <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">

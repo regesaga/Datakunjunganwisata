@@ -509,7 +509,8 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
     Route::get('wisata/byinput', [KunjunganWisataController::class, 'filterbyinput'])->name('account.wisata.kunjunganwisata.filterbyinput');
     Route::get('/wisata/kunjungan', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
     Route::get('/wisata/create', [KunjunganWisataController::class, 'createwisnu'])->name('account.wisata.kunjunganwisata.createwisnu');
-    Route::get('/wisata/confirm/{wisata_id}/{tanggal_kunjungan}',  [KunjunganWisataController::class, 'confirm'])->name('account.wisata.kunjunganwisata.confirm');
+    Route::get('/wisata/createbytanggal/{wisata_id}', [KunjunganWisataController::class, 'createbytanggal'])->name('account.wisata.kunjunganwisata.createbytanggal');
+    Route::post('/wisata/storekunjunganwisatabytanggal', [KunjunganWisataController::class, 'storewisnubytanggal'])->name('account.wisata.kunjunganwisata.storewisnubytanggal');
     Route::post('/wisata/storekunjunganwisata', [KunjunganWisataController::class, 'storewisnu'])->name('account.wisata.kunjunganwisata.storewisnu');
     Route::get('wisata/kunjungan/{wisata_id}/{tanggal_kunjungan}/edit', [KunjunganWisataController::class, 'editwisnu'])->name('account.wisata.kunjunganwisata.edit');
     Route::put('/wisata/update/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updatewisnu'])->name('account.wisata.kunjunganwisata.update');
@@ -657,7 +658,7 @@ Route::middleware(['auth', 'kuliner'])->prefix('kuliner')->group(function () {
   Route::get('kuliner/byinput', [KunjunganKulinerController::class, 'filterbyinput'])->name('account.kuliner.kunjungankuliner.filterbyinput');
   Route::get('/kuliner/kunjungan', [KunjunganKulinerController::class, 'indexkunjungankuliner'])->name('account.kuliner.kunjungankuliner.index');
   Route::get('/kuliner/create', [KunjunganKulinerController::class, 'createwisnu'])->name('account.kuliner.kunjungankuliner.createwisnu');
-  Route::get('/kuliner/confirm/{kuliner_id}/{tanggal_kunjungan}',  [KunjunganKulinerController::class, 'confirm'])->name('account.kuliner.kunjungankuliner.confirm');
+  Route::get('/kuliner/create/{kuliner_id}/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'createbytanggal'])->name('account.kuliner.kunjungankuliner.createbytanggal');
   Route::post('/kuliner/storekunjungankuliner', [KunjunganKulinerController::class, 'storewisnu'])->name('account.kuliner.kunjungankuliner.storewisnu');
   Route::get('kuliner/kunjungan/{kuliner_id}/{tanggal_kunjungan}/edit', [KunjunganKulinerController::class, 'editwisnu'])->name('account.kuliner.kunjungankuliner.edit');
   Route::put('/kuliner/update/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'updatewisnu'])->name('account.kuliner.kunjungankuliner.update');
@@ -747,7 +748,7 @@ Route::middleware(['auth', 'akomodasi'])->prefix('akomodasi')->group(function ()
   Route::get('akomodasi/byinput', [KunjunganAkomodasiController::class, 'filterbyinput'])->name('account.akomodasi.kunjunganakomodasi.filterbyinput');
   Route::get('/akomodasi/kunjungan', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('account.akomodasi.kunjunganakomodasi.index');
   Route::get('/akomodasi/create', [KunjunganAkomodasiController::class, 'createwisnu'])->name('account.akomodasi.kunjunganakomodasi.createwisnu');
-  Route::get('/akomodasi/confirm/{akomodasi_id}/{tanggal_kunjungan}',  [KunjunganAkomodasiController::class, 'confirm'])->name('account.akomodasi.kunjunganakomodasi.confirm');
+  Route::get('/akomodasi/create/{akomodasi_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'createbytanggal'])->name('account.akomodasi.kunjunganakomodasi.createbytanggal');
   Route::post('/akomodasi/storekunjunganakomodasi', [KunjunganAkomodasiController::class, 'storewisnu'])->name('account.akomodasi.kunjunganakomodasi.storewisnu');
   Route::get('akomodasi/kunjungan/{akomodasi_id}/{tanggal_kunjungan}/edit', [KunjunganAkomodasiController::class, 'editwisnu'])->name('account.akomodasi.kunjunganakomodasi.edit');
   Route::put('/akomodasi/update/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'updatewisnu'])->name('account.akomodasi.kunjunganakomodasi.update');

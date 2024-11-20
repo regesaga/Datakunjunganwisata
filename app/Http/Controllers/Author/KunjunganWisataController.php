@@ -107,10 +107,60 @@ class KunjunganWisataController extends Controller
         if (!$wisata) {
             return redirect()->back()->with('error', 'Wisata tidak ditemukan.');
         }
-    
+        $wisata_id = $wisata->id; // Dapatkan wisata_id untuk filtering data
         // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
         $tahun = $request->input('tahun', date('Y'));
     
+            
+         $bytgl = [];
+         $totalLakiLaki = 0;
+         $totalPerempuan = 0;
+         $totalWismanLaki = 0;
+         $totalWismanPerempuan = 0;
+         $totalKunjungan = 0;
+         $awal = Carbon::createFromFormat('Y-m-d', "$tahun-01-01");
+         $akhir = Carbon::createFromFormat('Y-m-d', "$tahun-12-31");
+         
+         for ($date = $awal; $date <= $akhir; $date->addDay()) {
+             $tanggal = $date->format('Y-m-d');
+         
+             // Ambil data Wisnu
+             $wisnuKunjungan = WisnuWisata::where('wisata_id', $wisata_id)
+                 ->whereDate('tanggal_kunjungan', $tanggal)
+                 ->get()
+                 ->groupBy('kelompok_kunjungan_id');
+         
+             // Ambil data Wisman
+             $wismanKunjungan = WismanWisata::where('wisata_id', $wisata_id)
+                 ->whereDate('tanggal_kunjungan', $tanggal)
+                 ->get()
+                 ->groupBy('wismannegara_id');
+         
+             // Hitung total harian
+             $jumlahLakiLaki = $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_laki_laki'));
+             $jumlahPerempuan = $wisnuKunjungan->sum(fn($data) => $data->sum('jumlah_perempuan'));
+             $jmlWismanLaki = $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_laki'));
+             $jmlWismanPerempuan = $wismanKunjungan->sum(fn($data) => $data->sum('jml_wisman_perempuan'));
+         
+             // Tambahkan ke total keseluruhan
+             $totalLakiLaki += $jumlahLakiLaki;
+             $totalPerempuan += $jumlahPerempuan;
+             $totalWismanLaki += $jmlWismanLaki;
+             $totalWismanPerempuan += $jmlWismanPerempuan;
+             $totalKunjungan= $totalLakiLaki + $totalPerempuan + $totalWismanLaki + $totalWismanPerempuan;
+         
+             // Isi data pada tanggal tertentu
+             $bytgl[$tanggal] = [
+                 'tanggal_kunjungan' => $tanggal,
+                 'jumlah_laki_laki' => $jumlahLakiLaki,
+                 'jumlah_perempuan' => $jumlahPerempuan,
+                 'jml_wisman_laki' => $jmlWismanLaki,
+                 'jml_wisman_perempuan' => $jmlWismanPerempuan,
+                 'kelompok' => $wisnuKunjungan,
+                 'wisman_by_negara' => $wismanKunjungan,
+             ];
+         }
+
         // Buat array untuk menyimpan data kunjungan per bulan
         $kunjungan = [];
     
@@ -141,11 +191,19 @@ class KunjunganWisataController extends Controller
                 'wisman_by_negara' => $wismanKunjungan,
             ];
         }
+          // Hitung total keseluruhan per tahun dari semua data
+          $totalKeseluruhan = [
+            'total_laki_laki' => array_sum(array_column($kunjungan, 'total_laki_laki')),
+            'total_perempuan' => array_sum(array_column($kunjungan, 'total_perempuan')),
+            'total_wisman_laki' => array_sum(array_column($kunjungan, 'total_wisman_laki')),
+            'total_wisman_perempuan' => array_sum(array_column($kunjungan, 'total_wisman_perempuan')),
+        ];
+
     
         $kelompok = KelompokKunjungan::all();
         $wismannegara = WismanNegara::all();
     
-        return view('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun', compact('kunjungan', 'wisata', 'kelompok', 'wismannegara', 'hash', 'tahun'));
+        return view('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun', compact('kunjungan','wisata_id', 'wisata', 'kelompok', 'wismannegara', 'hash', 'tahun','bytgl','totalKeseluruhan', 'totalKunjungan'));
     }
     
             public function dashboard(Request $request)
@@ -168,7 +226,7 @@ class KunjunganWisataController extends Controller
                 $totalPerempuan = 0;
                 $totalWismanLaki = 0;
                 $totalWismanPerempuan = 0;
-                
+                $totalKunjungan = 0;
                 $awal = Carbon::createFromFormat('Y-m-d', "$year-01-01");
                 $akhir = Carbon::createFromFormat('Y-m-d', "$year-12-31");
                 
@@ -198,7 +256,7 @@ class KunjunganWisataController extends Controller
                     $totalPerempuan += $jumlahPerempuan;
                     $totalWismanLaki += $jmlWismanLaki;
                     $totalWismanPerempuan += $jmlWismanPerempuan;
-                    
+                    $totalKunjungan= $totalLakiLaki + $totalPerempuan + $totalWismanLaki + $totalWismanPerempuan;
                 
                     // Isi data pada tanggal tertentu
                     $bytgl[$tanggal] = [
@@ -609,6 +667,105 @@ public function createwisnu()
     return view('account.wisata.kunjunganwisata.create', compact('wisata', 'kelompok', 'wismannegara', 'tanggal'));
 }
 
+// Menampilkan form input kunjungan
+public function createbytanggal($wisata_id, Request $request)
+{
+    $hash = new Hashids();
+    if (!$wisata_id) {
+        abort(404); // Jika `wisata_id` tidak valid, return 404
+    }
+
+    $company_id = auth()->user()->company->id;
+    $wisata = Wisata::where('company_id', $company_id)->first();
+    $kelompok = KelompokKunjungan::all();
+    $wismannegara = WismanNegara::all();
+    $tanggal_kunjungan = Carbon::parse($request->query('tanggal_kunjungan'))->format('Y-m-d');
+
+    // Define the $tanggal variable, you can set it to the current date or any other logic
+
+    return view('account.wisata.kunjunganwisata.createbytanggal', compact('wisata', 'kelompok', 'hash','wismannegara','tanggal_kunjungan'));
+}
+
+
+// Menyimpan data kunjungan
+public function storewisnubytanggal(Request $request)
+{
+    $hash = new Hashids();
+
+    // Decode wisata_id yang dikirim
+    $wisata_id_decoded = $hash->decode($request->wisata_id);
+    if (empty($wisata_id_decoded)) {
+        return redirect()->back()->with('error', 'ID wisata tidak valid.')->withInput($request->all());
+    }
+    $decodedWisataId = $wisata_id_decoded[0];
+    // Validasi input
+    $request->validate([
+        'wisata_id' => 'required',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'array',
+        'jml_wisman_laki' => 'array',
+        'jml_wisman_perempuan' => 'array',
+        'jml_wisman_laki.*' => 'integer|min:0',
+        'jml_wisman_perempuan.*' => 'integer|min:0',
+    ]);
+
+    // Cek apakah tanggal sudah ada di database
+    $existingWisnu = WisnuWisata::where('wisata_id', $decodedWisataId)
+        ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+        ->first();
+
+    if ($existingWisnu) {
+        // Jika ada, buat notifikasi untuk mengonfirmasi apakah akan mengubah data
+        $formattedDate = Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y');
+        return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di Input. Pilih Tanggal Lain atau Ubah data di menu')
+            ->withInput();
+    }
+
+    try {
+        // Loop untuk data WISNU (Wisatawan Nusantara)
+        foreach ($request->jumlah_laki_laki as $kelompok => $jumlah_laki) {
+            $jumlah_perempuan = $request->jumlah_perempuan[$kelompok];
+
+            WisnuWisata::create([
+                'wisata_id' => $decodedWisataId,
+                'kelompok_kunjungan_id' => $kelompok, 
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            ]);
+        }
+
+        // Loop untuk data WISMAN (Wisatawan Mancanegara) hanya jika data tersedia
+        if ($request->filled('wismannegara_id') && $request->filled('jml_wisman_laki') && $request->filled('jml_wisman_perempuan')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
+                WismanWisata::create([
+                    'wisata_id' => $decodedWisataId,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data kunjungan berhasil disimpan.');
+    } catch (\Exception $e) {
+        // Log error
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return redirect()->back()->with('error', 'Gagal menyimpan data kunjungan. Silakan coba lagi.');
+    }
+}
 
 // Menyimpan data kunjungan
 public function storewisnu(Request $request)
@@ -700,7 +857,7 @@ public function editwisnu($wisata_id, $tanggal_kunjungan)
     ->with('kelompokkunjungan')
     ->get();
 
-$wismanData = WismanWisata::where('wisata_id', $wisata_id)
+    $wismanData = WismanWisata::where('wisata_id', $wisata_id)
       ->where('tanggal_kunjungan', $tanggal_kunjungan)
       ->with('wismannegara')
       ->get();
@@ -726,7 +883,6 @@ $wismanData = WismanWisata::where('wisata_id', $wisata_id)
     // Get other data
     $kelompok = KelompokKunjungan::all();
     $wismannegara = WismanNegara::all();
-    $hash = new Hashids();
 
     // Pass data to the view
     return view('account.wisata.kunjunganwisata.edit', compact('wisnuData', 'hash','aggregatedWismanData','aggregatedWisnuData','tanggal_kunjungan','wismanData', 'wisata', 'kelompok', 'wismannegara', 'hash'));
