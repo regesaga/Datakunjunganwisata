@@ -1,5 +1,25 @@
 @extends('layouts.datakunjungan.datakunjungan')
 
+<style>
+    .editable input:focus {
+        background-color: #e0f7fa; /* Warna biru muda saat input difokuskan */
+        border-color: #008cba; /* Warna border saat difokuskan */
+    }
+
+    .editing {
+        background-color: #fff3e0; /* Warna latar belakang saat sedang diedit */
+    }
+
+    .saved {
+        background-color: #c8e6c9; /* Warna latar belakang setelah disimpan */
+    }
+
+    .blurred {
+        filter: blur(2px); /* Efek blur untuk baris yang tidak sedang diedit */
+        pointer-events: none; /* Menonaktifkan interaksi dengan elemen yang diburamkan */
+    }
+</style>
+
 @section('content')
 
 <section class="content-header">
@@ -73,31 +93,31 @@
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
                         <tr>
                             <td>
-                                <div style="text-align: center;">
+                                <div style <div style="text-align: center;">
                                     <button id="btn-save" class="btn btn-success">Simpan</button>
                                 </div>
                             </td>
-                            <input type="hidden" id="wisata_id" value="{{ $wisata->id }}">
+                            <input type="hidden" id="wisata_id" value="{{ $hash->encode($wisata->id) }}">
                             <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)
                             <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
                             <td class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
-                        @endforeach
-                        
-                        @foreach ($wismannegara as $negara)
+                            @endforeach
+                            
+                            @foreach ($wismannegara as $negara)
                             <td class="editable" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                <input type="text" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="width: 60px;">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
                             <td class="editable" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                <input type="text" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="width: 60px;">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
-                        @endforeach
+                            @endforeach
                         </tr>
                     @endforeach
                 </tbody>
@@ -110,6 +130,17 @@
 
 @section('scripts')
 <script>
+    $(document).on('focus', '.editable input', function() {
+        var row = $(this).closest('tr');
+        // Blur other rows
+        $('tbody tr').not(row).addClass('blurred');
+    });
+
+    $(document).on('blur', '.editable input', function() {
+        // Remove blur effect when input loses focus
+        $('tbody tr').removeClass('blurred');
+    });
+
     $(document).on('click', '#btn-save', function() {
         var row = $(this).closest('tr');
         var wisata_id = $('#wisata_id').val();
@@ -135,7 +166,7 @@
         });
 
         row.find('.editable[data-negara]').each(function() {
-            var negara = $(this).data('negara');
+            var negara = $( this).data('negara');
             var field = $(this).data('field');
             var inputValue = $(this).find('input').val();
 
@@ -163,6 +194,8 @@
             success: function(response) {
                 if (response.success) {
                     alert('Data berhasil disimpan!');
+                    // Remove blur effect after saving
+                    $('tbody tr').removeClass('blurred');
                 } else {
                     alert('Terjadi kesalahan!');
                 }
@@ -197,7 +230,6 @@
             autoWidth: false,
             ordering: false,
             paging: false,
-
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 </script>
@@ -224,10 +256,9 @@
     });
 </script>
 
-
 <script>
     // Fungsi untuk mengekspor tabel ke file Excel
-    document.getElementById('export-to-excel').addEventListener('click', function () {
+    document.getElementById('export -to-excel').addEventListener('click', function () {
         var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
         var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
         XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
