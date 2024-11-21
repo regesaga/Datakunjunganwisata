@@ -93,7 +93,7 @@
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
                         <tr>
                             <td>
-                                <div style <div style="text-align: center;">
+                                <div style="text-align: center;">
                                     <button id="btn-save" class="btn btn-success">Simpan</button>
                                 </div>
                             </td>

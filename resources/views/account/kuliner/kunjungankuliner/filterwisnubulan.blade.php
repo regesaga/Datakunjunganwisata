@@ -3,7 +3,6 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-        <h2>Laporan Kunjungan Wisatawan Nusantara</h2>
 
         <!-- Form Filter Bulan dan Tahun -->
         <form method="GET" action="{{ route('account.kuliner.kunjungankuliner.filterwisnubulan') }}">
@@ -43,10 +42,14 @@
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
+                    <th colspan="{{ 3 +  (count($kelompok) * 2) }}">
+                        <h2 style="text-align: center; text-transform: uppercase;">
+                            Data Kunjungan Wisatawan Nusantara {{$kuliner->namakuliner}} Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
+                        </h2>
+                    </th>
                     <tr>
                         <th rowspan="2">Tanggal</th>
                         <th rowspan="2">Total</th>
-                        <th rowspan="2">Aksi</th>
                         @foreach ($kelompok as $namaKelompok)
                             <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                         @endforeach
@@ -54,34 +57,32 @@
                     </tr>
                     <tr>
                         @foreach ($kelompok as $namaKelompok)
-                            <th>L</th>
-                            <th>P</th>
+                            <th>Laki - Laki</th>
+                            <th>Perempuan</th>
                         @endforeach
                       
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
-                        <tr>
+                    @php
+                    // Hitung total jumlah kulinerwan untuk baris ini
+                    $totalWisnu = $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'];
+                    
+                    foreach ($kelompok as $namaKelompok) {
+                        $totalWisnu += $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                        $totalWisnu += $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                    }
+        
+                    // Cek apakah total jumlah adalah 0
+                    $isZero = $totalWisnu === 0;
+                @endphp
+                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
                             <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
                             <td>
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>
-                            <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.edit', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                    <i class="fas fa-pencil-alt"></i> Ubah
-                                </a>
-                                <a href="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                    class="btn btn-danger btn-sm"
-                                    onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                     <i class="fas fa-trash"></i> Hapus
-                                 </a>
-                                 
-                                 <form id="delete-form" action="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
-                                     @csrf
-                                     @method('DELETE')
-                                 </form>
-                            </td>
+                           
 
                             @foreach ($kelompok as $namaKelompok)
                                 <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
@@ -101,7 +102,6 @@
                                 return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'];
                             }) }}
                         </th>
-                        <th></th>
 
                         @foreach ($kelompok as $namaKelompok)
                             <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {

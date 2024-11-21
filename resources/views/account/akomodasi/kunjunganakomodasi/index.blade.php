@@ -1,5 +1,25 @@
 @extends('layouts.datakunjungan.datakunjungan')
 
+<style>
+    .editable input:focus {
+        background-color: #e0f7fa; /* Warna biru muda saat input difokuskan */
+        border-color: #008cba; /* Warna border saat difokuskan */
+    }
+
+    .editing {
+        background-color: #fff3e0; /* Warna latar belakang saat sedang diedit */
+    }
+
+    .saved {
+        background-color: #c8e6c9; /* Warna latar belakang setelah disimpan */
+    }
+
+    .blurred {
+        filter: blur(2px); /* Efek blur untuk baris yang tidak sedang diedit */
+        pointer-events: none; /* Menonaktifkan interaksi dengan elemen yang diburamkan */
+    }
+</style>
+
 @section('content')
 
 <section class="content-header">
@@ -11,7 +31,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <label for="tahun" class="form-label">Tahun</label>
-                    <select id="tahun" name="tahun"  class="form-control select2" style="width: 100%;">
+                    <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
                         @for($y = date('Y'); $y >= 2020; $y--)
                             <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
@@ -19,7 +39,7 @@
                 </div>
                 <div class="col-lg-4">
                     <label for="bulan" class="form-label">Bulan</label>
-                    <select id="bulan" name="bulan"  class="form-control select2" style="width: 100%;">
+                    <select id="bulan" name="bulan" class="form-control select2" style="width: 100%;">
                         @foreach(range(1, 12) as $m)
                             <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
                                 {{ DateTime::createFromFormat('!m', $m)->format('F') }}
@@ -34,27 +54,19 @@
         </form>
 
         <div class="card">
-            <div class="card-header">
-                <a class="btn btn-success" href="{{ route("account.akomodasi.kunjunganakomodasi.createwisnu") }}">
-                    Tambah Data
-                </a>
-                <button class="btn btn-primary" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
-
-            </div>
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
-                    <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
-                        <h2 style="text-align: center; text-transform: uppercase;">
-                            Rekap Data Kunjungan {{$akomodasi->namaakomodasi}} Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
-                        </h2>
+                    <tr>
+                        <th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                            <h2 style="text-align: center; text-transform: uppercase;">
+                                Rekap Data Kunjungan {{$akomodasi->namaakomodasi}} Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
+                            </h2>
                         </th>
                     </tr>
                     <tr>
-                        <th rowspan="3">Tanggal</th>
-                        <th rowspan="3">Total</th>
                         <th rowspan="3">Aksi</th>
+                        <th rowspan="3">Tanggal</th>
                         <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Akomodasi Nusantara</th>
                         <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center;">Akomodasi Mancanegara</th>
                     </tr>
@@ -79,99 +91,121 @@
                 </thead>
                 <tbody>
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
-                        @php
-                            // Periksa apakah semua nilai untuk satu tanggal adalah 0
-                            $isZero = ($dataTanggal['jumlah_laki_laki'] == 0 && 
-                                       $dataTanggal['jumlah_perempuan'] == 0 && 
-                                       $dataTanggal['jml_wisman_laki'] == 0 && 
-                                       $dataTanggal['jml_wisman_perempuan'] == 0 &&
-                                       $dataTanggal['kelompok']->every(function($kelompok) {
-                                           return $kelompok->sum('jumlah_laki_laki') == 0 && $kelompok->sum('jumlah_perempuan') == 0;
-                                       }) &&
-                                       $dataTanggal['wisman_by_negara']->every(function($wismanNegara) {
-                                           return $wismanNegara->sum('jml_wisman_laki') == 0 && $wismanNegara->sum('jml_wisman_perempuan') == 0;
-                                       }));
-                        @endphp
-                        
-                        <tr class="{{ $isZero ? 'bg-warning' : '' }}">
+                        <tr>
+                            <td>
+                                <div style="text-align: center;">
+                                    <button id="btn-save" class="btn btn-success">Simpan</button>
+                                </div>
+                            </td>
+                            <input type="hidden" id="akomodasi_id" value="{{ $hash->encode($akomodasi->id) }}">
                             <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
-                            <td>
-                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
-                            </td>
-                            <td>
-                                @if ($isZero)
-                                    <!-- Show "Belum Input" when row is highlighted -->
-                                    <span class="text-muted">Belum Input</span>
-                                    <a class="btn btn-info btn-sm" href="{{ route('account.akomodasi.kunjunganakomodasi.createbytanggal', ['akomodasi_id' => $hash->encode($akomodasi->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                        Tambah Data
-                                    </a>
-                                @else
-                                    <!-- Show the buttons if the row is not highlighted -->
-                                    <a class="btn btn-info btn-sm" href="{{ route('account.akomodasi.kunjunganakomodasi.edit', ['akomodasi_id' => $hash->encode($akomodasi->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                        <i class="fas fa-pencil-alt"></i> Ubah
-                                    </a>
-                                    <a href="{{ route('account.akomodasi.kunjunganakomodasi.delete', ['akomodasi_id' => $hash->encode($akomodasi->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                       class="btn btn-danger btn-sm"
-                                       onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </a>
-                                    <form id="delete-form" action="{{ route('account.akomodasi.kunjunganakomodasi.delete', ['akomodasi_id' => $hash->encode($akomodasi->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                @endif
-                            </td>
-                    
+                            <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
+                            
                             @foreach ($kelompok as $namaKelompok)
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
+                            <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
+                            <td class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
                             @endforeach
-                    
+                            
                             @foreach ($wismannegara as $negara)
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
+                            <td class="editable" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
+                            <td class="editable" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
                             @endforeach
                         </tr>
                     @endforeach
                 </tbody>
-                
-
-                <tfoot>
-                    <tr>
-                        <th>Total Keseluruhan</th>
-                        <th>
-                            {{ $kunjungan->sum(function($dataTanggal) {
-                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
-                            }) }}
-                        </th>
-                        <th></th>
-
-                        @foreach ($kelompok as $namaKelompok)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
-                                return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki');
-                            }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
-                                return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan');
-                            }) }}</th>
-                        @endforeach
-
-                        @foreach ($wismannegara as $negara)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                            }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
-                            }) }}</th>
-                        @endforeach
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>
 </section>
+
 @endsection
 
 @section('scripts')
+<script>
+    $(document).on('focus', '.editable input', function() {
+        var row = $(this).closest('tr');
+        // Blur other rows
+        $('tbody tr').not(row).addClass('blurred');
+    });
+
+    $(document).on('blur', '.editable input', function() {
+        // Remove blur effect when input loses focus
+        $('tbody tr').removeClass('blurred');
+    });
+
+    $(document).on('click', '#btn-save', function() {
+        var row = $(this).closest('tr');
+        var akomodasi_id = $('#akomodasi_id').val();
+        var tanggal_kunjungan = row.find('input[id="tanggal_kunjungan"]').val();
+
+        var jumlah_laki_laki = {};
+        var jumlah_perempuan = {};
+        var jml_wisman_laki = {};
+        var jml_wisman_perempuan = {};
+
+        row.find('.editable[data-kelompok]').each(function() {
+            var kelompok = $(this).data('kelompok');
+            var field = $(this).data('field');
+            var inputValue = $(this).find('input').val();
+
+            if (inputValue !== '') {
+                if (field.startsWith('jumlah_laki_laki')) {
+                    jumlah_laki_laki[kelompok] = parseInt(inputValue) || 0;
+                } else if (field.startsWith('jumlah_perempuan')) {
+                    jumlah_perempuan[kelompok] = parseInt(inputValue) || 0;
+                }
+            }
+        });
+
+        row.find('.editable[data-negara]').each(function() {
+            var negara = $( this).data('negara');
+            var field = $(this).data('field');
+            var inputValue = $(this).find('input').val();
+
+            if (inputValue !== '') {
+                if (field.startsWith('jml_wisman_laki')) {
+                    jml_wisman_laki[negara] = parseInt(inputValue) || 0;
+                } else if (field.startsWith('jml_wisman_perempuan')) {
+                    jml_wisman_perempuan[negara] = parseInt(inputValue) || 0;
+                }
+            }
+        });
+
+        $.ajax({
+            url: '{{ route("account.akomodasi.kunjunganakomodasi.storewisnuindex") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                akomodasi_id: akomodasi_id,
+                tanggal_kunjungan: tanggal_kunjungan,
+                jumlah_laki_laki: jumlah_laki_laki,
+                jumlah_perempuan: jumlah_perempuan,
+                jml_wisman_laki: jml_wisman_laki,
+                jml_wisman_perempuan: jml_wisman_perempuan
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Data berhasil disimpan!');
+                    // Remove blur effect after saving
+                    $('tbody tr').removeClass('blurred');
+                } else {
+                    alert('Terjadi kesalahan!');
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan!');
+            }
+        });
+    });
+</script>
 <!-- DataTables  & Plugins -->
 <script src="{{ asset('datakunjungan/plugins/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{ asset('datakunjungan/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
@@ -196,7 +230,6 @@
             autoWidth: false,
             ordering: false,
             paging: false,
-
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 </script>
@@ -223,10 +256,9 @@
     });
 </script>
 
-
 <script>
     // Fungsi untuk mengekspor tabel ke file Excel
-    document.getElementById('export-to-excel').addEventListener('click', function () {
+    document.getElementById('export -to-excel').addEventListener('click', function () {
         var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
         var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Akomodasi' }); // Konversi tabel menjadi buku Excel
         XLSX.writeFile(sheet, 'Kunjungan_Akomodasi_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
