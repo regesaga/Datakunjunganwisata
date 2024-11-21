@@ -124,7 +124,7 @@
 <section class="content-header">
     <div class="container-fluid">
     
-        <form action="{{ route('account.kuliner.kunjungankuliner.storewisnu') }}" method="POST">
+        <form action="{{ route('account.kuliner.kunjungankuliner.storewisnubytanggal') }}" method="POST">
             @csrf
         <div class="form-header">
                 <h3>Tambah Laporan Kunjungan</h3>
@@ -133,7 +133,8 @@
           
             <div class="form-date">
                 <label for="tanggal">Tanggal:</label>
-                <input type="date" name="tanggal_kunjungan" class="form-control">
+                <input type="date" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan" required>
+
             </div>
             <button type="submit" class="btn-save">Simpan Data</button>
         </div>
@@ -156,7 +157,8 @@
 @endif
     
             <div class="col-lg-12">
-                        <input type="hidden" name="kuliner_id" value="{{ $kuliner->id }}">
+                
+                <input type="hidden" name="kuliner_id" value="{{ $hash->encode($kuliner->id) }}" required>
                         <div class="visitor-section">
                             <div class="row">
                                 <div class="col-md-6">
@@ -286,11 +288,15 @@
         });
     </script>
     <script>
-        // Set tanggal default ke hari ini
+        
+        // Set tanggal dari controler
         document.addEventListener('DOMContentLoaded', function () {
-            const today = new Date();
+            var tanggalKunjungan = "{{ $tanggal_kunjungan }}";  // Pastikan $tanggal_kunjungan dalam format 'YYYY-MM-DD'
+            
+            // Menetapkan nilai input tanggal_kunjungan menggunakan JavaScript
+            document.getElementById('tanggal_kunjungan').value = tanggalKunjungan;
             const dateInput = document.querySelector('input[name="tanggal_kunjungan"]');
-            dateInput.value = today.toISOString().split('T')[0];
+            dateInput.value = tanggalKunjungan.toISOString().split('T')[0];
         });
         // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
         function calculateWISMAN() {
@@ -344,4 +350,5 @@
             calculateWISMAN(); // Update total setelah menghapus baris
         });
     </script>
+
 @endsection
