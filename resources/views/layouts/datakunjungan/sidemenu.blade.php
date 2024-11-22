@@ -71,25 +71,7 @@
           </a>
         
         </li>
-       
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganwisata.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wisnuperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganwisata.filterwismanbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wismanperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+      
     </ul>
     </li>
     <li class="nav-header">KULINER</li>
@@ -125,25 +107,7 @@
           </a>
         
         </li>
-       
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjungankuliner.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wisnuperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjungankuliner.filterwismanbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wismanperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+      
     </ul>
     </li>
 
@@ -180,41 +144,11 @@
           </a>
         
         </li>
-
        
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganakomodasi.filterwisnubulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wisnuperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="{{ route('admin.kunjunganakomodasi.filterwismanbulan') }}" class="nav-link ? 'active' : '' ">
-            <i class="nav-icon fas fa-th"></i>
-            <p>
-              Wismanperbulan
-              <span class="right badge badge-danger">New</span>
-            </p>
-          </a>
-        </li>
+       
     </ul>
     </li>
-    
 
-
-    <li class="nav-header">EXAMPLES</li>
-    <li class="nav-item">
-      <a href="calendar.html" class="nav-link ? 'active' : '' ">
-        <i class="nav-icon far fa-calendar-alt"></i>
-        <p>
-          Calendar
-          <span class="badge badge-info right">2</span>
-        </p>
-      </a>
-    </li>
   
   </ul>
 </nav>
@@ -286,19 +220,6 @@
       
       </li>
       
-
-  
-      <li class="nav-header">EXAMPLES</li>
-      <li class="nav-item">
-        <a href="calendar.html" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon far fa-calendar-alt"></i>
-          <p>
-            Calendar
-            <span class="badge badge-info right">2</span>
-          </p>
-        </a>
-      </li>
-    
     </ul>
   </nav>
 @endrole
@@ -323,8 +244,8 @@
           <i class="nav-icon fas fa-th"></i>
 
           <p>
-            Index bulanan
-            <i class="right fas fa-angle-left"></i>
+            Index Ubah Data
+            <i class="fas fa-edit nav-icon"></i>
           </p>
         </a>
       
@@ -404,8 +325,8 @@
           <i class="nav-icon fas fa-th"></i>
 
           <p>
-            Index bulanan
-            <i class="right fas fa-angle-left"></i>
+            Index Ubah Data
+            <i class="fas fa-edit nav-icon"></i>
           </p>
         </a>
       
@@ -449,18 +370,6 @@
       </li>
      
 
-  
-      <li class="nav-header">EXAMPLES</li>
-      <li class="nav-item">
-        <a href="calendar.html" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon far fa-calendar-alt"></i>
-          <p>
-            Calendar
-            <span class="badge badge-info right">2</span>
-          </p>
-        </a>
-      </li>
-    
     </ul>
   </nav>
 @endrole

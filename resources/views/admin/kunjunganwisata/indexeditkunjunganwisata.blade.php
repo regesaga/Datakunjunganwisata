@@ -1,12 +1,58 @@
 @extends('layouts.datakunjungan.datakunjungan')
+<style>
+    .editable input:focus {
+        background-color: #e0f7fa; /* Warna biru muda saat input difokuskan */
+        border-color: #008cba; /* Warna border saat difokuskan */
+    }
 
+    .editing {
+        background-color: #fff3e0; /* Warna latar belakang saat sedang diedit */
+    }
+
+    .saved {
+        background-color: #c8e6c9; /* Warna latar belakang setelah disimpan */
+    }
+
+    .blurred {
+        filter: blur(2px); /* Efek blur untuk baris yang tidak sedang diedit */
+        pointer-events: none; /* Menonaktifkan interaksi dengan elemen yang diburamkan */
+    }
+</style>
 @section('content')
 
 <section class="content-header">
 
     <div class="container-fluid">
 
-      
+       <!-- Form Filter Bulan dan Tahun -->
+       <form method="GET" action="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
+        'wisata_id' => $hash->encode($wisata->first()->id)]) }}">
+        <div class="row">
+            <div class="col-lg-4">
+                <label for="tahun" class="form-label">Tahun</label>
+                <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
+                    @for($y = date('Y'); $y >= 2020; $y--)
+                        <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="col-lg-4">
+                <label for="bulan" class="form-label">Bulan</label>
+                <select id="bulan" name="bulan" class="form-control select2">
+                    @foreach(range(1, 12) as $m)
+                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                            {{ $bulanIndo[$m] }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+           
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-info">Terapkan Filter</button>
+            </div>
+        </div>
+    </form>
 
         <div class="card">
             <div class="card-header">
@@ -20,18 +66,15 @@
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
-                    <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
-                        
+                    <tr>
                         <h2 style="text-align: center; text-transform: uppercase;">
                             Rekap Data Kunjungan {{$wisata->first()->namawisata}}
                             Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
                         </h2>
-                        </th>
                     </tr>
                     <tr>
-                        <th rowspan="3">Tanggal</th>
-                        <th rowspan="3">Total</th>
                         <th rowspan="3">Aksi</th>
+                        <th rowspan="3">Tanggal</th>
                         <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisata Nusantara</th>
                         <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center;">Wisata Mancanegara</th>
                     </tr>
@@ -56,72 +99,49 @@
                 </thead>
                 <tbody>
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                                    @php
+                                    // Cek apakah semua nilai pada tanggal tersebut adalah 0
+                                    $isZero = ($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan']) == 0;
+                                    foreach ($kelompok as $namaKelompok) {
+                                        if ($dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
+                                            $isZero = false;
+                                            break;
+                                        }
+                                    }
+                                    if ($dataTanggal['jml_wisman_laki'] > 0 || $dataTanggal['jml_wisman_perempuan'] > 0) {
+                                        $isZero = false;
+                                    }
+                                @endphp
+                        <tr class="{{ $isZero ? 'bg-warning' : '' }}">
                             <td>
-                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                                <div style="text-align: center;">
+                                    <button id="btn-save" class="btn btn-success">Simpan</button>
+                                </div>
                             </td>
-                            <td>
-                                <a class="btn btn-info btn-sm" href="{{ route('admin.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->first()->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                    <i class="fas fa-pencil-alt"></i> Ubah
-                                </a>
-                                <a href="{{ route('admin.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->first()->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                    class="btn btn-danger btn-sm"
-                                    onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                     <i class="fas fa-trash"></i> Hapus
-                                 </a>
-                                 
-                                 <form id="delete-form" action="{{ route('admin.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->first()->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
-                                     @csrf
-                                     @method('DELETE')
-                                 </form>
-                                 
-                                
-                                
-                            </td>
-
+                            <input type="hidden" id="wisata_id" value="{{ $hash->encode($wisata->first()->id) }}">
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                            <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
+                            
                             @foreach ($kelompok as $namaKelompok)
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
+                            <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
+                            <td class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
                             @endforeach
-
+                            
                             @foreach ($wismannegara as $negara)
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
+                            <td class="editable" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
+                            <td class="editable" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            </td>
                             @endforeach
                         </tr>
                     @endforeach
                 </tbody>
-
-                <tfoot>
-                    <tr>
-                        <th>Total Keseluruhan</th>
-                        <th>
-                            {{ $kunjungan->sum(function($dataTanggal) {
-                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
-                            }) }}
-                        </th>
-                        <th></th>
-
-                        @foreach ($kelompok as $namaKelompok)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
-                                return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki');
-                            }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
-                                return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan');
-                            }) }}</th>
-                        @endforeach
-
-                        @foreach ($wismannegara as $negara)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                            }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
-                                return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
-                            }) }}</th>
-                        @endforeach
-                    </tr>
-                </tfoot>
             </table>
         </div>
     </div>
@@ -129,6 +149,83 @@
 @endsection
 
 @section('scripts')
+<script>
+    $(document).on('focus', '.editable input', function() {
+        var row = $(this).closest('tr');
+        // Blur other rows
+        $('tbody tr').not(row).addClass('blurred');
+    });
+
+    $(document).on('blur', '.editable input', function() {
+        // Remove blur effect when input loses focus
+        $('tbody tr').removeClass('blurred');
+    });
+
+    $(document).on('click', '#btn-save', function() {
+        var row = $(this).closest('tr');
+        var wisata_id = $('#wisata_id').val();
+        var tanggal_kunjungan = row.find('input[id="tanggal_kunjungan"]').val();
+
+        var jumlah_laki_laki = {};
+        var jumlah_perempuan = {};
+        var jml_wisman_laki = {};
+        var jml_wisman_perempuan = {};
+
+        row.find('.editable[data-kelompok]').each(function() {
+            var kelompok = $(this).data('kelompok');
+            var field = $(this).data('field');
+            var inputValue = $(this).find('input').val();
+
+            if (inputValue !== '') {
+                if (field.startsWith('jumlah_laki_laki')) {
+                    jumlah_laki_laki[kelompok] = parseInt(inputValue) || 0;
+                } else if (field.startsWith('jumlah_perempuan')) {
+                    jumlah_perempuan[kelompok] = parseInt(inputValue) || 0;
+                }
+            }
+        });
+
+        row.find('.editable[data-negara]').each(function() {
+            var negara = $( this).data('negara');
+            var field = $(this).data('field');
+            var inputValue = $(this).find('input').val();
+
+            if (inputValue !== '') {
+                if (field.startsWith('jml_wisman_laki')) {
+                    jml_wisman_laki[negara] = parseInt(inputValue) || 0;
+                } else if (field.startsWith('jml_wisman_perempuan')) {
+                    jml_wisman_perempuan[negara] = parseInt(inputValue) || 0;
+                }
+            }
+        });
+
+        $.ajax({
+            url: '{{ route("admin.datakunjungan.storewisnuindex") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                wisata_id: wisata_id,
+                tanggal_kunjungan: tanggal_kunjungan,
+                jumlah_laki_laki: jumlah_laki_laki,
+                jumlah_perempuan: jumlah_perempuan,
+                jml_wisman_laki: jml_wisman_laki,
+                jml_wisman_perempuan: jml_wisman_perempuan
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Data berhasil disimpan!');
+                    // Remove blur effect after saving
+                    $('tbody tr').removeClass('blurred');
+                } else {
+                    alert('Terjadi kesalahan!');
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan!');
+            }
+        });
+    });
+</script>
 <!-- DataTables  & Plugins -->
 <script src="{{ asset('datakunjungan/plugins/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{ asset('datakunjungan/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>

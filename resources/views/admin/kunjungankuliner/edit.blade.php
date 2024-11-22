@@ -160,7 +160,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="visitor-card">
-                                <strong>Kunjungan Wisatawan Nusantara (WISNU)</strong>
+                                <strong>Kunjungan Kulinerwan Nusantara (WISNU)</strong>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -208,7 +208,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="visitor-card">
-                                <strong>Kunjungan Wisatawan Mancanegara (WISMAN)</strong>
+                                <strong>Kunjungan Kulinerwan Mancanegara (WISMAN)</strong>
                                 <table class="table table-bordered" id="wisman-table">
                                     <thead>
                                         <tr>
@@ -303,7 +303,7 @@
     </script>
      <script>
         
-        // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
+        // Fungsi untuk menghitung total Kulinerwan Mancanegara (WISMAN)
         function calculateWISMAN() {
             let totalLakiWISMAN = 0;
             let totalPerempuanWISMAN = 0;

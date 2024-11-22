@@ -151,6 +151,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
   Route::delete('wismannegara/delete/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
   Route::get('Datakunjungan', [AdminDatakunjunganController::class, 'index'])->name('admin.datakunjungan.index');
+  Route::post('/wisata/storewisnuindex', [AdminDatakunjunganController::class, 'storewisnuindex'])->name('admin.datakunjungan.storewisnuindex');
 
   // --- data kunjungan wisata ------
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');

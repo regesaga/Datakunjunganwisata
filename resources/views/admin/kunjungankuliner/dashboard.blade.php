@@ -29,7 +29,7 @@
             <div class="card-header border-0">
               <h3 class="card-title">
                 <i class="fas fa-users mr-1"></i>
-                Kunjungan Wisatawan Tahun {{ $year }}
+                Kunjungan Kulinerwan Tahun {{ $year }}
               </h3>
               <!-- card tools -->
               <div class="card-tools">

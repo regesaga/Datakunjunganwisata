@@ -28,7 +28,7 @@ class AdminKunjunganKulinerController extends Controller
             $kategoriKuliner = CategoryKuliner::all();
 
             $categorykuliner_id = $request->input('categorykuliner_id', null);
-        // Menentukan bulan dalam format angka
+            // Menentukan bulan dalam format angka
             $bulan = $request->input('bulan', date('m')); 
             $tahun = $request->input('tahun', date('Y')); 
 
@@ -107,7 +107,10 @@ class AdminKunjunganKulinerController extends Controller
             $kelompok = KelompokKunjungan::all();
             $wismannegara = WismanNegara::all();
 
-            return view('admin.kunjungankuliner.index', compact('kunjungan', 'kategoriKuliner', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun', 'categorykuliner_id', 'totalWismanLaki', 'totalWismanPerempuan'));
+            return view('admin.kunjungankuliner.index', compact(
+                'kuliner', 'kunjungan', 'kategoriKuliner', 'kelompok', 'wismannegara', 'hash', 
+                'bulan', 'tahun', 'categorykuliner_id', 'totalWismanLaki', 'totalWismanPerempuan', 'bulanIndo'
+            ));
         }
 
         public function indexkunjungankulinerpertahun(Request $request)
@@ -181,10 +184,21 @@ class AdminKunjunganKulinerController extends Controller
             $bulan = $request->input('bulan', date('m'));
             $tahun = $request->input('tahun', date('Y'));
         
+            // Daftar bulan dalam Bahasa Indonesia
+            $bulanIndo = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
+
+            // Mendapatkan nama bulan
+            $namaBulan = $bulanIndo[(int)$bulan];
             // Menentukan rentang tanggal untuk bulan dan tahun yang dipilih
             $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
             $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
         
+            $tanggalRentang = \Carbon\CarbonPeriod::create($startDate, '1 day', $endDate);
+
+
             // Ambil data WisnuKuliner berdasarkan kuliner_id dan rentang tanggal
             $wisnuKunjungan = WisnuKuliner::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
                 ->where('kuliner_id', $kulinerId)
@@ -201,19 +215,27 @@ class AdminKunjunganKulinerController extends Controller
         
             // Olah data kunjungan
             $kunjungan = [];
-            foreach ($wisnuKunjungan as $tanggal => $dataTanggal) {
-                $jumlahLakiLaki = $dataTanggal->sum('jumlah_laki_laki');
-                $jumlahPerempuan = $dataTanggal->sum('jumlah_perempuan');
-                $jmlWismanLaki = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_laki');
-                $jmlWismanPerempuan = $wismanKunjungan->get($tanggal, collect())->sum('jml_wisman_perempuan');
+            foreach ($tanggalRentang as $tanggal ) {
                 
-                $kunjungan[$tanggal] = [
+                $tanggalFormat = $tanggal->format('Y-m-d');
+                // Ambil data kunjungan dari WisnuKuliner
+                $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
+                $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
+                $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
+
+                    // Ambil data kunjungan dari WismanKuliner
+                $dataWisman = $wismanKunjungan->get($tanggalFormat, collect());
+                $jmlWismanLaki = $dataWisman->sum('jml_wisman_laki');
+                $jmlWismanPerempuan = $dataWisman->sum('jml_wisman_perempuan');
+                $wismanByNegara = $dataWisman->groupBy('wismannegara_id');
+
+                $kunjungan[$tanggalFormat] = [
                     'jumlah_laki_laki' => $jumlahLakiLaki,
                     'jumlah_perempuan' => $jumlahPerempuan,
-                    'kelompok' => $dataTanggal,
+                    'kelompok' => $dataWisnu,
                     'jml_wisman_laki' => $jmlWismanLaki ?: 0,
                     'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
-                    'wisman_by_negara' => $wismanKunjungan->get($tanggal, collect())->groupBy('wismannegara_id'),
+                    'wisman_by_negara' => $wismanByNegara,
                 ];
             }
         
@@ -235,6 +257,7 @@ class AdminKunjunganKulinerController extends Controller
                 'hash' => $hash,
                 'bulan' => $bulan,
                 'tahun' => $tahun,
+                'bulanIndo' =>$bulanIndo,
             ]);
         }
         
@@ -531,6 +554,7 @@ public function storewisnu(Request $request)
 // Menampilkan form edit kunjungan
 public function editwisnu($kuliner_id, $tanggal_kunjungan)
 {
+
     $hash = new Hashids();
 
     // Dekripsi `kuliner_id`
@@ -551,6 +575,7 @@ public function editwisnu($kuliner_id, $tanggal_kunjungan)
     if (!$kuliner) {
         abort(404, 'Data kuliner tidak ditemukan');
     }
+    
 
     // Query data WISNU terkait kuliner dan tanggal kunjungan
     $wisnuData = WisnuKuliner::where('kuliner_id', $decodedKulinerId)
@@ -758,6 +783,11 @@ public function deletewisnu($kuliner_id, $tanggal_kunjungan)
                             ->with('error', 'Gagal menghapus data kunjungan. Silakan coba lagi.');
         }
     }
+
+
+
+
+
 
 
 
