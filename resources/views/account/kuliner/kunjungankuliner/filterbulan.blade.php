@@ -18,6 +18,7 @@
                                 @endfor
                             </select>
                         </div>
+                        
                         <div class="col-lg-4">
                             <label for="month" class="form-label">Bulan</label>
                             <select id="month" name="month"  class="form-control select2" style="width: 100%;">
@@ -53,7 +54,7 @@
                     <tbody>
                         @forelse($kunjungan as $tanggal => $data)
                             <tr>
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                                 <td>{{ $data['jumlah_laki_laki'] }}</td>
                                 <td>{{ $data['jumlah_perempuan'] }}</td>
                                 <td>{{ $data['jml_wisman_laki'] }}</td>

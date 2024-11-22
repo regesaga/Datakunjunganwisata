@@ -32,9 +32,18 @@ class KunjunganAkomodasiController extends Controller
     
         $akomodasi_id = $akomodasi->id; // Mendapatkan akomodasi_id dari data Akomodasi
     
-        // Filter bulan dan tahun dari request atau default saat ini
-        $bulan = $request->input('bulan', date('m'));
-        $tahun = $request->input('tahun', date('Y'));
+          // Menentukan bulan dalam format angka
+          $bulan = $request->input('bulan', date('m')); 
+          $tahun = $request->input('tahun', date('Y')); 
+
+          // Daftar bulan dalam Bahasa Indonesia
+          $bulanIndo = [
+              1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+              7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+          ];
+
+          // Mendapatkan nama bulan
+          $namaBulan = $bulanIndo[(int)$bulan];
     
         // Periode waktu untuk bulan yang dipilih
         $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
@@ -93,7 +102,7 @@ class KunjunganAkomodasiController extends Controller
         $wismannegara = WismanNegara::all();
     
         return view('account.akomodasi.kunjunganakomodasi.index', compact(
-            'kunjungan', 'akomodasi', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun'
+            'kunjungan', 'akomodasi', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun','bulanIndo'
         ));
     }
     
@@ -269,6 +278,14 @@ class KunjunganAkomodasiController extends Controller
                         'wisman_by_negara' => $wismanKunjungan,
                     ];
                 }
+                                // Daftar bulan dalam Bahasa Indonesia
+                $bulanIndo = [
+                    1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                    7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                ];
+
+                // Ambil nama bulan dan total kunjungan per bulan
+                $bulan = [];
                 // Buat array untuk menyimpan data kunjungan per bulan
                 $kunjungan = [];
                 for ($month = 1; $month <= 12; $month++) {
@@ -374,7 +391,7 @@ class KunjunganAkomodasiController extends Controller
                     }
             
             
-                    return view('account.akomodasi.kunjunganakomodasi.dashboard', compact(
+                    return view('account.akomodasi.kunjunganakomodasi.dashboard', compact('bulan','bulanIndo',
                         'kunjungan', 'kelompok','kelompokData','wismannegara', 'akomodasi','bytgl', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan', 'negaraData'
                     ));
             }
@@ -532,66 +549,76 @@ class KunjunganAkomodasiController extends Controller
     
 
     public function filterwisnubulan(Request $request)
-{
-    $hash = new Hashids();
-    $company_id = auth()->user()->company->id;
-    
-    // Fetch akomodasi based on company_id and ensure we get the akomodasi_id
-    $akomodasi = Akomodasi::where('company_id', $company_id)->first(); 
-    
-    // Check if akomodasi is found
-    if (!$akomodasi) {
-        return response()->json(['error' => 'Akomodasi not found for this company'], 404);
-    }
-    
-    $akomodasi_id = $akomodasi->id; // Get the akomodasi_id
-    
-    // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
-    $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
-    $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
-    
-    // Buat rentang tanggal untuk bulan yang dipilih
-    $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
-    $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
-    
-    // Buat rentang tanggal dari startDate hingga endDate
-    $tanggalRentang = \Carbon\CarbonPeriod::create($startDate, '1 day', $endDate);
-   
-    // Ambil data WisnuAkomodasi berdasarkan akomodasi_id
-    $wisnuKunjungan = WisnuAkomodasi::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
-    ->where('akomodasi_id', $akomodasi_id) // Filter berdasarkan akomodasi_id
-    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
-    ->get()
-    ->groupBy('tanggal_kunjungan');
+        {
+            $hash = new Hashids();
+            $company_id = auth()->user()->company->id;
+            
+            // Fetch akomodasi based on company_id and ensure we get the akomodasi_id
+            $akomodasi = Akomodasi::where('company_id', $company_id)->first(); 
+            
+            // Check if akomodasi is found
+            if (!$akomodasi) {
+                return response()->json(['error' => 'Akomodasi not found for this company'], 404);
+            }
+            
+            $akomodasi_id = $akomodasi->id; // Get the akomodasi_id
+            
+            // Menentukan bulan dalam format angka
+            $bulan = $request->input('bulan', date('m')); 
+            $tahun = $request->input('tahun', date('Y')); 
+
+            // Daftar bulan dalam Bahasa Indonesia
+            $bulanIndo = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+                7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            ];
+
+            // Mendapatkan nama bulan
+            $namaBulan = $bulanIndo[(int)$bulan];
+
+            
+            // Buat rentang tanggal untuk bulan yang dipilih
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->endOfMonth();
+            
+            // Buat rentang tanggal dari startDate hingga endDate
+            $tanggalRentang = \Carbon\CarbonPeriod::create($startDate, '1 day', $endDate);
+        
+            // Ambil data WisnuAkomodasi berdasarkan akomodasi_id
+            $wisnuKunjungan = WisnuAkomodasi::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->where('akomodasi_id', $akomodasi_id) // Filter berdasarkan akomodasi_id
+            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+            ->get()
+            ->groupBy('tanggal_kunjungan');
 
 
-    $kunjungan = [];
-    foreach ($tanggalRentang as $tanggal ) {
-        $tanggalFormat = $tanggal->format('Y-m-d');
+            $kunjungan = [];
+            foreach ($tanggalRentang as $tanggal ) {
+                $tanggalFormat = $tanggal->format('Y-m-d');
 
-         // Ambil data kunjungan dari WisnuAkomodasi
-         $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
-        // Get the total local visitors
-        $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
-        $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
-    
-        $kunjungan[$tanggalFormat] = [
-            'jumlah_laki_laki' => $jumlahLakiLaki,
-            'jumlah_perempuan' => $jumlahPerempuan,
-            'kelompok' => $dataWisnu, // Store the collection for later use
-        ];
-    }
-    
-    // Sort kunjungan by date (youngest to oldest)
-    $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
-        return $key; // Sort by the key which is tanggal
-    });
+                // Ambil data kunjungan dari WisnuAkomodasi
+                $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
+                // Get the total local visitors
+                $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
+                $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
+            
+                $kunjungan[$tanggalFormat] = [
+                    'jumlah_laki_laki' => $jumlahLakiLaki,
+                    'jumlah_perempuan' => $jumlahPerempuan,
+                    'kelompok' => $dataWisnu, // Store the collection for later use
+                ];
+            }
+            
+            // Sort kunjungan by date (youngest to oldest)
+            $kunjungan = collect($kunjungan)->sortBy(function($item, $key) {
+                return $key; // Sort by the key which is tanggal
+            });
 
-    // Get kelompok and wisman negara
-    $kelompok = KelompokKunjungan::all();
-    
-    return view('account.akomodasi.kunjunganakomodasi.filterwisnubulan', compact('kunjungan','akomodasi','kelompok', 'hash', 'bulan', 'tahun'));
-}
+            // Get kelompok and wisman negara
+            $kelompok = KelompokKunjungan::all();
+            
+            return view('account.akomodasi.kunjunganakomodasi.filterwisnubulan', compact('kunjungan','akomodasi','kelompok', 'hash', 'bulan', 'tahun','bulanIndo'));
+        }
 
 public function filterwismanbulan(Request $request)
 {
@@ -608,9 +635,15 @@ public function filterwismanbulan(Request $request)
     
     $akomodasi_id = $akomodasi->id; // Get the akomodasi_id
     
-    // Ambil bulan dan tahun dari request (default ke bulan dan tahun saat ini)
-    $bulan = $request->input('bulan', date('m')); // Default bulan saat ini
-    $tahun = $request->input('tahun', date('Y')); // Default tahun saat ini
+      // Menentukan bulan dalam format angka
+      $bulan = $request->input('bulan', date('m')); 
+      $tahun = $request->input('tahun', date('Y')); 
+  
+      // Daftar bulan dalam Bahasa Indonesia
+      $bulanIndo = [
+          1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+          7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+      ];
     
     // Buat rentang tanggal untuk bulan yang dipilih
     $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$tahun}-{$bulan}-01")->startOfMonth();
@@ -652,7 +685,7 @@ public function filterwismanbulan(Request $request)
     // Get wisman negara (foreign countries)
     $wismannegara = WismanNegara::all();
     
-    return view('account.akomodasi.kunjunganakomodasi.filterwismanbulan', compact('kunjungan','akomodasi', 'wismannegara', 'hash', 'bulan', 'tahun'));
+    return view('account.akomodasi.kunjunganakomodasi.filterwismanbulan', compact('kunjungan','akomodasi', 'wismannegara', 'hash', 'bulan', 'tahun','bulanIndo'));
 }
 
 

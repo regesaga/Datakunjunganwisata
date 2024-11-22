@@ -86,7 +86,7 @@
                                 }
                             @endphp
                             <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                                 <td>
                                     @if ($isZero)
                                         <!-- Show "Belum Input" when row is highlighted -->

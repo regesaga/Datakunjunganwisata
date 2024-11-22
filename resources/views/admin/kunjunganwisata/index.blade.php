@@ -31,11 +31,12 @@
                     <select id="bulan" name="bulan" class="form-control select2">
                         @foreach(range(1, 12) as $m)
                             <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
-                                {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                                {{ $bulanIndo[$m] }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+                
 
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-info">Terapkan Filter</button>
@@ -50,7 +51,7 @@
                     Tambah Data
                 </a>
             </div>
-            <h3 style="text-align: center; text-transform: uppercase;">Rekapan Kunjungan Bulan  {{ DateTime::createFromFormat('!m', $bulan)->format('F') }} Tahun {{ $tahun }}</h3>
+            <h3 style="text-align: center; text-transform: uppercase;">Rekapan Kunjungan Bulan  {{ $bulanIndo[(int)$bulan] }}  Tahun {{ $tahun }}</h3>
             <h2 style="text-align: center; text-transform: uppercase;">{{ $kategoriWisata->find($categorywisata_id)->category_name ?? 'Semua Tempat Wisata' }} </h2>
             <div class="card-body">
                 <table id="example1" class="table table-bordered table-striped">
@@ -80,7 +81,16 @@
                     <tbody>
                         @forelse ($kunjungan as $dataTanggal)
                             <tr>
-                                <td>{{ $dataTanggal['wisata']->namawisata }}</td>
+                                                      
+
+
+                                <td>  <a href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
+                                    'wisata_id' => $hash->encode($dataTanggal['wisata']->id), 
+                                    'bulan' => $bulan,
+                                    'tahun' => $tahun
+                                ]) }}">
+                                {{ $dataTanggal['wisata']->namawisata }}
+                                </a>
                                 <td>
                                     {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                                 </td>

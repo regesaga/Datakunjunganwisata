@@ -16,10 +16,10 @@
                 </div>
                 <div class="col-lg-4">
                     <label for="bulan" class="form-label">Bulan</label>
-                    <select id="bulan" name="bulan"  class="form-control select2" style="width: 100%;">
+                    <select id="bulan" name="bulan" class="form-control select2">
                         @foreach(range(1, 12) as $m)
-                            <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
-                                {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                            <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                                {{ $bulanIndo[$m] }}
                             </option>
                         @endforeach
                     </select>
@@ -43,7 +43,7 @@
                 <thead>
                     <th colspan="{{ 3 +  (count($wismannegara) * 2) }}">
                         <h2 style="text-align: center; text-transform: uppercase;">
-                            Data Kunjungan Wisatawan Mancanegara {{$wisata->namawisata}} Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
+                            Data Kunjungan Wisatawan Mancanegara {{$wisata->namawisata}} Tahun {{ $tahun }} Bulan{{ $bulanIndo[(int)$bulan] }}
                         </h2>
                     </th>
                     <tr>
@@ -77,7 +77,7 @@
                             $isZero = $totalWisman === 0;
                         @endphp
                         <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                             <td>
                                 {{ $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                             </td>

@@ -242,7 +242,8 @@
                                     }
                                 @endphp
                                 <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                                    <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                                    <td>{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
+
                                     <td>
                                         {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                                     </td>

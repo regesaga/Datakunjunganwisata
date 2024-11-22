@@ -107,7 +107,10 @@ class AdminKunjunganWisataController extends Controller
             $kelompok = KelompokKunjungan::all();
             $wismannegara = WismanNegara::all();
 
-            return view('admin.kunjunganwisata.index', compact('kunjungan', 'kategoriWisata', 'kelompok', 'wismannegara', 'hash', 'bulan', 'tahun', 'categorywisata_id', 'totalWismanLaki', 'totalWismanPerempuan'));
+            return view('admin.kunjunganwisata.index', compact(
+                'wisata', 'kunjungan', 'kategoriWisata', 'kelompok', 'wismannegara', 'hash', 
+                'bulan', 'tahun', 'categorywisata_id', 'totalWismanLaki', 'totalWismanPerempuan', 'bulanIndo'
+            ));
         }
 
         public function indexkunjunganwisatapertahun(Request $request)

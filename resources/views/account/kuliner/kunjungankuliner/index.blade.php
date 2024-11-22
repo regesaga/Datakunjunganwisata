@@ -39,14 +39,16 @@
                 </div>
                 <div class="col-lg-4">
                     <label for="bulan" class="form-label">Bulan</label>
-                    <select id="bulan" name="bulan" class="form-control select2" style="width: 100%;">
+                    <select id="bulan" name="bulan" class="form-control select2">
                         @foreach(range(1, 12) as $m)
-                            <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
-                                {{ DateTime::createFromFormat('!m', $m)->format('F') }}
+                            <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                                {{ $bulanIndo[$m] }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+
+               
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
@@ -60,7 +62,7 @@
                     <tr>
                         <th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
                             <h2 style="text-align: center; text-transform: uppercase;">
-                                Rekap Data Kunjungan {{$kuliner->namakuliner}} Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
+                                Rekap Data Kunjungan {{$kuliner->namakuliner}} Tahun {{ $tahun }} Bulan {{ $bulanIndo[(int)$bulan] }}
                             </h2>
                         </th>
                     </tr>
@@ -98,7 +100,7 @@
                                 </div>
                             </td>
                             <input type="hidden" id="kuliner_id" value="{{ $hash->encode($kuliner->id) }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)
