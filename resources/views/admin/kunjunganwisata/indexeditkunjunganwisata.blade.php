@@ -59,41 +59,41 @@
                 <a class="btn btn-outline-primary btn-sm" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
                     Tambah Data
                 </a>
-                <button class="btn btn-outline-success" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
 
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th colspan="{{ 2 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
                         <h2 style="text-align: center; text-transform: uppercase;">
-                            Rekap Data Kunjungan {{$wisata->first()->namawisata}}
+                            INDEX Kunjungan {{$wisata->first()->namawisata}}
                             Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
                         </h2>
+                        </th>
                     </tr>
                     <tr>
-                        <th rowspan="3">Aksi</th>
-                        <th rowspan="3">Tanggal</th>
-                        <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisata Nusantara</th>
-                        <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center;">Wisata Mancanegara</th>
-                    </tr>
-                    <tr>
-                        @foreach ($kelompok as $namaKelompok)
-                            <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
-                        @endforeach
-                        @foreach ($wismannegara as $negara)
-                            <th colspan="2">{{ $negara->wismannegara_name }}</th>
-                        @endforeach
+                        <th style="text-align: center; text-transform: uppercase;" rowspan="3">Aksi</th>
+                        <th style="text-align: center; text-transform: uppercase;" rowspan="3">Tanggal</th>
+                        <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center; text-transform: uppercase;">Wisata Nusantara</th>
+                        <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center; text-transform: uppercase;">Wisata Mancanegara</th>
                     </tr>
                     <tr>
                         @foreach ($kelompok as $namaKelompok)
-                            <th>L</th>
-                            <th>P</th>
+                            <th style="text-align: center; text-transform: uppercase;" colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                         @endforeach
                         @foreach ($wismannegara as $negara)
-                            <th>L</th>
-                            <th>P</th>
+                            <th style="text-align: center; text-transform: uppercase;" colspan="2">{{ $negara->wismannegara_name }}</th>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach ($kelompok as $namaKelompok)
+                            <th style="text-align: center; text-transform: uppercase;">L</th>
+                            <th style="text-align: center; text-transform: uppercase;">P</th>
+                        @endforeach
+                        @foreach ($wismannegara as $negara)
+                            <th style="text-align: center; text-transform: uppercase;">L</th>
+                            <th style="text-align: center; text-transform: uppercase;">P</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -114,30 +114,30 @@
                                 @endphp
                         <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
                             <td>
-                                <div style="text-align: center;">
-                                    <button id="btn-save" class="btn btn-outline-dark btn-sm">Simpan</button>
+                                <div style="text-align: center; text-transform: uppercase;">
+                                    <button style="text-align: center; text-transform: uppercase;" id="btn-save" class="btn btn-outline-success btn-sm">Simpan</button>
                                 </div>
                             </td>
                             <input type="hidden" id="wisata_id" value="{{ $hash->encode($wisata->first()->id) }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                            <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
                             
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)
-                            <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
-                            <td class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
                             @endforeach
                             
                             @foreach ($wismannegara as $negara)
-                            <td class="editable" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
-                            <td class="editable" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
                             @endforeach
                         </tr>
@@ -201,7 +201,7 @@
         });
 
         $.ajax({
-            url: '{{ route("admin.datakunjungan.storewisnuindex") }}',
+            url: '{{ route("admin.kunjunganwisata.storewisnuindex") }}',
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',
@@ -233,13 +233,6 @@
 <script src="{{ asset('datakunjungan/plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
 <script src="{{ asset('datakunjungan/plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
 <script src="{{ asset('datakunjungan/plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-buttons/js/buttons.bootstrap4.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/jszip/jszip.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/pdfmake/pdfmake.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/pdfmake/vfs_fonts.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-<script src="{{ asset('datakunjungan/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 <script>
     $(function () {
         const currentDate = new Date();
@@ -255,36 +248,5 @@
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
-<script>
-    document.getElementById('export-to-pdf').addEventListener('click', function () {
-        var element = document.getElementById('example1');
-        var opt = {
-            margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
-            filename:     'Kunjungan_Wisata_' + new Date().toISOString() + '.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
-            jsPDF:        { 
-                unit: 'mm', 
-                format: 'letter',  // Format A4
-                orientation: 'landscape'  // Mengatur orientasi menjadi landscape agar lebih lebar
-            }
-        };
 
-        // Menambahkan pengaturan CSS untuk menghindari pemotongan
-        html2pdf().from(element).set(opt).save();
-    });
-</script>
-
-
-<script>
-    // Fungsi untuk mengekspor tabel ke file Excel
-    document.getElementById('export-to-excel').addEventListener('click', function () {
-        var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
-        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Wisata' }); // Konversi tabel menjadi buku Excel
-        XLSX.writeFile(sheet, 'Kunjungan_Wisata_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
-    });
-</script>
 @endsection

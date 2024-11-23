@@ -127,7 +127,7 @@
             @csrf
             @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
             <div class="form-header">
-                <h1>Edit Data Kunjungan</h1>
+                <h1 style="text-align: center; text-transform: uppercase;">Edit Data Kunjungan</h1>
                 <h2>{{ $akomodasi->namaakomodasi }}</h2>
                 @if (session('warning'))
                 <div class="alert alert-warning">
@@ -148,7 +148,7 @@
             @endif
         
                 <div class="form-date">
-                    <label for="tanggal">Tanggal:</label>
+                    <label for="tanggal">TANGGAL </label>
                     <input type="date" class="form-control" name="tanggal_kunjungan" value="{{ old('tanggal_kunjungan', $tanggal_kunjungan) }}" required>
                 </div>
                 <button type="submit" class="btn-save">Simpan Data</button>
@@ -160,7 +160,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="visitor-card">
-                                <strong>Kunjungan Akomodasiwan Nusantara (WISNU)</strong>
+                                <strong>Kunjungan Wisatawan Nusantara (WISNU)</strong>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -208,7 +208,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="visitor-card">
-                                <strong>Kunjungan Akomodasiwan Mancanegara (WISMAN)</strong>
+                                <strong>Kunjungan Wisatawan Mancanegara (WISMAN)</strong>
                                 <table class="table table-bordered" id="wisman-table">
                                     <thead>
                                         <tr>
@@ -303,7 +303,7 @@
     </script>
      <script>
         
-        // Fungsi untuk menghitung total Akomodasiwan Mancanegara (WISMAN)
+        // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
         function calculateWISMAN() {
             let totalLakiWISMAN = 0;
             let totalPerempuanWISMAN = 0;

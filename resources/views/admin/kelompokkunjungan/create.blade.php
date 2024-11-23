@@ -3,7 +3,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header">
+            <div style="text-align: center; text-transform: uppercase;" class="card-header">
                 Tambah Kelompok
             </div>
 
@@ -11,8 +11,8 @@
                 <form method="POST" action="{{ route("admin.kelompokkunjungan.storekelompokkunjungan") }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label class="required" for="name">Nama Kelompok</label>
-                        <input class="form-control {{ $errors->has('kelompokkunjungan_name') ? 'is-invalid' : '' }}" type="text" name="kelompokkunjungan_name" id="kelompokkunjungan_name" value="{{ old('kelompokkunjungan_name', '') }}" required>
+                        <label style="text-align: center; text-transform: uppercase;" class="required" for="name">Nama Kelompok</label>
+                        <input style="text-align: center; text-transform: uppercase;" class="form-control {{ $errors->has('kelompokkunjungan_name') ? 'is-invalid' : '' }}" type="text" name="kelompokkunjungan_name" id="kelompokkunjungan_name" value="{{ old('kelompokkunjungan_name', '') }}" required>
                         @if($errors->has('kelompokkunjungan_name'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('name') }}
@@ -21,7 +21,7 @@
                     
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-outline-danger" type="submit">
+                        <button style="text-align: center; text-transform: uppercase;" class="btn btn-outline-danger" type="submit">
                             Simpan
                         </button>
                     </div>

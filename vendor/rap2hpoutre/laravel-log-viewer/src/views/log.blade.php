@@ -231,7 +231,7 @@
               <td class="text">
                 @if ($log['stack'])
                   <button type="button"
-                          class="float-right expand btn btn-outline-dark btn-sm mb-2 ml-2"
+                          class="float-right expand btn btn-outline-success btn-sm mb-2 ml-2"
                           data-display="stack{{{$key}}}">
                     <span class="fa fa-search"></span>
                   </button>

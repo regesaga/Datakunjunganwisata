@@ -127,7 +127,7 @@
         <form action="{{ route('admin.kunjunganwisata.storewisnu') }}" method="POST">
             @csrf
         <div class="form-header">
-                <h3>Tambah Laporan Kunjungan</h3>
+                <h3 style="text-align: center; text-transform: uppercase;">INPUT DATA KUNJUNGAN</h3>
                 <div class="col-lg-2">
                 <select name="wisata_id" class="form-control select2">
                     @foreach($wisata as $item)
@@ -139,10 +139,10 @@
                 </div>      
           
             <div class="form-date">
-                <label for="tanggal">Tanggal:</label>
+                <label for="tanggal">TANGGAL <label>
                 <input type="date" name="tanggal_kunjungan" class="form-control">
             </div>
-            <button type="submit" class="btn-save">Simpan Data</button>
+            <button type="submit" class="btn-save">SIMPAN DATA</button>
         </div>
         @if (session('warning'))
     <div class="alert alert-warning">
@@ -169,42 +169,42 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="visitor-card">
-                                            <strong>Kunjungan Wisatawan Nusantara (WISNU)</strong>
+                                            <strong style="text-align: center; text-transform: uppercase;">Kunjungan Wisatawan Nusantara (WISNU)</strong>
                                             <table class="table table-bordered">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kelompok Pengunjung</th>
-                                                        <th>Laki-laki</th>
-                                                        <th>Perempuan</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Kelompok Pengunjung</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Laki-laki</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Perempuan</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach ($kelompok as $namaKelompok)
                                                     <tr>
-                                                        <td>{{ $namaKelompok->kelompokkunjungan_name }}</td>
+                                                        <td style="text-align: center; text-transform: uppercase;"> {{ $namaKelompok->kelompokkunjungan_name }}</td>
                                                         <td>
-                                                            <input type="number" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"  value="0"  oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                            <input type="text" style="text-align: center; text-transform: uppercase;" id="jumlah_laki_laki_{{ $namaKelompok->id }}" name="jumlah_laki_laki[{{ $namaKelompok->id }}]" class="form-control"  value="0"  oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                         </td>
                                                         <td>
-                                                            <input type="number" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"  value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
+                                                            <input type="text" style="text-align: center; text-transform: uppercase;" id="jumlah_perempuan_{{ $namaKelompok->id }}" name="jumlah_perempuan[{{ $namaKelompok->id }}]" class="form-control"  value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')" oninvalid="this.setCustomValidity('Harap masukkan angka')" required>
                                                         </td>
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td>Jumlah</td>
+                                                        <td style="text-align: center; text-transform: uppercase;">Jumlah</td>
                                                         <td>
-                                                            <input type="text" id="total_wisnu_laki" name="total_wisnu_laki" class="form-control" value="0" readonly>
+                                                            <input type="text" style="text-align: center; text-transform: uppercase;" id="total_wisnu_laki" name="total_wisnu_laki" class="form-control" value="0" readonly>
                                                         </td>
                                                         <td>
-                                                            <input type="text" id="total_wisnu_perempuan" name="total_wisnu_perempuan" class="form-control"   value="0" readonly>
+                                                            <input type="text" style="text-align: center; text-transform: uppercase;" id="total_wisnu_perempuan" name="total_wisnu_perempuan" class="form-control"   value="0" readonly>
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Total                                                  
+                                                        <td style="text-align: center; text-transform: uppercase;">Total                                                  
                                                         </td>
-                                                        <td colspan="2"> <input type="text" id="total_wisnu" name="total_wisnu" class="form-control"    value="0" readonly></td>
+                                                        <td colspan="2"> <input type="text" style="text-align: center; text-transform: uppercase;" id="total_wisnu" name="total_wisnu" class="form-control"    value="0" readonly></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -212,14 +212,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="visitor-card">
-                                            <strong>Kunjungan Wisatawan Mancanegara (WISMAN)</strong>
+                                            <strong style="text-align: center; text-transform: uppercase;">Kunjungan Wisatawan Mancanegara (WISMAN)</strong>
                                             <table class="table table-bordered" id="wisman-table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Negara</th>
-                                                        <th>Laki-laki</th>
-                                                        <th>Perempuan</th>
-                                                        <th>Hapus</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Negara</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Laki-laki</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Perempuan</th>
+                                                        <th style="text-align: center; text-transform: uppercase;">Hapus</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -232,9 +232,9 @@
                                                                 @endforeach
                                                             </select>
                                                         </td>
-                                                        <td><input type="number" name="jml_wisman_laki[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                        <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wisman_laki[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
                                                             oninvalid="this.setCustomValidity('Harap masukkan angka')" required></td>
-                                                        <td><input type="number" name="jml_wisman_perempuan[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
+                                                        <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wisman_perempuan[]" class="form-control" value="0" oninput="this.value = this.value.replace(/[^0-9]/g, ''); this.setCustomValidity('')"
                                                             oninvalid="this.setCustomValidity('Harap masukkan angka')"  required></td>
                                                         <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                                                     </tr> -->
@@ -246,10 +246,10 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Jumlah</td>
-                                                        <td><input type="text" name="jml_wismanlakilaki" id="jml_wismanlakilaki" class="form-control" value="0" readonly></td>
-                                                        <td><input type="text" name="jml_wismanperempuan" id="jml_wismanperempuan" class="form-control" value="0" readonly></td>
-                                                        <td><input type="text" name="total_wisman" id="total_wisman" class="form-control" value="0" readonly></td>
+                                                        <td style="text-align: center; text-transform: uppercase;">Jumlah</td>
+                                                        <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wismanlakilaki" id="jml_wismanlakilaki" class="form-control" value="0" readonly></td>
+                                                        <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wismanperempuan" id="jml_wismanperempuan" class="form-control" value="0" readonly></td>
+                                                        <td><input type="text" style="text-align: center; text-transform: uppercase;" name="total_wisman" id="total_wisman" class="form-control" value="0" readonly></td>
                                                         
                                                     </tr>
                                                 
@@ -338,8 +338,8 @@
                             @endforeach
                         </select>
                     </td>
-                    <td><input type="number" name="jml_wisman_laki[]" value="0" class="form-control" required></td>
-                    <td><input type="number" name="jml_wisman_perempuan[]" value="0" class="form-control" required></td>
+                    <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wisman_laki[]" value="0" class="form-control" required></td>
+                    <td><input type="text" style="text-align: center; text-transform: uppercase;" name="jml_wisman_perempuan[]" value="0" class="form-control" required></td>
                     <td><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                 </tr>`;
             $('#wisman-table tbody').append(newRow);

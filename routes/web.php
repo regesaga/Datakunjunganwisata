@@ -151,7 +151,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::post('wismannegara/media', [WismanNegaraController::class, 'storeMedia'])->name('admin.wismannegara.storeMedia');
   Route::delete('wismannegara/delete/{wismannegara}', [WismanNegaraController::class, 'destroywismannegara'])->name('admin.wismannegara.destroy');
   Route::get('Datakunjungan', [AdminDatakunjunganController::class, 'index'])->name('admin.datakunjungan.index');
-  Route::post('/wisata/storewisnuindex', [AdminDatakunjunganController::class, 'storewisnuindex'])->name('admin.datakunjungan.storewisnuindex');
+  Route::post('/wisata/storewisnuindex', [AdminKunjunganWisataController::class, 'storewisnuindex'])->name('admin.kunjunganwisata.storewisnuindex');
 
   // --- data kunjungan wisata ------
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
@@ -178,6 +178,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
  Route::get('kuliner/kunjungan/{kuliner_id}/{tanggal_kunjungan}/edit', [AdminKunjunganKulinerController::class, 'editwisnu'])->name('admin.kunjungankuliner.edit');
  Route::put('/kuliner/update/{tanggal_kunjungan}', [AdminKunjunganKulinerController::class, 'updatewisnu'])->name('admin.kunjungankuliner.update');
  Route::delete('/kunjungankuliner/{kuliner_id}/{tanggal_kunjungan}', [AdminKunjunganKulinerController::class, 'deletewisnu'])->name('admin.kunjungankuliner.delete');
+ Route::post('/kuliner/storewisnuindex', [AdminKunjunganKulinerController::class, 'storewisnuindex'])->name('admin.kunjungankuliner.storewisnuindex');
 
   //--- data kunjungan Akomodasi  ------
   Route::get('indexkunjunganakomodasi', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('admin.kunjunganakomodasi.index');
@@ -191,6 +192,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('akomodasi/kunjungan/{akomodasi_id}/{tanggal_kunjungan}/edit', [AdminKunjunganAkomodasiController::class, 'editwisnu'])->name('admin.kunjunganakomodasi.edit');
   Route::put('/akomodasi/update/{tanggal_kunjungan}', [AdminKunjunganAkomodasiController::class, 'updatewisnu'])->name('admin.kunjunganakomodasi.update');
   Route::delete('/kunjunganakomodasi/{akomodasi_id}/{tanggal_kunjungan}', [AdminKunjunganAkomodasiController::class, 'deletewisnu'])->name('admin.kunjunganakomodasi.delete');
+  Route::post('/akomodasi/storewisnuindex', [AdminKunjunganAkomodasiController::class, 'storewisnuindex'])->name('admin.kunjunganakomodasi.storewisnuindex');
 
 
   

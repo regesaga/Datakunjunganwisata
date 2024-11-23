@@ -27,7 +27,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-outline-info btn-block"><i class="fa fa-search"></i>Terapkan Filter</button>
+                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
@@ -61,7 +61,8 @@
                 <tbody>
                     @foreach ($kunjungan as $tanggal => $dataTanggal)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}</td>
+                            <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                             <td>
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>

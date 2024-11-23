@@ -3,7 +3,7 @@
 <section class="content-header">
     <div class="container-fluid">
 <div class="card">
-    <div class="card-header">
+    <div style="text-align: center; text-transform: uppercase;" class="card-header">
         Tambah Negara
     </div>
 
@@ -12,8 +12,8 @@
         <form method="POST" action="{{ route("admin.wismannegara.storewismannegara") }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
-                <label class="required" for="name">Nama Negara</label>
-                <input class="form-control {{ $errors->has('wismannegara_name') ? 'is-invalid' : '' }}" type="text" name="wismannegara_name" id="wismannegara_name" value="{{ old('wismannegara_name', '') }}" required>
+                <label style="text-align: center; text-transform: uppercase;" class="required" for="name">Nama Negara</label>
+                <input style="text-center: left; text-transform: uppercase;" class="form-control {{ $errors->has('wismannegara_name') ? 'is-invalid' : '' }}" type="text" name="wismannegara_name" id="wismannegara_name" value="{{ old('wismannegara_name', '') }}" required>
                 @if($errors->has('wismannegara_name'))
                     <div class="invalid-feedback">
                         {{ $errors->first('name') }}
@@ -22,7 +22,7 @@
                
             </div>
             <div class="form-group">
-                <button class="btn btn-outline-danger" type="submit">
+                <button style="text-align: center; text-transform: uppercase;" class="btn btn-outline-danger" type="submit">
                     Simpan
                 </button>
             </div>

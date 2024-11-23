@@ -123,7 +123,8 @@ class AdminKunjunganKulinerController extends Controller
             $decode = $request->input('kuliner_id'); // Ambil kuliner_id dari request, bisa null
             $hash = new Hashids();
             $kuliner_id = $hash->decode($decode);    
-        
+            $kulinerTerpilih = $kuliner_id ? $kuliner->find($kuliner_id) : null;
+
             for ($month = 1; $month <= 12; $month++) {
                 $startDate = \Carbon\Carbon::create($tahun, $month, 1)->startOfMonth();
                 $endDate = \Carbon\Carbon::create($tahun, $month, 1)->endOfMonth();
@@ -158,7 +159,7 @@ class AdminKunjunganKulinerController extends Controller
             $wismannegara = WismanNegara::all();
         
             return view('admin.kunjungankuliner.indexkunjungankulinerpertahun', compact(
-                'kunjungan', 'kuliner', 'kelompok','hash', 'wismannegara', 'tahun', 'kuliner_id'
+                'kunjungan', 'kuliner', 'kelompok','hash', 'wismannegara', 'tahun', 'kuliner_id','kulinerTerpilih'
             ));
         }
         
@@ -727,6 +728,103 @@ public function updatewisnu(Request $request, $tanggal_kunjungan)
                                     ->withInput($request->all());
         }
     }
+
+    // Menyimpan data kunjungan
+public function storewisnuindex(Request $request)
+{
+    $hash = new Hashids();
+
+    // Decode kuliner_id yang dikirim
+    $kuliner_id_decoded = $hash->decode($request->kuliner_id);
+    if (empty($kuliner_id_decoded)) {
+        return redirect()->back()->with('error', 'ID kuliner tidak valid.')->withInput($request->all());
+    }
+    $decodedKulinerId = $kuliner_id_decoded[0];
+
+    // Validasi input
+    $request->validate([
+        'kuliner_id' => 'required',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'nullable|array',
+        'jml_wisman_laki' => 'nullable|array',
+        'jml_wisman_perempuan' => 'nullable|array',
+        'jml_wisman_laki.*' => 'nullable|integer|min:0',
+        'jml_wisman_perempuan.*' => 'nullable|integer|min:0',
+    ]);
+
+    // Mulai transaksi
+    DB::beginTransaction();
+    Log::info('Starting storewisnu method');
+
+    try {
+        // Hapus data sebelumnya berdasarkan kuliner_id dan tanggal kunjungan
+        $deletedWisnu = WisnuKuliner::where('kuliner_id', $decodedKulinerId)
+                                     ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                     ->delete();
+
+        $deletedWisman = WismanKuliner::where('kuliner_id', $decodedKulinerId)
+                                       ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                       ->delete();
+
+        Log::info('Previous WISNU and WISMAN data deleted', [
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+                // Loop untuk data WISNU
+            foreach ($request->jumlah_laki_laki as $kelompok => $jumlah_laki) {
+                $jumlah_perempuan = $request->jumlah_perempuan[$kelompok] ?? 0; // Default ke 0 jika tidak ada
+
+                WisnuKuliner::create([
+                    'kuliner_id' => $decodedKulinerId,
+                    'kelompok_kunjungan_id' => $kelompok,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                    'jumlah_laki_laki' => $jumlah_laki,
+                    'jumlah_perempuan' => $jumlah_perempuan,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Loop untuk data WISMAN
+            foreach ($request->jml_wisman_laki as $negara => $jumlah_wisman_laki) {
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$negara] ?? 0; // Default ke 0 jika tidak ada
+
+                WismanKuliner::create([
+                    'kuliner_id' => $decodedKulinerId,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            // Commit transaksi
+            DB::commit();
+
+
+        // Kembalikan respons JSON
+        return response()->json(['success' => true, 'message' => 'Data kunjungan berhasil disimpan.']);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        // Mencatat detail kesalahan dengan data yang akan disimpan
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([' success' => false, 'message' => 'Gagal menyimpan data kunjungan. Silakan coba lagi. Kesalahan: ' . $e->getMessage()], 500);
+    }
+}
 
 // Fungsi untuk menghapus data kunjungan
 public function deletewisnu($kuliner_id, $tanggal_kunjungan)

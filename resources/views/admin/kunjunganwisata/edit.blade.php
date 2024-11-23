@@ -127,7 +127,7 @@
             @csrf
             @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
             <div class="form-header">
-                <h1>Edit Data Kunjungan</h1>
+                <h1 style="text-align: center; text-transform: uppercase;">Edit Data Kunjungan</h1>
                 <h2>{{ $wisata->namawisata }}</h2>
                 @if (session('warning'))
                 <div class="alert alert-warning">
@@ -148,7 +148,7 @@
             @endif
         
                 <div class="form-date">
-                    <label for="tanggal">Tanggal:</label>
+                    <label for="tanggal">TANGGAL </label>
                     <input type="date" class="form-control" name="tanggal_kunjungan" value="{{ old('tanggal_kunjungan', $tanggal_kunjungan) }}" required>
                 </div>
                 <button type="submit" class="btn-save">Simpan Data</button>

@@ -3,7 +3,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header">
+            <div style="text-align: center; text-transform: uppercase;" class="card-header">
                 Ubah Nama Kelompok
             </div>
 
@@ -12,12 +12,12 @@
                     @method('PUT')
                     @csrf
                     <div class="form-group">
-                        <label class="required" for="name">Nama</label>
-                        <input class="form-control" type="text" name="kelompokkunjungan_name" id="name" value=" {{$kelompokKunjungan->kelompokkunjungan_name }}" required>
+                        <label style="text-align: center; text-transform: uppercase;" class="required" for="name">Nama</label>
+                        <input  style="text-transform: uppercase;" class="form-control" type="text" name="kelompokkunjungan_name" id="name" value=" {{$kelompokKunjungan->kelompokkunjungan_name }}" required>
                         
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-outline-danger" type="submit">
+                        <button style="text-align: center; text-transform: uppercase;" class="btn btn-outline-danger" type="submit">
                             Simpan
                         </button>
                     </div>
