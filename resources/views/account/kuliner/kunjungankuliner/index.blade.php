@@ -96,11 +96,12 @@
                         <tr>
                             <td>
                                 <div style="text-align: center;">
-                                    <button id="btn-save" class="btn btn-success">Simpan</button>
+                                    <button id="btn-save" class="btn btn-outline-success btn-sm">Simpan</button>
                                 </div>
                             </td>
                             <input type="hidden" id="kuliner_id" value="{{ $hash->encode($kuliner->id) }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)

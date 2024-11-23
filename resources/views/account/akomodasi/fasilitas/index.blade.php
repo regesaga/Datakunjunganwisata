@@ -32,7 +32,7 @@
             </a>
             </div>
   </div>
-    <a class="btn btn-success" href="{{ route('account.akomodasi.fasilitas.create') }}">
+    <a class="btn btn-outline-success btn-sm" href="{{ route('account.akomodasi.fasilitas.create') }}">
         Tambah Fasilitas
     </a>
     <div class="card">

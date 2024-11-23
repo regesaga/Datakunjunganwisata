@@ -3,7 +3,7 @@
 <div class="account-layout  border">
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("account.kuliner.kulinerproduk.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("account.kuliner.kulinerproduk.create") }}">
                     {{ trans('Tambah Produk') }} 
                 </a>
             </div>

@@ -42,7 +42,7 @@
     </div>
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{route('account.wisata.guide.create')}}">
+                <a class="btn btn-outline-success btn-sm" href="{{route('account.wisata.guide.create')}}">
                     {{ trans('Tambah PaketWisata') }} 
                 </a>
             </div>

@@ -64,7 +64,7 @@
                                 Akun</a>
                         </div>
                         <div class="mt-2">
-                            <a href="{{ route('redirect') }}" class="btn btn-danger"><i class="fab fa-google"></i> Login
+                            <a href="{{ route('redirect') }}" class="btn btn-outline-danger"><i class="fab fa-google"></i> Login
                                 dengan Google</a>
                         </div>
 

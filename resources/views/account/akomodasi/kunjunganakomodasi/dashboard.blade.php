@@ -187,8 +187,8 @@
                     <!-- card tools -->
                     <div class="card-tools">
                
-                            <button class="btn btn-success" id="export-to-excel">Download Excel</button> <!-- Tombol Export -->
-                            <button class="btn btn-danger" id="export-to-pdf">Download PDF</button> <!-- Tombol Export PDF -->
+                            <button class="btn btn-outline-success btn-sm" id="export-to-excel">Download Excel</button> <!-- Tombol Export -->
+                            <button class="btn btn-outline-danger btn-sm" id="export-to-pdf">Download PDF</button> <!-- Tombol Export PDF -->
             
                     <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                         <i class="fas fa-minus"></i>
@@ -241,7 +241,7 @@
                                         $isZero = false;
                                     }
                                 @endphp
-                                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
+                                <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
                                     <td>{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
 
                                     <td>

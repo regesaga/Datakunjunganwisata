@@ -11,7 +11,7 @@
             <!-- Page Heading -->
             
             <div class="card-body">
-                <a class="btn btn-success" href="{{ route("admin.banerpromo.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.banerpromo.create") }}">
                     <i class="fas fa-plus"></i>     {{ trans('Tambah Baner') }} 
                 </a>
                 <table class=" table table-bordered table-striped table-hover datatable datatable-banerpromo">
@@ -44,7 +44,7 @@
 
                                         <td width="25%">
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                                <a class="btn btn-success" href="{{ route('admin.banerpromo.show', $hash->encodeHex($banerpromo->id)) }}"><i class="fas fa-eye"></i>
+                                                <a class="btn btn-outline-success btn-sm" href="{{ route('admin.banerpromo.show', $hash->encodeHex($banerpromo->id)) }}"><i class="fas fa-eye"></i>
                                                     Detail</a>
                                                 <a class="btn btn-info" href="{{ route('admin.banerpromo.edit', $hash->encodeHex($banerpromo->id)) }}">
                                                     <i class="fas fa-edit"></i> Edit</a>
@@ -52,7 +52,7 @@
                                                 <form action="{{ route('admin.banerpromo.destroy', $hash->encodeHex($banerpromo->id)) }}" method="POST" onsubmit="return confirm('{{ trans('anda yakin akan menghapus?') }}');" >
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <input type="submit" class="btn btn-danger" value="{{ trans('Hapus') }}">
+                                                    <input type="submit" class="btn btn-outline-danger" value="{{ trans('Hapus') }}">
                                                 </form>
                                             </div>
                                         </td>

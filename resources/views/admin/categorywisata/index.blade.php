@@ -8,7 +8,7 @@
         <div class="animated fadeIn">
     
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("admin.categorywisata.create") }}">
+            <a class="btn btn-outline-success btn-sm" href="{{ route("admin.categorywisata.create") }}">
                 Tambah Kategori Wisata
             </a>
       

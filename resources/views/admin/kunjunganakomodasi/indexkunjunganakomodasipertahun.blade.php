@@ -29,7 +29,7 @@
                 </div>
         
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                    <button type="submit" class="btn btn-outline-info btn-block"><i class="fa fa-search"></i>Terapkan Filter</button>
                 </div>
             </div>
         </form>
@@ -38,13 +38,14 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route('admin.kunjunganakomodasi.createwisnu') }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route('admin.kunjunganakomodasi.createwisnu') }}">
                     Tambah Data
                 </a>
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
+                    
                     <tr>
                         <th rowspan="2">Bulan</th>
                         <th rowspan="2">Total</th>

@@ -93,7 +93,7 @@
         @if($company)
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{route('account.guide.guide.create')}}">
+                <a class="btn btn-outline-success btn-sm" href="{{route('account.guide.guide.create')}}">
                     {{ trans('Tambah PaketWisata') }} 
                 </a>
             </div>

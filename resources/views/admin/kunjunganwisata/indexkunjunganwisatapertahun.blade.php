@@ -10,6 +10,7 @@
                 <div class="col-lg-3">
                     <label for="wisata_id" class="form-label">Wisata</label>
                     <select name="wisata_id" class="form-control select2">
+                        <option value="">Semua Tempat Wisata</option>
                         @foreach($wisata as $item)
                             <option value="{{ $hash->encode($item->id) }}" 
                                 {{ request('wisata_id') == $hash->encode($item->id) ? 'selected' : '' }}>
@@ -38,13 +39,24 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route('admin.kunjunganwisata.createwisnu') }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route('admin.kunjunganwisata.createwisnu') }}">
                     Tambah Data
                 </a>
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
+                    <tr>
+                        <th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                            <h2 style="text-align: center; text-transform: uppercase;">
+                               
+                                Data Kunjungan {{ $wisataTerpilih ? $wisataTerpilih->first()->namawisata : 'Semua Tempat Wisata' }} Tahun {{ $tahun }}
+                            </h2>
+                            
+                            
+                            
+                        </th>
+                    </tr>
                     <tr>
                         <th rowspan="2">Bulan</th>
                         <th rowspan="2">Total</th>
@@ -71,12 +83,12 @@
                         <tr>
                             <td>
                                 @if($wisata_id)
-    <a href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
+    <a class="btn btn-outline-primary btn-sm" href="{{ route('admin.kunjunganwisata.indexeditkunjunganwisata', [
         'wisata_id' => $hash->encode($wisata_id), 
         'bulan' => $month,
         'tahun' => $tahun
     ]) }}">
-        {{ DateTime::createFromFormat('!m', $month)->format('F') }}
+        <i class="fas fa-eye"></i> {{ DateTime::createFromFormat('!m', $month)->format('F') }}
     </a>
 @else
                                     {{ DateTime::createFromFormat('!m', $month)->format('F') }}

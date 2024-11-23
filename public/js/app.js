@@ -39772,7 +39772,7 @@ var render = function () {
                   _c(
                     "button",
                     {
-                      staticClass: "btn btn-success pt-1",
+                      staticClass: "btn btn-outline-success btn-sm pt-1",
                       on: { click: _vm.searchByTitle },
                     },
                     [

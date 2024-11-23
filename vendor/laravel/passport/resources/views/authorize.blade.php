@@ -70,7 +70,7 @@
                                 <input type="hidden" name="state" value="{{ $request->state }}">
                                 <input type="hidden" name="client_id" value="{{ $client->id }}">
                                 <input type="hidden" name="auth_token" value="{{ $authToken }}">
-                                <button type="submit" class="btn btn-success btn-approve">Authorize</button>
+                                <button type="submit" class="btn btn-outline-success btn-sm btn-approve">Authorize</button>
                             </form>
 
                             <!-- Cancel Button -->
@@ -81,7 +81,7 @@
                                 <input type="hidden" name="state" value="{{ $request->state }}">
                                 <input type="hidden" name="client_id" value="{{ $client->id }}">
                                 <input type="hidden" name="auth_token" value="{{ $authToken }}">
-                                <button class="btn btn-danger">Cancel</button>
+                                <button class="btn btn-outline-danger">Cancel</button>
                             </form>
                         </div>
                     </div>

@@ -148,7 +148,42 @@
        
     </ul>
     </li>
+    <li class="nav-header">REKAPAN</li>
+    <li class="nav-item">
+      <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-copy"></i>
+        <p>
+          Wisata
+          <i class="fas fa-angle-left right"></i>
+          <span class="badge badge-info right">6</span>
+        </p>
+      </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+          <a href="{{ route('admin.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
+            <i class="nav-icon fas fa-th"></i>
 
+            <p>
+              Index bulanan
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+        
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('admin.kunjunganwisata.indexkunjunganwisatapertahun') }}" class="nav-link ? 'active' : '' ">
+            <i class="nav-icon fas fa-th"></i>
+
+            <p>
+              Index tahunan
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+        
+        </li>
+      
+    </ul>
+    </li>
   
   </ul>
 </nav>

@@ -9,7 +9,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <a class="btn btn-success" href="{{ route("admin.akomodasi.create") }}">
+                        <a class="btn btn-outline-success btn-sm" href="{{ route("admin.akomodasi.create") }}">
                             {{ trans('Tambah Akomodasi') }} 
                         </a>
                     </div>

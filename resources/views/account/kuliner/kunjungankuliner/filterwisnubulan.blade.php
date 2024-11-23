@@ -34,11 +34,11 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("account.kuliner.kunjungankuliner.createwisnu") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("account.kuliner.kunjungankuliner.createwisnu") }}">
                     Tambah Data
                 </a>
                 <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
-                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
             </div>
 
             <table id="example1" class="table table-bordered table-striped">
@@ -78,8 +78,9 @@
                     // Cek apakah total jumlah adalah 0
                     $isZero = $totalWisnu === 0;
                 @endphp
-                <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                             <td>
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>

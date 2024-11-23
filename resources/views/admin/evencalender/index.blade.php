@@ -9,7 +9,7 @@
 <div class="col-lg-12" style="padding-right: 35px;">
         <div class="card" style="margin-right: 100px;">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.evencalender.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.evencalender.create") }}">
                     {{ trans('Tambah Event') }} 
                 </a>
             </div>

@@ -22,7 +22,7 @@
         </div>
        
         <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
-        <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+        <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
 
         <!-- Tabel Data Kunjungan Per Bulan -->
         <div class="card">

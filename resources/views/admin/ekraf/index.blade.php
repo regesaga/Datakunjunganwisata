@@ -10,7 +10,7 @@
 <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.ekraf.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.ekraf.create") }}">
                     {{ trans('Tambah Pelaku Ekraf') }} 
                 </a>
             </div>

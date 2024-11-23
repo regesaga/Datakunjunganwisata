@@ -27,14 +27,14 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                    <button type="submit" class="btn btn-outline-info btn-block"><i class="fa fa-search"></i>Terapkan Filter</button>
                 </div>
             </div>
         </form>
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
                     Tambah Data
                 </a>
             </div>

@@ -27,8 +27,9 @@
               
                 <!-- card tools -->
                 <div class="card-tools">
+                    <button class="btn btn-outline-success" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
                     <button class="btn btn-primary" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                    <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                    <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
                 <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -85,8 +86,9 @@
                                     $isZero = false;
                                 }
                             @endphp
-                            <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                            <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
+                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                                 <td>
                                     @if ($isZero)
                                         <!-- Show "Belum Input" when row is highlighted -->

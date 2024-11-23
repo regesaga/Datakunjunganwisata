@@ -141,7 +141,7 @@
 
                                     
                 <div class="card-footer">
-                    <input type="submit" class="btn btn-success form-control" value="Submit">
+                    <input type="submit" class="btn btn-outline-success btn-sm form-control" value="Submit">
 
                 
                 </div>

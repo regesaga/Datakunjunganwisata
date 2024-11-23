@@ -17,7 +17,7 @@
                             </select>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                            <button type="submit" class="btn btn-outline-info btn-block"><i class="fa fa-search"></i>Terapkan Filter</button>
                         </div>
                     </div>
                 </form>
@@ -75,7 +75,15 @@
                         </div>
                     </div>
                 </div>
+            <div id="charttrend"></div>
+
                 <div id="chart"></div>
+                 <!-- Donut Chart -->
+            <div class="row">
+                <div class="col">
+                    <div id="donut-chart"></div>
+                </div>
+            </div>
                 <div class="row">
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-info">
@@ -143,12 +151,7 @@
                     @endforeach
                 </div>
                 
-                <!-- Donut Chart -->
-                    <div class="row">
-                        <div class="col">
-                            <div id="donut-chart"></div>
-                        </div>
-                    </div>
+                
                     <div class="row">
                         <div class="col">
                             <div class="small-box bg-danger">
@@ -376,7 +379,92 @@
     chart.render();
 </script>
 
+<script>
+    var options = {
+        series: [{
+            name: 'Total Kunjungan',
+            data: @json($totalKunjungan) // Replace with your PHP variable for data
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+                enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        title: {
+            text: 'Trends Kunjungan berdasarkan Bulan',
+            align: 'left'
+        },
+        grid: {
+            row: {
+                colors: ['#f3f3f3', 'transparent'], // Alternating row colors
+                opacity: 0.5
+            }
+        },
+        xaxis: {
+            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
+        }
+    };
 
+    var chart = new ApexCharts(document.querySelector("#charttrend"), options);
+    chart.render();
+</script>
+<script>
+    var options = {
+        series: [
+            {{ $totalKeseluruhan['totalkunjunganWisata'] }},
+            {{ $totalKeseluruhan['totalkunjunganKuliner'] }},
+            {{ $totalKeseluruhan['totalkunjunganAkomodasi'] }}
+        ],
+        chart: {
+            width: 380,
+            type: 'donut',
+        },
+        labels: [
+            "Wisata",
+            "Kuliner",
+            "Akomodasi"
+        ],
+        plotOptions: {
+            pie: {
+                startAngle: -90,
+                endAngle: 270
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        fill: {
+            type: 'gradient',
+        },
+        legend: {
+            formatter: function(val, opts) {
+                return val + " - " + opts.w.globals.series[opts.seriesIndex];
+            }
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
+    chart.render();
+</script>
 
 @endsection
 @endsection

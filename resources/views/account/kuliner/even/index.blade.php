@@ -65,7 +65,7 @@
         </div>
     </div>
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("account.kuliner.even.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("account.kuliner.even.create") }}">
                     {{ trans('Tambah Event') }} 
                 </a>
             </div>

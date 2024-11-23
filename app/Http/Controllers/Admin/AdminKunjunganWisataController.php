@@ -123,7 +123,8 @@ class AdminKunjunganWisataController extends Controller
             $decode = $request->input('wisata_id'); // Ambil wisata_id dari request, bisa null
             $hash = new Hashids();
             $wisata_id = $hash->decode($decode);    
-        
+            $wisataTerpilih = $wisata_id ? $wisata->find($wisata_id) : null;
+
             for ($month = 1; $month <= 12; $month++) {
                 $startDate = \Carbon\Carbon::create($tahun, $month, 1)->startOfMonth();
                 $endDate = \Carbon\Carbon::create($tahun, $month, 1)->endOfMonth();
@@ -158,7 +159,7 @@ class AdminKunjunganWisataController extends Controller
             $wismannegara = WismanNegara::all();
         
             return view('admin.kunjunganwisata.indexkunjunganwisatapertahun', compact(
-                'kunjungan', 'wisata', 'kelompok','hash', 'wismannegara', 'tahun', 'wisata_id'
+                'kunjungan', 'wisata', 'kelompok','hash', 'wismannegara', 'tahun', 'wisata_id','wisataTerpilih'
             ));
         }
         

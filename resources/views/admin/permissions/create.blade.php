@@ -25,7 +25,7 @@
                
             </div>
             <div class="form-group">
-                <button class="btn btn-danger" type="submit">
+                <button class="btn btn-outline-danger" type="submit">
                     save
                 </button>
             </div>

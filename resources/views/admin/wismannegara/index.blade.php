@@ -8,7 +8,7 @@
           
             <div class="card">
                         <div class="card-header">
-                            <a class="btn btn-success" href="{{ route("admin.wismannegara.create") }}">
+                            <a class="btn btn-outline-success btn-sm" href="{{ route("admin.wismannegara.create") }}">
                                 Tambah Negara
                             </a>
                         </div>

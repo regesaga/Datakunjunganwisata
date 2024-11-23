@@ -8,7 +8,7 @@
         <div class="animated fadeIn">
     <div class="col-lg-12">
             {{-- <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.reserv.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.reserv.create") }}">
                     {{ trans('Tambah Wisata') }} 
                 </a>
             </div> --}}

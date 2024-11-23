@@ -56,11 +56,11 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
+                <a class="btn btn-outline-primary btn-sm" href="{{ route("admin.kunjunganwisata.createwisnu") }}">
                     Tambah Data
                 </a>
-                <button class="btn btn-primary" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                <button class="btn btn-outline-success" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
+                <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
 
             </div>
 
@@ -112,14 +112,15 @@
                                         $isZero = false;
                                     }
                                 @endphp
-                        <tr class="{{ $isZero ? 'bg-warning' : '' }}">
+                        <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
                             <td>
                                 <div style="text-align: center;">
-                                    <button id="btn-save" class="btn btn-success">Simpan</button>
+                                    <button id="btn-save" class="btn btn-outline-dark btn-sm">Simpan</button>
                                 </div>
                             </td>
                             <input type="hidden" id="wisata_id" value="{{ $hash->encode($wisata->first()->id) }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                            
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)

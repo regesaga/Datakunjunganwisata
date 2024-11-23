@@ -33,7 +33,7 @@
                                             <form action="{{ route('account.ekraf.tag.destroy', $hash->encodeHex($tag->id)) }}" method="POST" onsubmit="return confirm('{{ trans('anda yakin akan menghapus?') }}');" >
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="submit" class="btn btn-danger" value="{{ trans('Hapus') }}">
+                                                <input type="submit" class="btn btn-outline-danger" value="{{ trans('Hapus') }}">
                                             </form>
                                         </div>
                                     </td>

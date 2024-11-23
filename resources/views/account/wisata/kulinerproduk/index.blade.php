@@ -30,7 +30,7 @@
           </div>
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("account.wisata.kulinerproduk.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("account.wisata.kulinerproduk.create") }}">
                     {{ trans('Tambah Produk') }} 
                 </a>
             </div>

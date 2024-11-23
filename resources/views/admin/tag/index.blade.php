@@ -9,7 +9,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.tag.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.tag.create") }}">
                     {{ trans('Tambah Tag') }} 
                 </a>
             </div>
@@ -46,7 +46,7 @@
                                                             <form action="{{ route('admin.tag.destroy', $hash->encodeHex($tag->id)) }}" method="POST" onsubmit="return confirm('{{ trans('anda yakin akan menghapus?') }}');" >
                                                                 <input type="hidden" name="_method" value="DELETE">
                                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                                <input type="submit" class="btn btn-danger" value="{{ trans('Hapus') }}">
+                                                                <input type="submit" class="btn btn-outline-danger" value="{{ trans('Hapus') }}">
                                                             </form>
                                                         </div>
                                                     </td>

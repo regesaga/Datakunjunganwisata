@@ -39,7 +39,7 @@
             <!-- Tabel Data Kunjungan -->
             <div class="card-body">
                 <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
-                <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -54,7 +54,8 @@
                     <tbody>
                         @forelse($kunjungan as $tanggal => $data)
                             <tr>
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                                 <td>{{ $data['jumlah_laki_laki'] }}</td>
                                 <td>{{ $data['jumlah_perempuan'] }}</td>
                                 <td>{{ $data['jml_wisman_laki'] }}</td>

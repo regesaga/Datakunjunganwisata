@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="animated fadeIn">
         <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route("admin.roles.create") }}">
+            <a class="btn btn-outline-success btn-sm" href="{{ route("admin.roles.create") }}">
                 add role
             </a>
        

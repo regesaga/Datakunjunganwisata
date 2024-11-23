@@ -16,7 +16,8 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                    
+                    <button type="submit" class="btn btn-outline-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
@@ -27,8 +28,8 @@
               
                 <!-- card tools -->
                 <div class="card-tools">
-                    <button class="btn btn-primary" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                    <button class="btn btn-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
+                    <button class="btn btn-outline-success" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
+                    <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
                 <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-minus"></i>
                 </button>
@@ -85,24 +86,24 @@
                                     $isZero = false;
                                 }
                             @endphp
-                            <tr class="{{ $isZero ? 'bg-warning' : '' }}">
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('D MMMM YYYY') }}</td>
+                            <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
+                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+
                                 <td>
                                     @if ($isZero)
                                         <!-- Show "Belum Input" when row is highlighted -->
-                                        <span class="text-muted">Belum Input</span>
-                                        <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.createbytanggal', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                            Tambah Data
+                                        <a class="btn btn-outline-success btn-sm" href="{{ route('account.wisata.kunjunganwisata.createbytanggal', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                            <i class="fa fa-plus"></i>
                                         </a>
                                     @else
                                         <!-- Show the buttons if the row is not highlighted -->
-                                        <a class="btn btn-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                            <i class="fas fa-pencil-alt"></i> Ubah
+                                        <a class="btn btn-outline-info btn-sm" href="{{ route('account.wisata.kunjunganwisata.edit', ['wisata_id' => $hash->encode($wisata->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                            <i class="fas fa-pencil-alt"></i> 
                                         </a>
                                         <a href="{{ route('account.wisata.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                           class="btn btn-danger btn-sm"
+                                           class="btn btn-outline-danger btn-sm"
                                            onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                            <i class="fas fa-trash"></i> Hapus
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                         <form id="delete-form" action="{{ route('account.wisata.kunjunganwisata.delete', ['wisata_id' => $hash->encode($wisata->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
                                             @csrf

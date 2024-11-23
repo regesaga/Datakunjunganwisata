@@ -56,7 +56,7 @@
                                             <span class="badge badge-danger">Lakukan Pembayaran terlebih dahulu</span>
                                             <form action="/wisata/tikettunai/{{ $pesantiket->kodetiket }}" method="post">
                                                 @csrf
-                                                <button type="submit" class="btn btn-success btn-sm">Checkin dengan Bayar Tunai</button>
+                                                <button type="submit" class="btn btn-outline-success btn-sm btn-sm">Checkin dengan Bayar Tunai</button>
                                             </form>
                                         @else
                                         <form action="/wisata/tiket/{{ $pesantiket->kodetiket }}" method="post">

@@ -8,7 +8,7 @@
             
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-success" href="{{ route("admin.kelompokkunjungan.create") }}">
+                <a class="btn btn-outline-success btn-sm" href="{{ route("admin.kelompokkunjungan.create") }}">
                     Tambah Nama Kelompok 
                 </a>
             </div>
