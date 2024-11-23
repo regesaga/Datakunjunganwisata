@@ -149,41 +149,36 @@
                             <div id="donut-chart"></div>
                         </div>
                     </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="small-box bg-danger">
-                            <div class="inner">
-                                <h3>{{ $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
-                                <p>Jumlah Pengunjung Mancanegara</p>
-                            </div>
-                            <div class="icon">
+                    <div class="row">
+                        <div class="col">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3> {{ 
+                                        $totalKeseluruhan['total_wisman_laki'] + 
+                                        $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
+                        
+                                    <p>Jumlah Pengunjung Mancanegara</p>
+                                </div>
+                                <div class="icon">
                                 <i class="ion ion-person-add"></i>
+                                </div>
+
+                                <table id="example1" class="table table-striped">
+                                    @foreach ($negaraData as $data)
+                                    <tr>
+                                        <td> {{$data['name'] }}</td>
+                                        <td >{{ ($data['jml_wisman_laki'] ?? 0) + ($data['jml_wisman_perempuan'] ?? 0) }}</td>
+                                    </tr>
+                                @endforeach
+                        
+                                </table>
+                                
                             </div>
-                            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                </div>
+                    <div id="chartbar"></div>
             </div>
-            <div class="card-footer bg-transparent">
-                <div class="row">
-                    @foreach ($kelompok as $namaKelompok)
-    <div class="col-4 text-center">
-        <div id="sparkline-1">
-            {{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                if (isset($dataBulan->kelompok) && $dataBulan->kelompok->has($namaKelompok->id)) {
-                    return $dataBulan->kelompok->get($namaKelompok->id)->sum(function($item) {
-                        return $item->jumlah_laki_laki + $item->jumlah_perempuan;
-                    });
-                }
-                return 0;
-            }) }}
-        </div>
-        <div class="text-white">{{ $namaKelompok->kelompokkunjungan_name }}</div>
-    </div>
-@endforeach
-
-                </div>
-            </div>
+           
         </div>
 
            </div>
@@ -191,7 +186,87 @@
 @section('scripts')
 <!-- DataTables  & Plugins -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var options = {
+        series: [{
+            data: [
+                @foreach($negaraData as $data)
+                    {{ $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }},
+                @endforeach
+            ]
+        }],
+        chart: {
+            type: 'bar',
+            height: 150
+        },
+        plotOptions: {
+            bar: {
+                barHeight: '100%',
+                distributed: true,
+                horizontal: true,
+                dataLabels: {
+                    position: 'bottom'
+                }
+            }
+        },
+        colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
+            '#f48024', '#69d2e7'
+        ],
+        dataLabels: {
+            enabled: true,
+            textAnchor: 'start',
+            style: {
+                colors: ['#fff']
+            },
+            formatter: function (val, opt) {
+                return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val;
+            },
+            offsetX: 0,
+            dropShadow: {
+                enabled: true
+            }
+        },
+        stroke: {
+            width: 1,
+            colors: ['#fff']
+        },
+        xaxis: {
+            categories: [
+                @foreach($negaraData as $data)
+                    '{{ $data['name'] }}',
+                @endforeach
+            ],
+        },
+        yaxis: {
+            labels: {
+                show: false
+            }
+        },
+        title: {
+            align: 'center',
+            floating: true
+        },
+        subtitle: {
+            align: 'center',
+        },
+        tooltip: {
+            theme: 'dark',
+            x: {
+                show: false
+            },
+            y: {
+                title: {
+                    formatter: function () {
+                        return ''
+                    }
+                }
+            }
+        }
+    };
 
+    var chart = new ApexCharts(document.querySelector("#chartbar"), options);
+    chart.render();
+</script>
 <script>
     var options = {
         series: [{

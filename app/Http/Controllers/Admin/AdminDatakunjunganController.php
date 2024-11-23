@@ -179,6 +179,36 @@ class AdminDatakunjunganController extends Controller
                     }
 
 
+                     $negaraData = [];
+
+                     foreach ($wismanKunjungan as $NegaraId => $dataNegara) {
+                         $jmlwismanLaki = 0;
+                         $jmlwismanPerempuan = 0;
+                         
+                         // Menghitung total jumlah laki-laki dan perempuan untuk masing-masing kelompok
+                         foreach ($dataNegara as $data) {
+                             $jmlwismanLaki += $data->jml_wisman_laki;
+                             $jmlwismanPerempuan += $data->jml_wisman_perempuan;
+                         }
+ 
+                         // Menyimpan nama kelompok dari database menggunakan NegaraId
+                         $negaraName = DB::table('wismannegara')
+                             ->where('id', $NegaraId)
+                             ->value('wismannegara_name'); // Ambil nama kelompok berdasarkan ID
+ 
+                         // Menyimpan hasil perhitungan
+                         $negaraData[] = [
+                             'wismannegara_id' => $NegaraId,
+                             'name' => $negaraName, // Menggunakan nama yang didapatkan dari query
+                             'jml_wisman_laki' => $jmlwismanLaki,
+                             'jml_wisman_perempuan' => $jmlwismanPerempuan
+                         ];
+                     }
+ 
+
+
+
+
                         foreach ($kunjungan as $month => $dataBulan) {
                             $bulan[] = \Carbon\Carbon::createFromFormat('!m', $month)->format('F');  // Nama bulan
                             $totalKunjungan[] = $dataBulan['total_laki_laki'] + $dataBulan['total_perempuan'] + 
@@ -188,35 +218,11 @@ class AdminDatakunjunganController extends Controller
                             $totalWisataAll[] = $dataBulan['totalkunjunganWisata'];  // Total  LakiLaki
                             $totalKulinerAll[] = $dataBulan['totalkunjunganKuliner'];  // Total  LakiLaki
                             $totalAkomodasiAll[] = $dataBulan['totalkunjunganAkomodasi'];  // Total  LakiLaki
-                    
-                        }
-
-
-
-                        // Persiapkan data untuk grafik bar
-                    $negaraData = [];
-                    foreach ($wismannegara as $negara) {
-                        $negaraData[] = [
-                            'name' => $negara->wismannegara_name,
-                            'value' => collect($kunjungan)->sum(function($dataBulan) use ($negara) {
-                                // Correctly access 'wisman_by_negara' as an object
-                                $wismanNegaraData = isset($dataBulan->wisman_by_negara) ? $dataBulan->wisman_by_negara : collect();
-
-                                // Sum 'jml_wisman_laki' and 'jml_wisman_perempuan' values
-                                return $wismanNegaraData->get($negara->id, collect())->sum(function($item) {
-                                    return ($item->jml_wisman_laki ?? 0) + ($item->jml_wisman_perempuan ?? 0);
-                                });
-                            })
-                        ];
+                        
                     }
 
-
-
-
-
-
-            return view('admin.datakunjungan.index', compact(
-                'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll', 'negaraData'
+            return view('admin.datakunjungan.index', compact('negaraData',
+                'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll'
             ));
         }
 

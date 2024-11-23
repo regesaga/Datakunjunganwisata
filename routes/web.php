@@ -157,7 +157,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('indexkunjunganwisata', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
   Route::get('/kunjungan-wisata/{wisata_id}', [AdminKunjunganWisataController::class, 'indexeditkunjunganwisata'])->name('admin.kunjunganwisata.indexeditkunjunganwisata');
   Route::get('/wisata/indexkunjunganwisatapertahun', [AdminKunjunganWisataController::class, 'indexkunjunganwisatapertahun'])->name('admin.kunjunganwisata.indexkunjunganwisatapertahun');
-  Route::get('wisata/dashboard', [AdminKunjunganWisataController::class, 'dashboard'])->name('admin.kunjunganwisata.dashboard');
   Route::get('wisata/wisnuperbulan', [AdminKunjunganWisataController::class, 'filterwisnubulan'])->name('admin.kunjunganwisata.filterwisnubulan');
   Route::get('wisata/wismanperbulan', [AdminKunjunganWisataController::class, 'filterwismanbulan'])->name('admin.kunjunganwisata.filterwismanbulan');
   Route::get('/wisata/kunjungan', [AdminKunjunganWisataController::class, 'indexkunjunganwisata'])->name('admin.kunjunganwisata.index');
@@ -171,7 +170,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
  Route::get('indexkunjungankuliner', [AdminKunjunganKulinerController::class, 'indexkunjungankuliner'])->name('admin.kunjungankuliner.index');
  Route::get('/kunjungan-kuliner/{kuliner_id}', [AdminKunjunganKulinerController::class, 'indexeditkunjungankuliner'])->name('admin.kunjungankuliner.indexeditkunjungankuliner');
  Route::get('/kuliner/indexkunjungankulinerpertahun', [AdminKunjunganKulinerController::class, 'indexkunjungankulinerpertahun'])->name('admin.kunjungankuliner.indexkunjungankulinerpertahun');
- Route::get('kuliner/dashboard', [AdminKunjunganKulinerController::class, 'dashboard'])->name('admin.kunjungankuliner.dashboard');
  Route::get('kuliner/wisnuperbulan', [AdminKunjunganKulinerController::class, 'filterwisnubulan'])->name('admin.kunjungankuliner.filterwisnubulan');
  Route::get('kuliner/wismanperbulan', [AdminKunjunganKulinerController::class, 'filterwismanbulan'])->name('admin.kunjungankuliner.filterwismanbulan');
  Route::get('/kuliner/kunjungan', [AdminKunjunganKulinerController::class, 'indexkunjungankuliner'])->name('admin.kunjungankuliner.index');
@@ -185,7 +183,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('indexkunjunganakomodasi', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('admin.kunjunganakomodasi.index');
  Route::get('/kunjungan-akomodasi/{akomodasi_id}', [AdminKunjunganAkomodasiController::class, 'indexeditkunjunganakomodasi'])->name('admin.kunjunganakomodasi.indexeditkunjunganakomodasi');
   Route::get('/akomodasi/indexkunjunganakomodasipertahun', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasipertahun'])->name('admin.kunjunganakomodasi.indexkunjunganakomodasipertahun');
-  Route::get('akomodasi/dashboard', [AdminKunjunganAkomodasiController::class, 'dashboard'])->name('admin.kunjunganakomodasi.dashboard');
   Route::get('akomodasi/wisnuperbulan', [AdminKunjunganAkomodasiController::class, 'filterwisnubulan'])->name('admin.kunjunganakomodasi.filterwisnubulan');
   Route::get('akomodasi/wismanperbulan', [AdminKunjunganAkomodasiController::class, 'filterwismanbulan'])->name('admin.kunjunganakomodasi.filterwismanbulan');
   Route::get('/akomodasi/kunjungan', [AdminKunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('admin.kunjunganakomodasi.index');

@@ -249,7 +249,7 @@
 
             <li class="nav-item">
                             
-                <a href="{{route('admin.kunjunganwisata.dashboard')}}" class="nav-link ? 'active' : '' ">
+                <a href="{{route('admin.datakunjungan.index')}}" class="nav-link ? 'active' : '' ">
                     <i class="far fa-th nav-icon"></i>
 
                    Data Kunjungan
