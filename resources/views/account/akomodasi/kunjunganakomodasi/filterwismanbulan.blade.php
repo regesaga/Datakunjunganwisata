@@ -7,15 +7,15 @@
         <form method="GET" action="{{ route('account.akomodasi.kunjunganakomodasi.filterwismanbulan') }}">
             <div class="row">
                 <div class="col-lg-4">
-                    <label for="tahun" class="form-label">Tahun</label>
+                    <label  style="text-align: center; text-transform: uppercase;" for="tahun" class="form-label">Tahun</label>
                     <select id="tahun" name="tahun"  class="form-control select2" style="width: 100%;">
                         @for($y = date('Y'); $y >= 2020; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            <option  style="text-align: center; text-transform: uppercase;" value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
                 </div>
                 <div class="col-lg-4">
-                    <label for="bulan" class="form-label">Bulan</label>
+                    <label  style="text-align: center; text-transform: uppercase;" for="bulan" class="form-label">Bulan</label>
                     <select id="bulan" name="bulan" class="form-control select2">
                         @foreach(range(1, 12) as $m)
                             <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
@@ -25,17 +25,17 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                    <button  style="text-align: center; text-transform: uppercase;" type="submit" class="btn btn-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-outline-success btn-sm" href="{{ route("account.akomodasi.kunjunganakomodasi.createwisnu") }}">
+                <a   style="text-align: center; text-transform: uppercase;" class="btn btn-outline-success btn-sm" href="{{ route("account.akomodasi.kunjunganakomodasi.createwisnu") }}">
                     Tambah Data
                 </a>
-                <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
+                <button class="btn btn-outline-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
                 <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
             </div>
 
@@ -47,18 +47,18 @@
                         </h2>
                     </th>
                     <tr>
-                        <th rowspan="2">Tanggal</th>
-                        <th rowspan="2">Total</th>
+                        <th  style="text-align: center; text-transform: uppercase;" rowspan="2">Tanggal</th>
+                        <th  style="text-align: center; text-transform: uppercase;" rowspan="2">Total</th>
                       
                         @foreach ($wismannegara as $negara)
-                            <th colspan="2">{{ $negara->wismannegara_name }}</th>
+                            <th  style="text-align: center; text-transform: uppercase;" colspan="2">{{ $negara->wismannegara_name }}</th>
                         @endforeach
                     </tr>
                     <tr>
                       
                         @foreach ($wismannegara as $negara)
-                            <th>Laki - Laki</th>
-                            <th>Perempuan</th>
+                            <th  style="text-align: center; text-transform: uppercase;">Laki - Laki</th>
+                            <th  style="text-align: center; text-transform: uppercase;">Perempuan</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -77,15 +77,15 @@
                             $isZero = $totalWisman === 0;
                         @endphp
                         <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                            <td  style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
 
-                            <td>
+                            <td  style="text-align: center; text-transform: uppercase;">
                                 {{ $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
                             </td>
                 
                             @foreach ($wismannegara as $negara)
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                <td>{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
                             @endforeach
                         </tr>
                     @endforeach
@@ -94,18 +94,18 @@
 
                 <tfoot>
                     <tr>
-                        <th>Total Keseluruhan</th>
-                        <th>
+                        <th  style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
+                        <th  style="text-align: center; text-transform: uppercase;">
                             {{ $kunjungan->sum(function($dataTanggal) {
                                 return $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
                             }) }}
                         </th>
 
                         @foreach ($wismannegara as $negara)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
                                 return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
                             }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ $kunjungan->sum(function($dataTanggal) use ($negara) {
                                 return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
                             }) }}</th>
                         @endforeach
@@ -153,7 +153,7 @@
         var element = document.getElementById('example1');
         var opt = {
             margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
-            filename:     'Kunjungan_Akomodasi_' + new Date().toISOString() + '.pdf',
+            filename:     'Kunjungan_akomodasi_' + new Date().toISOString() + '.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
             jsPDF:        { 
@@ -173,8 +173,8 @@
     // Fungsi untuk mengekspor tabel ke file Excel
     document.getElementById('export-to-excel').addEventListener('click', function () {
         var table = document.getElementById('example1'); // Ambil tabel berdasarkan ID
-        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Akomodasi' }); // Konversi tabel menjadi buku Excel
-        XLSX.writeFile(sheet, 'Kunjungan_Akomodasi_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+        var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan akomodasi' }); // Konversi tabel menjadi buku Excel
+        XLSX.writeFile(sheet, 'Kunjungan_akomodasi_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
     });
 </script>
 @endsection

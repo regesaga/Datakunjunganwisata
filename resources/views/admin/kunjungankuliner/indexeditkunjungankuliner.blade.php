@@ -65,7 +65,7 @@
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th colspan="{{ 2 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
+                        <th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
                         <h2 style="text-align: center; text-transform: uppercase;">
                             INDEX Kunjungan {{$kuliner->first()->namakuliner}}
                             Tahun {{ $tahun }} Bulan {{ DateTime::createFromFormat('!m', $bulan)->format('F') }}
@@ -75,6 +75,7 @@
                     <tr>
                         <th style="text-align: center; text-transform: uppercase;" rowspan="3">Aksi</th>
                         <th style="text-align: center; text-transform: uppercase;" rowspan="3">Tanggal</th>
+                        <th  style="text-align: center; text-transform: uppercase;"rowspan="3">Total</th>
                         <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center; text-transform: uppercase;">Wisatawan Nusantara</th>
                         <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center; text-transform: uppercase;">Wisatawan Mancanegara</th>
                     </tr>
@@ -120,15 +121,17 @@
                             </td>
                             <input type="hidden" id="kuliner_id" value="{{ $hash->encode($kuliner->first()->id) }}">
                             <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
-                            
+                            <td  style="text-align: center; text-transform: uppercase;">
+                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                            </td>
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
                             @foreach ($kelompok as $namaKelompok)
-                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
-                            <td style="text-align: center; text-transform: uppercase;" class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}" class="form-control edit-field" style="text-align: center; text-transform: uppercase;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                            <td class="editable" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
+                                <input type="text" min="0" step="1" value="{{ $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}" class="form-control edit-field" style="width: 60px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
                             </td>
                             @endforeach
                             
@@ -143,6 +146,33 @@
                         </tr>
                     @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th  style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
+                        <th  style="text-align: center; text-transform: uppercase;"></th>
+                        <th  style="text-align: center; text-transform: uppercase;">
+                            {{ collect($kunjungan)->sum(function($dataTanggal) {
+                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
+                            }) }}
+                        </th>
+                        @foreach ($kelompok as $namaKelompok)
+                            <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {
+                                return $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                            }) }}</th>
+                            <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {
+                                return $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                            }) }}</th>
+                        @endforeach
+                        @foreach ($wismannegara as $negara)
+                        <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($negara) {
+                            return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
+                        }) }}</th>
+                        <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($negara) {
+                            return $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
+                        }) }}</th>
+                    @endforeach
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

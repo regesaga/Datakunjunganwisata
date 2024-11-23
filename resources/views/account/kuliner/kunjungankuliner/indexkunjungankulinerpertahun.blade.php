@@ -8,7 +8,7 @@
         <form method="GET" action="{{ route('account.kuliner.kunjungankuliner.indexkunjungankulinerpertahun') }}">
             <div class="row">
                 <div class="col-lg-2">
-                    <label for="tahun" class="form-label">Tahun</label>
+                    <label  style="text-align: center; text-transform: uppercase;"for="tahun" class="form-label">Tahun</label>
                     <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
                         @for($y = date('Y'); $y >= 2020; $y--)
                             <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
@@ -16,7 +16,8 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-info">Terapkan Filter</button>
+                    
+                    <button type="submit" class="btn btn-outline-info">Terapkan Filter</button>
                 </div>
             </div>
         </form>
@@ -28,7 +29,6 @@
                 <!-- card tools -->
                 <div class="card-tools">
                     <button class="btn btn-outline-success" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
-                    <button class="btn btn-primary" id="export-to-excel">Export to Excel</button> <!-- Tombol Export -->
                     <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
                 <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-minus"></i>
@@ -46,28 +46,28 @@
                             </th>
                         </tr>
                         <tr>
-                            <th rowspan="3">Tanggal</th>
-                            <th rowspan="3">Aksi</th>
-                            <th rowspan="3">Total</th>
-                            <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Kuliner Nusantara</th>
-                            <th colspan="{{ count($wismannegara) * 2 }}" style="text-align: center;">Kuliner Mancanegara</th>
+                            <th  style="text-align: center; text-transform: uppercase;"rowspan="3">Tanggal</th>
+                            <th  style="text-align: center; text-transform: uppercase;"rowspan="3">Aksi</th>
+                            <th  style="text-align: center; text-transform: uppercase;"rowspan="3">Total</th>
+                            <th  style="text-align: center; text-transform: uppercase;"colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Wisatawan Nusantara</th>
+                            <th  style="text-align: center; text-transform: uppercase;"colspan="{{ count($wismannegara) * 2 }}" style="text-align: center;">Wisatawan Mancanegara</th>
                         </tr>
                         <tr>
                             @foreach ($kelompok as $namaKelompok)
-                                <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                                <th  style="text-align: center; text-transform: uppercase;"colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                             @endforeach
                             @foreach ($wismannegara as $negara)
-                                <th colspan="2">{{ $negara->wismannegara_name }}</th>
+                                <th  style="text-align: center; text-transform: uppercase;"colspan="2">{{ $negara->wismannegara_name }}</th>
                             @endforeach
                         </tr>
                         <tr>
                             @foreach ($kelompok as $namaKelompok)
-                                <th>L</th>
-                                <th>P</th>
+                                <th  style="text-align: center; text-transform: uppercase;">L</th>
+                                <th  style="text-align: center; text-transform: uppercase;">P</th>
                             @endforeach
                             @foreach ($wismannegara as $negara)
-                                <th>L</th>
-                                <th>P</th>
+                                <th  style="text-align: center; text-transform: uppercase;">L</th>
+                                <th  style="text-align: center; text-transform: uppercase;">P</th>
                             @endforeach
                         </tr>
                     </thead>
@@ -87,24 +87,23 @@
                                 }
                             @endphp
                             <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
-                                <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
 
-                                <td>
+                                <td  style="text-align: center; text-transform: uppercase;">
                                     @if ($isZero)
                                         <!-- Show "Belum Input" when row is highlighted -->
-                                        <span class="text-muted">Belum Input</span>
-                                        <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.createbytanggal', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                            Tambah Data
+                                        <a  style="text-align: center; text-transform: uppercase;"class="btn btn-outline-success btn-sm" href="{{ route('account.kuliner.kunjungankuliner.createbytanggal', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                            <i class="fa fa-plus"></i>
                                         </a>
                                     @else
                                         <!-- Show the buttons if the row is not highlighted -->
-                                        <a class="btn btn-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.edit', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                            <i class="fas fa-pencil-alt"></i> Ubah
+                                        <a  style="text-align: center; text-transform: uppercase;"class="btn btn-outline-info btn-sm" href="{{ route('account.kuliner.kunjungankuliner.edit', ['kuliner_id' => $hash->encode($kuliner->id),'tanggal_kunjungan' => $tanggal]) }}">
+                                            <i class="fas fa-pencil-alt"></i> 
                                         </a>
-                                        <a href="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}"
-                                           class="btn btn-danger btn-sm"
+                                        <a  style="text-align: center; text-transform: uppercase;" href="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}"
+                                           class="btn btn-outline-danger btn-sm"
                                            onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                            <i class="fas fa-trash"></i> Hapus
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                         <form id="delete-form" action="{{ route('account.kuliner.kunjungankuliner.delete', ['kuliner_id' => $hash->encode($kuliner->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
                                             @csrf
@@ -112,41 +111,42 @@
                                         </form>
                                     @endif
                                 </td>
-                                <td>
+                                <td  style="text-align: center; text-transform: uppercase;">
                                     {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                                 </td>
                                 @foreach ($kelompok as $namaKelompok)
-                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                    <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
                                 @endforeach
                                 @foreach ($wismannegara as $negara)
-                                <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
-                                <td>{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}</td>
                             @endforeach
                         @endforeach
                     </tbody>
                     
                     <tfoot>
                         <tr>
-                            <th>Total Keseluruhan</th>
-                            <th>
+                            <th style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
+                            <th></th>
+                            <th style="text-align: center; text-transform: uppercase;">
                                 {{ collect($kunjungan)->sum(function($dataBulan) {
                                     return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
                                 }) }}
                             </th>
                             @foreach ($kelompok as $namaKelompok)
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
                                     return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
                                 }) }}</th>
-                                <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+                                <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
                                     return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
                                 }) }}</th>
                             @endforeach
                             @foreach ($wismannegara as $negara)
-                            <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
                                 return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
                             }) }}</th>
-                            <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
                                 return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
                             }) }}</th>
                         @endforeach

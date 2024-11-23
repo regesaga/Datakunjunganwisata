@@ -75,6 +75,7 @@ class KunjunganWisataController extends Controller
             $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
             $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
             $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
+            $wisnuByKelompok = $dataWisnu->groupBy('kelompok_kunjungan_id');
     
             // Ambil data kunjungan dari WismanWisata
             $dataWisman = $wismanKunjungan->get($tanggalFormat, collect());
@@ -85,7 +86,7 @@ class KunjunganWisataController extends Controller
             $kunjungan[$tanggalFormat] = [
                 'jumlah_laki_laki' => $jumlahLakiLaki ?: 0,
                 'jumlah_perempuan' => $jumlahPerempuan ?: 0,
-                'kelompok' => $dataWisnu,
+                'kelompok' => $wisnuByKelompok,
                 'jml_wisman_laki' => $jmlWismanLaki ?: 0,
                 'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
                 'wisman_by_negara' => $wismanByNegara,

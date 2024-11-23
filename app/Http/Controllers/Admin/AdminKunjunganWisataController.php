@@ -216,24 +216,25 @@ class AdminKunjunganWisataController extends Controller
         
             // Olah data kunjungan
             $kunjungan = [];
-            foreach ($tanggalRentang as $tanggal ) {
-                
+            foreach ($tanggalRentang as $tanggal) {
                 $tanggalFormat = $tanggal->format('Y-m-d');
+        
                 // Ambil data kunjungan dari WisnuWisata
                 $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
                 $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
                 $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
-
-                    // Ambil data kunjungan dari WismanWisata
+                $wisnuByKelompok = $dataWisnu->groupBy('kelompok_kunjungan_id');
+        
+                // Ambil data kunjungan dari WismanWisata
                 $dataWisman = $wismanKunjungan->get($tanggalFormat, collect());
                 $jmlWismanLaki = $dataWisman->sum('jml_wisman_laki');
                 $jmlWismanPerempuan = $dataWisman->sum('jml_wisman_perempuan');
                 $wismanByNegara = $dataWisman->groupBy('wismannegara_id');
-
+        
                 $kunjungan[$tanggalFormat] = [
-                    'jumlah_laki_laki' => $jumlahLakiLaki,
-                    'jumlah_perempuan' => $jumlahPerempuan,
-                    'kelompok' => $dataWisnu,
+                    'jumlah_laki_laki' => $jumlahLakiLaki ?: 0,
+                    'jumlah_perempuan' => $jumlahPerempuan ?: 0,
+                    'kelompok' => $wisnuByKelompok,
                     'jml_wisman_laki' => $jmlWismanLaki ?: 0,
                     'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
                     'wisman_by_negara' => $wismanByNegara,

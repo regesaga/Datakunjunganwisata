@@ -8,18 +8,18 @@
         <form method="GET" action="{{ route('account.wisata.kunjunganwisata.filterwisnubulan') }}">
             <div class="row">
                 <div class="col-lg-4">
-                    <label for="tahun" class="form-label">Tahun</label>
+                    <label  style="text-align: center; text-transform: uppercase;" for="tahun" class="form-label">Tahun</label>
                     <select id="tahun" name="tahun"  class="form-control select2" style="width: 100%;">
                         @for($y = date('Y'); $y >= 2020; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            <option  style="text-align: center; text-transform: uppercase;" value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
                 </div>
                 <div class="col-lg-4">
-                    <label for="bulan" class="form-label">Bulan</label>
+                    <label  style="text-align: center; text-transform: uppercase;" for="bulan" class="form-label">Bulan</label>
                     <select id="bulan" name="bulan" class="form-control select2">
                         @foreach(range(1, 12) as $m)
-                            <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
+                            <option  style="text-align: center; text-transform: uppercase;" value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
                                 {{ $bulanIndo[$m] }}
                             </option>
                         @endforeach
@@ -34,10 +34,10 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-outline-success btn-sm" href="{{ route("account.wisata.kunjunganwisata.createwisnu") }}">
+                <a  style="text-align: center; text-transform: uppercase;" class="btn btn-outline-success btn-sm" href="{{ route("account.wisata.kunjunganwisata.createwisnu") }}">
                     Tambah Data
                 </a>
-                <button class="btn btn-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
+                <button class="btn btn-outline-primary" id="export-to-excel">Cetak Excel </button> <!-- Tombol Export -->
                 <button class="btn btn-outline-danger" id="export-to-pdf">Export to PDF</button> <!-- Tombol Export PDF -->
             </div>
 
@@ -49,17 +49,17 @@
                         </h2>
                     </th>
                     <tr>
-                        <th rowspan="2">Tanggal</th>
-                        <th rowspan="2">Total</th>
+                        <th  style="text-align: center; text-transform: uppercase;"rowspan="2">Tanggal</th>
+                        <th  style="text-align: center; text-transform: uppercase;"rowspan="2">Total</th>
                         @foreach ($kelompok as $namaKelompok)
-                            <th colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
+                            <th  style="text-align: center; text-transform: uppercase;"colspan="2">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                         @endforeach
                         
                     </tr>
                     <tr>
                         @foreach ($kelompok as $namaKelompok)
-                            <th>Laki - Laki</th>
-                            <th>Perempuan</th>
+                            <th  style="text-align: center; text-transform: uppercase;">Laki - Laki</th>
+                            <th  style="text-align: center; text-transform: uppercase;">Perempuan</th>
                         @endforeach
                       
                     </tr>
@@ -79,16 +79,16 @@
                     $isZero = $totalWisnu === 0;
                 @endphp
                 <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
-                            <td>{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                            <td  style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
 
-                            <td>
+                            <td  style="text-align: center; text-transform: uppercase;">
                                 {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] }}
                             </td>
                            
 
                             @foreach ($kelompok as $namaKelompok)
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
-                                <td>{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki') }}</td>
+                                <td  style="text-align: center; text-transform: uppercase;">{{ $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan') }}</td>
                             @endforeach
 
                           
@@ -98,18 +98,18 @@
 
                 <tfoot>
                     <tr>
-                        <th>Total Keseluruhan</th>
-                        <th>
+                        <th  style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
+                        <th  style="text-align: center; text-transform: uppercase;">
                             {{ $kunjungan->sum(function($dataTanggal) {
                                 return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'];
                             }) }}
                         </th>
 
                         @foreach ($kelompok as $namaKelompok)
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
                                 return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_laki_laki');
                             }) }}</th>
-                            <th>{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
+                            <th  style="text-align: center; text-transform: uppercase;">{{ $kunjungan->sum(function($dataTanggal) use ($namaKelompok) {
                                 return $dataTanggal['kelompok']->where('kelompok_kunjungan_id', $namaKelompok->id)->sum('jumlah_perempuan');
                             }) }}</th>
                         @endforeach
