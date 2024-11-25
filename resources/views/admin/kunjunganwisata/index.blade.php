@@ -88,20 +88,20 @@
                     
                     <tbody>
                         @forelse ($kunjungan as $dataTanggal)
-                        @php
-                        // Cek apakah semua nilai pada tanggal tersebut adalah 0
-                        $isZero = ($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan']) == 0;
-                        foreach ($kelompok as $namaKelompok) {
-                            if ($dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
-                                $isZero = false;
-                                break;
-                            }
-                        }
-                        if ($dataTanggal['jml_wisman_laki'] > 0 || $dataTanggal['jml_wisman_perempuan'] > 0) {
-                            $isZero = false;
-                        }
-                    @endphp
-            <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
+                                        @php
+                                        // Cek apakah semua nilai pada tanggal tersebut adalah 0
+                                        $isZero = ($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan']) == 0;
+                                        foreach ($kelompok as $namaKelompok) {
+                                            if ($dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') > 0 || $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') > 0) {
+                                                $isZero = false;
+                                                break;
+                                            }
+                                        }
+                                        if ($dataTanggal['jml_wisman_laki'] > 0 || $dataTanggal['jml_wisman_perempuan'] > 0) {
+                                            $isZero = false;
+                                        }
+                                    @endphp
+                            <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
                                                       
 
 
