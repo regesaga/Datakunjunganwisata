@@ -126,4 +126,14 @@ class Akomodasi extends Model implements HasMedia
     {
         return $this->hasOne(RekomendasiAkomodasi::class, 'akomodasi_id');
     }
+
+    public function wisnuAkomodasi()
+    {
+        return $this->hasMany(WisnuAkomodasi::class, 'akomodasi_id');
+    }
+
+    public function wismanAkomodasi()
+    {
+        return $this->hasMany(WismanAkomodasi::class, 'akomodasi_id');
+    }
 }

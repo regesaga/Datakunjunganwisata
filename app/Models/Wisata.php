@@ -129,9 +129,17 @@ class Wisata extends Model implements HasMedia
     return $this->hasMany(KunjunganWisata::class);
 }
 
-public function wisnuwisata()
-{
-    return $this->hasMany(WisnuWisata::class);
-}
+
+
+public function wisnuWisata()
+    {
+        return $this->hasMany(WisnuWisata::class, 'wisata_id');
+    }
+
+    public function wismanWisata()
+    {
+        return $this->hasMany(WismanWisata::class, 'wisata_id');
+    }
+
 
 }

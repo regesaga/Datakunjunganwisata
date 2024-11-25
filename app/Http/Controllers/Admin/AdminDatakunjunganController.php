@@ -449,7 +449,155 @@ private function getKunjunganSemua($tahun)
 }
 
 
+public function semuabulan(Request $request)
+{
+    $kategori = $request->get('kategori', 'semua'); // Default ke 'semua' jika tidak ada kategori dipilih
+    $tahun = $request->get('tahun');
+    $bulan = $request->get('bulan');
+
+    // Daftar bulan dalam Bahasa Indonesia
+    $bulanIndo = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+        7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+    $kelompok = KelompokKunjungan::all();
+    $wismannegara = WismanNegara::all();
+    // Mendapatkan awal dan akhir bulan
+    $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth();
+    $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth();
+
+    $wisataList = null;
+    $kulinerList = null;
+    $akomodasiList = null;
+    $kunjungan = [];
+    $totalWismanLaki = 0;
+    $totalWismanPerempuan = 0;
+
+    if ($kategori === 'semua') {
+        $wisataList = Wisata::with([
+            'wisnuWisata' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            },
+            'wismanWisata' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            }
+        ])->get();
+
+        $kulinerList = Kuliner::with([
+            'wisnuKuliner' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            },
+            'wismanKuliner' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            }
+        ])->get();
+
+        $akomodasiList = Akomodasi::with([
+            'wisnuAkomodasi' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            },
+            'wismanAkomodasi' => function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+            }
+        ])->get();
+    } else {
+        switch ($kategori) {
+            case 'wisata':
+                $wisataList = Wisata::with([
+                    'wisnuWisata' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    },
+                    'wismanWisata' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    }
+                ])->get();
+                break;
+            case 'kuliner':
+                $kulinerList = Kuliner::with([
+                    'wisnuKuliner' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    },
+                    'wismanKuliner' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    }
+                ])->get();
+                break;
+            case 'akomodasi':
+                $akomodasiList = Akomodasi::with([
+                    'wisnuAkomodasi' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    },
+                    'wismanAkomodasi' => function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('tanggal_kunjungan', [$startDate, $endDate]);
+                    }
+                ])->get();
+                break;
+        }
+    }
+
+    // Fungsi untuk memproses data
+    $processData = function ($item, $wisnuRelation, $wismanRelation) use (&$kunjungan, &$totalWismanLaki, &$totalWismanPerempuan) {
+        $wisnu = $item->$wisnuRelation;
+        $wisman = $item->$wismanRelation;
+
+        // Agregasi jumlah kunjungan Wisnu
+        $jumlahLakiLaki = $wisnu->sum('jumlah_laki_laki');
+        $jumlahPerempuan = $wisnu->sum('jumlah_perempuan');
+
+        // Agregasi jumlah kunjungan Wisman
+        $jmlWismanLaki = $wisman->sum('jml_wisman_laki');
+        $jmlWismanPerempuan = $wisman->sum('jml_wisman_perempuan');
+
+        // Tambahkan ke total
+        $totalWismanLaki += $jmlWismanLaki;
+        $totalWismanPerempuan += $jmlWismanPerempuan;
+
+        // Kelompokkan data berdasarkan kelompok kunjungan dan negara
+        $kelompok = $wisnu->groupBy('kelompok_kunjungan_id');
+        $wismannegara = $wisman->groupBy('wismannegara_id');
+
+        // Gabungkan data kunjungan
+        $kunjungan[] = [
+            'item' => $item,
+            'jumlah_laki_laki' => $jumlahLakiLaki,
+            'jumlah_perempuan' => $jumlahPerempuan,
+            'kelompok' => $kelompok,
+            'jml_wisman_laki' => $jmlWismanLaki ?: 0,
+            'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
+            'wismannegara' => $wismannegara,
+        ];
+    };
+
+    // Proses data Wisata
+    if ($wisataList) {
+        foreach ($wisataList as $wisataItem) {
+            $processData($wisataItem, 'wisnuWisata', 'wismanWisata');
+        }
+    }
+
+    // Proses data Kuliner
+    if ($kulinerList) {
+        foreach ($kulinerList as $kulinerItem) {
+            $processData($kulinerItem, 'wisnuKuliner', 'wismanKuliner');
+        }
+    }
+
+    // Proses data Akomodasi
+    if ($akomodasiList) {
+        foreach ($akomodasiList as $akomodasiItem) {
+            $processData($akomodasiItem, 'wisnuAkomodasi', 'wismanAkomodasi');
+        }
+    }
+
+    // Kembalikan data ke view
+    return view('admin.datakunjungan.semuabulan', compact(
+        'kategori', 'tahun', 'bulan', 'bulanIndo', 
+        'wisataList', 'kulinerList', 'akomodasiList', 
+        'kunjungan', 'totalWismanLaki', 'totalWismanPerempuan','kelompok','wismannegara'
+    ));
+}
+
+
 
 
 }
-

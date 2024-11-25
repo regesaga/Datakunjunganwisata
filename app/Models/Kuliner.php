@@ -116,4 +116,13 @@ class Kuliner extends Model implements HasMedia
         return $this->hasOne('App\Models\CategoryKuliner');
     }
 
+    public function wisnuKuliner()
+    {
+        return $this->hasMany(WisnuKuliner::class, 'kuliner_id');
+    }
+
+    public function wismanKuliner()
+    {
+        return $this->hasMany(WismanKuliner::class, 'kuliner_id');
+    }
 }
