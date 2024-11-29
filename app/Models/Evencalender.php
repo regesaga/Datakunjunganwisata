@@ -8,6 +8,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Evencalender extends Model implements HasMedia
 {
@@ -68,4 +69,19 @@ class Evencalender extends Model implements HasMedia
             });
         });
     }
+
+
+
+
+    public function wisnuEvent()
+    {
+        return $this->hasMany(WisnuEvent::class, 'event_calendar_id');
+    }
+
+    public function wismanEvent()
+    {
+        return $this->hasMany(WismanEvent::class, 'event_calendar_id');
+    }
+
+
 }

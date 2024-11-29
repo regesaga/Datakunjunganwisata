@@ -124,17 +124,31 @@
 <section class="content-header">
     <div class="container-fluid">
     
-        <form action="{{ route('account.wisata.kunjunganwisata.storewisnu') }}" method="POST">
+        <form action="{{ route('account.wisata.kunjunganevent.storewisnuevent') }}" method="POST">
             @csrf
         <div class="form-header">
-                <h3  style="text-align: center; text-transform: uppercase;">INPUT DATA KUNJUNGAN</h3>
-            <h2  style="text-align: center; text-transform: uppercase;">{{$wisata->namawisata}}</h2>
+                <h3  style="text-align: center; text-transform: uppercase;">INPUT DATA KUNJUNGAN EVENT</h3>
+                <div class="col-lg-2">
+                    <select name="event_calendar_id" class="form-control select2">
+                        @if($event->isEmpty())
+                            <option value="" disabled selected>Anda belum memiliki Event</option>
+                        @else
+                            @foreach($event as $item)
+                                <option value="{{ $item->id }}" {{ request('event_calendar_id') == $item->id ? 'selected' : '' }}>
+                                    <h2><b>{{ $item->title }}</b></h2>
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                    
+                    </div>    
             
           
-            <div class="form-date">
-                <label  style="text-align: center; text-transform: uppercase;" for="tanggal">TANGGAL </label>
-                <input type="date" name="tanggal_kunjungan" class="form-control">
-            </div>
+                    <div class="form-date">
+                        <label  style="text-align: center; text-transform: uppercase;" for="tanggal">TANGGAL </label>
+                        <input type="date" class="form-control" id="tanggal_kunjungan" name="tanggal_kunjungan" required>
+        
+                    </div>
             <button  style="text-align: center; text-transform: uppercase;" type="submit" class="btn-save">SIMPAN DATA</button>
         </div>
         @if (session('warning'))
@@ -156,7 +170,6 @@
 @endif
     
             <div class="col-lg-12">
-                        <input type="hidden" name="wisata_id" value="{{ $wisata->id }}">
                         <div class="visitor-section">
                             <div class="row">
                                 <div class="col-md-6">
@@ -286,11 +299,15 @@
         });
     </script>
     <script>
-        // Set tanggal default ke hari ini
+        
+        // Set tanggal dari controler
         document.addEventListener('DOMContentLoaded', function () {
-            const today = new Date();
+            var tanggalKunjungan = "{{ $tanggal_kunjungan }}";  // Pastikan $tanggal_kunjungan dalam format 'YYYY-MM-DD'
+            
+            // Menetapkan nilai input tanggal_kunjungan menggunakan JavaScript
+            document.getElementById('tanggal_kunjungan').value = tanggalKunjungan;
             const dateInput = document.querySelector('input[name="tanggal_kunjungan"]');
-            dateInput.value = today.toISOString().split('T')[0];
+            dateInput.value = tanggalKunjungan.toISOString().split('T')[0];
         });
         // Fungsi untuk menghitung total Wisatawan Mancanegara (WISMAN)
         function calculateWISMAN() {
@@ -330,8 +347,8 @@
                             @endforeach
                         </select>
                     </td>
-                    <td  style="text-align: center; text-transform: uppercase;"><input type="text" name="jml_wisman_laki[]" value="0" class="form-control" required></td>
-                    <td  style="text-align: center; text-transform: uppercase;"><input type="text" name="jml_wisman_perempuan[]" value="0" class="form-control" required></td>
+                    <td  style="text-align: center; text-transform: uppercase;"><input type="number" name="jml_wisman_laki[]" value="0" class="form-control" required></td>
+                    <td  style="text-align: center; text-transform: uppercase;"><input type="number" name="jml_wisman_perempuan[]" value="0" class="form-control" required></td>
                     <td  style="text-align: center; text-transform: uppercase;"><button type="button" class="btn btn-danger remove-row">Hapus</button></td>
                 </tr>`;
             $('#wisman-table tbody').append(newRow);
@@ -344,4 +361,5 @@
             calculateWISMAN(); // Update total setelah menghapus baris
         });
     </script>
+
 @endsection

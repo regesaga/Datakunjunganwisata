@@ -522,6 +522,10 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
     Route::delete('/kunjunganwisataa/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnu'])->name('account.wisata.kunjunganwisata.delete');
     Route::delete('/kunjunganwisata/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnutahunan'])->name('account.wisata.kunjunganwisata.hapus');
 
+    Route::get('/wisata/kunjunganevent', [KunjunganWisataController::class, 'createwisnuevent'])->name('account.wisata.kunjunganevent.create');
+    Route::post('/wisata/storekunjunganwisataevent', [KunjunganWisataController::class, 'storewisnuevent'])->name('account.wisata.kunjunganevent.storewisnuevent');
+    Route::get('/wisata/indexkunjunganeventpertahun', [KunjunganWisataController::class, 'indexkunjunganeventpertahun'])->name('account.wisata.kunjunganevent.indexkunjunganeventpertahun');
+    Route::post('/wisata/storewisnuindexevent', [KunjunganWisataController::class, 'storewisnuindexeven'])->name('account.wisata.kunjunganevent.storewisnuindexeven');
 
 
   // --- data kunjungan wisata ------

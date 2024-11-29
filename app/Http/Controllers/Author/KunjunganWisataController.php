@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Author;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Models\Evencalender;
 use App\Models\WisnuWisata;
+use App\Models\WisnuEvent;
 use App\Models\KelompokKunjungan;
 use App\Models\WismanWisata;
+use App\Models\WismanEvent;
 use App\Models\WismanNegara;
 use App\Models\Wisata;
 use Illuminate\Http\Request;
@@ -14,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Illuminate\Support\Facades\DB;
 use Hashids\Hashids;
 use Carbon\Carbon; 
+use Illuminate\Support\Facades\Auth;
 
 
 class KunjunganWisataController extends Controller
@@ -1292,7 +1296,282 @@ public function deletewisnutahunan($wisata_id, $tanggal_kunjungan)
         }
     }
 
+    public function indexkunjunganeventpertahun(Request $request)
+    {
+        $hash = new Hashids();
+        $userId = Auth::id();
+        $company_id = auth()->user()->company->id;
+    
+        // Mengambil event berdasarkan created_by_id, hanya satu event
+        $events = Evencalender::where('created_by_id', $userId)->first();
+    
+        // Jika tidak ada event, kembalikan dengan pesan error
+        if (!$events) {
+            return redirect()->back()->withErrors(['error' => 'Anda belum memiliki Event.']);
+        }
+    
+        $tahun = $request->input('tahun', date('Y')); 
+    
+        // Mengambil event_calendar_id dari event yang ditemukan
+        $event_calendar_id = $events->id;
+    
+        // Ambil data WisnuEvent dan WismanEvent berdasarkan event_calendar_id dan tahun
+        $wisnuEvents = WisnuEvent::select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+            ->where('event_calendar_id', $event_calendar_id)
+            ->whereYear('tanggal_kunjungan', $tahun) // Filter berdasarkan tahun
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        $wismanEvents = WismanEvent::select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+            ->where('event_calendar_id', $event_calendar_id)
+            ->whereYear('tanggal_kunjungan', $tahun) // Filter berdasarkan tahun
+            ->get()
+            ->groupBy('tanggal_kunjungan');
+    
+        // Ambil hanya tanggal yang ada di database
+        $tanggalKunjungan = $wisnuEvents->keys()->merge($wismanEvents->keys())->unique()->sort();
+    
+        // Olah data kunjungan
+        $kunjungan = [];
+        foreach ($tanggalKunjungan as $tanggal) {
+            // Ambil data kunjungan dari WisnuEvent
+            $dataWisnu = $wisnuEvents->get($tanggal, collect());
+            $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
+            $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
+            $wisnuByKelompok = $dataWisnu->groupBy('kelompok_kunjungan_id');
+    
+            // Ambil data kunjungan dari WismanEvent
+            $dataWisman = $wismanEvents->get($tanggal, collect());
+            $jmlWismanLaki = $dataWisman->sum('jml_wisman_laki');
+            $jmlWismanPerempuan = $dataWisman->sum('jml_wisman_perempuan');
+            $wismanByNegara = $dataWisman->groupBy('wismannegara_id');
+    
+            $kunjungan[$tanggal] = [
+                'jumlah_laki_laki' => $jumlahLakiLaki ?: 0,
+                'jumlah_perempuan' => $jumlahPerempuan ?: 0,
+                'kelompok' => $wisnuByKelompok,
+                'jml_wisman_laki' => $jmlWismanLaki ?: 0,
+                'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
+                'wisman_by_negara' => $wismanByNegara,
+            ];
+        }
+    
+        // Ambil data pendukung
+        $kelompok = KelompokKunjungan::all();
+        $wismannegara = WismanNegara::all();
+    
+        return view('account.wisata.kunjunganevent.indexkunjunganeventpertahun', compact(
+            'kunjungan', 'events', 'kelompok', 'wismannegara', 'hash', 'tahun'
+        ));
+    }
+    
 
+    
+// Menampilkan form input kunjungan
+public function createwisnuevent()
+{
+    $company_id = auth()->user()->company->id;
+    $kelompok = KelompokKunjungan::all();
+    $id = Auth::id();
+
+    // Mengambil semua event berdasarkan created_by_id
+    $event = Evencalender::where('created_by_id', $id)->get(); // Ambil semua event
+
+    // Pastikan ada event yang ditemukan
+    if ($event->isNotEmpty()) {
+        // Ambil tanggalmulai dari event pertama
+        $tanggal_kunjungan = Carbon::parse($event->first()->tanggalmulai)->format('Y-m-d');
+    } else {
+        $tanggal_kunjungan = null; // Set null jika tidak ada event
+    }
+
+    // Ambil semua data WismanNegara
+    $wismannegara = WismanNegara::all();
+
+    // Kirim data ke view
+    return view('account.wisata.kunjunganevent.create', compact('event', 'kelompok', 'wismannegara', 'tanggal_kunjungan'));
+}
+// Menyimpan data kunjungan
+public function storewisnuevent(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'event_calendar_id' => 'required',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'array',
+        'jml_wisman_laki' => 'array',
+        'jml_wisman_perempuan' => 'array',
+        'jml_wisman_laki.*' => 'integer|min:0',
+        'jml_wisman_perempuan.*' => 'integer|min:0',
+    ]);
+
+    // Cek apakah tanggal sudah ada di database
+    $existingWisnu = WisnuEvent::where('event_calendar_id', $request->event_calendar_id)
+        ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+        ->first();
+
+    if ($existingWisnu) {
+        // Jika ada, buat notifikasi untuk mengonfirmasi apakah akan mengubah data
+        $formattedDate = Carbon::parse($request->tanggal_kunjungan)->format('d-m-Y');
+        return redirect()->back()->with('warning', 'Data Kunjungan dengan Tanggal "' . $formattedDate . '" Sudah Di Input. Pilih Tanggal Lain atau Ubah data di menu')
+            ->withInput();
+    }
+
+    try {
+        // Loop untuk data WISNU (Wisatawan Nusantara)
+        foreach ($request->jumlah_laki_laki as $kelompok => $jumlah_laki) {
+            $jumlah_perempuan = $request->jumlah_perempuan[$kelompok];
+
+            WisnuEvent::create([
+                'event_calendar_id' => $request->event_calendar_id,
+                'kelompok_kunjungan_id' => $kelompok, 
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            ]);
+        }
+
+        // Loop untuk data WISMAN (Wisatawan Mancanegara) hanya jika data tersedia
+        if ($request->filled('wismannegara_id') && $request->filled('jml_wisman_laki') && $request->filled('jml_wisman_perempuan')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
+                WismanEvent::create([
+                    'event_calendar_id' => $request->event_calendar_id,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data kunjungan event berhasil disimpan.');
+    } catch (\Exception $e) {
+        // Log error
+        Log::error('Failed to save kunjungan event to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return redirect()->back()->with('error', 'Gagal menyimpan data kunjungan event. Silakan coba lagi.');
+    }
+}
+
+public function storewisnuindexeven(Request $request)
+{
+    $hash = new Hashids();
+
+    // Decode wisata_id yang dikirim
+    $event_calender_id_decoded = $hash->decode($request->event_calender_id);
+    if (empty($event_calender_id_decoded)) {
+        Log::error('Failed to decode event_calendar_id.', [
+            'event_calender_id' => $request->event_calender_id
+        ]);
+        return redirect()->back()->with('error', 'ID wisata tidak valid.')->withInput($request->all());
+    }
+    $decodedEventId = $event_calender_id_decoded[0];
+    
+    // Validasi input
+    $request->validate([
+        'event_calender_id' => 'required',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'wismannegara_id' => 'nullable|array',
+        'jml_wisman_laki' => 'nullable|array',
+        'jml_wisman_perempuan' => 'nullable|array',
+        'jml_wisman_laki.*' => 'nullable|integer|min:0',
+        'jml_wisman_perempuan.*' => 'nullable|integer|min:0',
+    ]);
+
+    // Mulai transaksi
+    DB::beginTransaction();
+    Log::info('Starting storewisnu method', ['request_data' => $request->all()]);
+
+    try {
+        // Hapus data sebelumnya berdasarkan event_calender_id dan tanggal kunjungan
+        $deletedWisnu = WisnuEvent::where('event_calender_id', $decodedEventId)
+                                     ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                     ->delete();
+
+        $deletedWisman = WismanEvent::where('event_calender_id', $decodedEventId)
+                                       ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+                                       ->delete();
+
+        Log::info('Previous WISNU and WISMAN data deleted', [
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+        // Loop untuk data WISNU
+        foreach ($request->jumlah_laki_laki as $kelompok => $jumlah_laki) {
+            $jumlah_perempuan = $request->jumlah_perempuan[$kelompok] ?? 0; // Default ke 0 jika tidak ada
+            Log::info('Inserting WISNU data', [
+                'kelompok' => $kelompok,
+                'jumlah_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan
+            ]);
+
+            WisnuEvent::create([
+                'event_calender_id' => $decodedEventId,
+                'kelompok_kunjungan_id' => $kelompok,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Loop untuk data WISMAN
+        foreach ($request->jml_wisman_laki as $negara => $jumlah_wisman_laki) {
+            $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$negara] ?? 0; // Default ke 0 jika tidak ada
+            Log::info('Inserting WISMAN data', [
+                'negara' => $negara,
+                'jumlah_wisman_laki' => $jumlah_wisman_laki,
+                'jumlah_wisman_perempuan' => $jumlah_wisman_perempuan
+            ]);
+
+            WismanEvent::create([
+                'event_calender_id' => $decodedEventId,
+                'wismannegara_id' => $negara,
+                'jml_wisman_laki' => $jumlah_wisman_laki,
+                'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Commit transaksi
+        DB::commit();
+
+        Log::info('Data successfully saved to the database.');
+        
+        // Kembalikan respons JSON
+        return response()->json(['success' => true, 'message' => 'Data kunjungan berhasil disimpan.']);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        // Mencatat detail kesalahan dengan data yang akan disimpan
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json(['success' => false, 'message' => 'Gagal menyimpan data kunjungan. Silakan coba lagi. Kesalahan: ' . $e->getMessage()], 500);
+    }
+}
 
 
 

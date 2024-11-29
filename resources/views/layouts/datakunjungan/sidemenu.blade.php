@@ -153,7 +153,7 @@
       <a href="#" class="nav-link">
         <i class="nav-icon fas fa-copy"></i>
         <p>
-          PERBULAN
+          REKAPITULASI
           <i class="fas fa-angle-left right"></i>
           <span class="badge badge-info right">6</span>
         </p>
@@ -243,6 +243,26 @@
            Tambah Data
         </a>
       </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
+            <i class="fas fa-edit nav-icon"></i>
+
+            </i>
+           Tambah Kunjungan Event
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganevent.indexkunjunganeventpertahun') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+
+          <p>
+            Index Event
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+      
+      </li>
+     
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.index') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
