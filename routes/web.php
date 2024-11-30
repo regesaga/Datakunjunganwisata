@@ -501,6 +501,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
 
 Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
+
   // tambahkan rute lain untuk admin di sini0
   // --- data kunjungan wisata ------
     Route::get('indexkunjunganwisata', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
@@ -526,7 +527,10 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
     Route::post('/wisata/storekunjunganwisataevent', [KunjunganWisataController::class, 'storewisnuevent'])->name('account.wisata.kunjunganevent.storewisnuevent');
     Route::get('/wisata/indexkunjunganeventpertahun', [KunjunganWisataController::class, 'indexkunjunganeventpertahun'])->name('account.wisata.kunjunganevent.indexkunjunganeventpertahun');
     Route::post('/wisata/storewisnuindexevent', [KunjunganWisataController::class, 'storewisnuindexeven'])->name('account.wisata.kunjunganevent.storewisnuindexeven');
-
+    Route::get('wisata/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}/edit', [KunjunganWisataController::class, 'editwisnuevent'])->name('account.wisata.kunjunganevent.edit');
+    Route::put('/wisata/updatervent/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updatewisnuevent'])->name('account.wisata.kunjunganevent.update');
+    Route::delete('/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'deletewisnuevent'])->name('account.wisata.kunjunganevent.delete');
+    
 
   // --- data kunjungan wisata ------
 
@@ -678,6 +682,15 @@ Route::middleware(['auth', 'kuliner'])->prefix('kuliner')->group(function () {
   Route::delete('/kunjungankuliner/{kuliner_id}/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'deletewisnutahunan'])->name('account.kuliner.kunjungankuliner.hapus');
 
 
+  Route::get('/kuliner/kunjunganevent', [KunjunganKulinerController::class, 'createwisnuevent'])->name('account.kuliner.kunjunganevent.create');
+  Route::post('/kuliner/storekunjungankulinerevent', [KunjunganKulinerController::class, 'storewisnuevent'])->name('account.kuliner.kunjunganevent.storewisnuevent');
+  Route::get('/kuliner/indexkunjunganeventpertahun', [KunjunganKulinerController::class, 'indexkunjunganeventpertahun'])->name('account.kuliner.kunjunganevent.indexkunjunganeventpertahun');
+  Route::post('/kuliner/storewisnuindexevent', [KunjunganKulinerController::class, 'storewisnuindexeven'])->name('account.kuliner.kunjunganevent.storewisnuindexeven');
+  Route::get('kuliner/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}/edit', [KunjunganKulinerController::class, 'editwisnuevent'])->name('account.kuliner.kunjunganevent.edit');
+  Route::put('/kuliner/updatervent/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'updatewisnuevent'])->name('account.kuliner.kunjunganevent.update');
+  Route::delete('/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'deletewisnuevent'])->name('account.kuliner.kunjunganevent.delete');
+  
+
   // --- data kunjungan wisata ------
 
   // tambahkan rute lain untuk admin di sini0
@@ -770,6 +783,16 @@ Route::middleware(['auth', 'akomodasi'])->prefix('akomodasi')->group(function ()
   Route::delete('/kunjunganakomodasia/{akomodasi_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'deletewisnu'])->name('account.akomodasi.kunjunganakomodasi.delete');
   Route::delete('/kunjunganakomodasi/{akomodasi_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'deletewisnutahunan'])->name('account.akomodasi.kunjunganakomodasi.hapus');
  
+
+
+  Route::get('/akomodasi/kunjunganevent', [KunjunganAkomodasiController::class, 'createwisnuevent'])->name('account.akomodasi.kunjunganevent.create');
+  Route::post('/akomodasi/storekunjunganakomodasievent', [KunjunganAkomodasiController::class, 'storewisnuevent'])->name('account.akomodasi.kunjunganevent.storewisnuevent');
+  Route::get('/akomodasi/indexkunjunganeventpertahun', [KunjunganAkomodasiController::class, 'indexkunjunganeventpertahun'])->name('account.akomodasi.kunjunganevent.indexkunjunganeventpertahun');
+  Route::post('/akomodasi/storewisnuindexevent', [KunjunganAkomodasiController::class, 'storewisnuindexeven'])->name('account.akomodasi.kunjunganevent.storewisnuindexeven');
+  Route::get('akomodasi/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}/edit', [KunjunganAkomodasiController::class, 'editwisnuevent'])->name('account.akomodasi.kunjunganevent.edit');
+  Route::put('/akomodasi/updatervent/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'updatewisnuevent'])->name('account.akomodasi.kunjunganevent.update');
+  Route::delete('/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'deletewisnuevent'])->name('account.akomodasi.kunjunganevent.delete');
+  
 
   // tambahkan rute lain untuk admin di sini0
   Route::get('getwisatawan', [AkomodasiAuthorController::class, 'getwisatawan'])->name('account.akomodasi.getwisatawan');;

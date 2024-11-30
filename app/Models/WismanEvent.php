@@ -31,6 +31,6 @@ class WismanEvent extends Model
     // Di model Wismanakomodasi
 public function wismanNegara()
 {
-    return $this->belongsToMany(WismanNegara::class, 'wisman_negara_wisman_event', 'wisman_akomodasi_id', 'wismannegara_id');
+    return $this->belongsToMany(WismanNegara::class, 'wisman_negara_wisman_event', 'wisman_event_id', 'wismannegara_id');
 }
 }

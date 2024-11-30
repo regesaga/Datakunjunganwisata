@@ -123,7 +123,7 @@
 @section('content')
 <section class="content-header">
     <div class="container-fluid">
-        <form action="{{ route('account.wisata.kunjunganevent.update', $tanggal_kunjungan) }}" method="POST">
+        <form action="{{ route('account.kuliner.kunjunganevent.update', $tanggal_kunjungan) }}" method="POST">
             @csrf
             @method('PUT')  <!-- Ganti dari PATCH ke PUT -->
             <div class="form-header">

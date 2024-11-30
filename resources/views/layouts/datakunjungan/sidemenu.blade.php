@@ -345,15 +345,24 @@
       </li>
       
   
-      <li class="nav-header">EXAMPLES</li>
       <li class="nav-item">
-        <a href="calendar.html" class="nav-link ? 'active' : '' ">
-          <i class="nav-icon far fa-calendar-alt"></i>
+        <a href="{{ route('account.kuliner.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
+            <i class="fas fa-edit nav-icon"></i>
+
+            </i>
+           Tambah Kunjungan Event
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.kuliner.kunjunganevent.indexkunjunganeventpertahun') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+
           <p>
-            Calendar
-            <span class="badge badge-info right">2</span>
+            Index Event
+            <i class="right fas fa-angle-left"></i>
           </p>
         </a>
+      
       </li>
     
     </ul>
@@ -422,6 +431,25 @@
             </i>
            Tambah Data
         </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.akomodasi.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
+            <i class="fas fa-edit nav-icon"></i>
+
+            </i>
+           Tambah Kunjungan Event
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.akomodasi.kunjunganevent.indexkunjunganeventpertahun') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-th"></i>
+
+          <p>
+            Index Event
+            <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+      
       </li>
      
 
