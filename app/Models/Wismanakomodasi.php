@@ -20,7 +20,7 @@ class Wismanakomodasi extends Model
 
     public function akomodasi()
     {
-        return $this->belongsTo(Kuliner::class, 'akomodasi_id');
+        return $this->belongsTo(Akomodasi::class, 'akomodasi_id');
     }
     public function KelompokKunjungan()
     {

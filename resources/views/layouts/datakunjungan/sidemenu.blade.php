@@ -199,7 +199,7 @@
           <i class="nav-icon fas fa-tachometer-alt"></i>
           <p>
             Dashboard
-            <i class="right fas fa-angle-left"></i>
+            
           </p>
         </a>
       
@@ -211,7 +211,7 @@
 
           <p>
             Index tahunan
-            <i class="right fas fa-angle-left"></i>
+            
           </p>
         </a>
       
@@ -222,7 +222,7 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wisnuperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>
@@ -231,24 +231,24 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wismanperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.createwisnu') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
-
-            </i>
+            <p>
            Tambah Data
+            </p>
         </a>
       </li>
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
-
-            </i>
+            <p>
            Tambah Kunjungan Event
+            </p>
         </a>
       </li>
       <li class="nav-item">
@@ -257,7 +257,7 @@
 
           <p>
             Index Event
-            <i class="right fas fa-angle-left"></i>
+            
           </p>
         </a>
       
@@ -322,7 +322,7 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wisnuperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>
@@ -331,16 +331,16 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wismanperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>
       <li class="nav-item">
         <a href="{{ route('account.kuliner.kunjungankuliner.createwisnu') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
-
-            </i>
+            <p>
            Tambah Data
+            </p>
         </a>
       </li>
       
@@ -348,8 +348,6 @@
       <li class="nav-item">
         <a href="{{ route('account.kuliner.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
-
-            </i>
            Tambah Kunjungan Event
         </a>
       </li>
@@ -411,7 +409,7 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wisnuperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>
@@ -420,7 +418,7 @@
           <i class="nav-icon fas fa-th"></i>
           <p>
             Wismanperbulan
-            <span class="right badge badge-danger">New</span>
+            
           </p>
         </a>
       </li>

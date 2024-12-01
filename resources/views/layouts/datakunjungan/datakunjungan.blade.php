@@ -12,6 +12,10 @@
 
 <!-- Theme style -->
 <link href="{{ asset('datakunjungan/dist/css/adminlte.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('datakunjungan/3dLine.css') }}" rel="stylesheet" />
+<link href="{{ asset('datakunjungan/Line.css') }}" rel="stylesheet" />
+<link href="{{ asset('datakunjungan/Area.css') }}" rel="stylesheet" />
+<link href="{{ asset('datakunjungan/Donut.css') }}" rel="stylesheet" />
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 
