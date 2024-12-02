@@ -14,6 +14,7 @@
                         <option value="wisata" {{ request()->get('kategori') == 'wisata' ? 'selected' : '' }}>WISATA</option>
                         <option value="akomodasi" {{ request()->get('kategori') == 'akomodasi' ? 'selected' : '' }}>AKOMODASI</option>
                         <option value="kuliner" {{ request()->get('kategori') == 'kuliner' ? 'selected' : '' }}>KULINER</option>
+                        <option value="event" {{ request()->get('kategori') == 'event' ? 'selected' : '' }}>EVENT</option>
                     </select>
                 </div>
         
@@ -51,6 +52,8 @@
                                         DATA KUNJUNGAN KULINER TAHUN{{$tahun}}
                                     @elseif(request()->get('kategori') == 'akomodasi')
                                     DATA KUNJUNGAN AKOMODASI TAHUN{{$tahun}}
+                                    @elseif(request()->get('kategori') == 'event')
+                                    DATA KUNJUNGAN EVENT TAHUN{{$tahun}}
                                     @endif
                                 </h2>
                                 
@@ -80,7 +83,7 @@
                     <tbody>
                         @foreach ($kunjungan as $month => $dataBulan)
                             <tr>
-                                <td>
+                                 <td style="text-align: center; text-transform: uppercase;">
                                     <p style="text-align: left; text-transform: uppercase;">
                                         {{ DateTime::createFromFormat('!m', $month)->format('F') }}
                                     </p>

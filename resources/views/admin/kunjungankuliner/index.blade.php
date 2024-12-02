@@ -101,11 +101,11 @@
                             $isZero = false;
                         }
                     @endphp
-            <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
+                        <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
                                                       
 
 
-                                <td>  <a  href="{{ route('admin.kunjungankuliner.indexeditkunjungankuliner', [
+                                 <td style="text-align: center; text-transform: uppercase;">  <a  href="{{ route('admin.kunjungankuliner.indexeditkunjungankuliner', [
                                     'kuliner_id' => $hash->encode($dataTanggal['kuliner']->id), 
                                     'bulan' => $bulan,
                                     'tahun' => $tahun

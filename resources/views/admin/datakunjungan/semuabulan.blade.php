@@ -14,6 +14,7 @@
                         <option value="wisata" {{ request()->get('kategori') == 'wisata' ? 'selected' : '' }}>WISATA</option>
                         <option value="akomodasi" {{ request()->get('kategori') == 'akomodasi' ? 'selected' : '' }}>AKOMODASI</option>
                         <option value="kuliner" {{ request()->get('kategori') == 'kuliner' ? 'selected' : '' }}>KULINER</option>
+                        <option value="event" {{ request()->get('kategori') == 'event' ? 'selected' : '' }}>EVENT</option>
                     </select>
                 </div>
         
@@ -60,6 +61,8 @@
                                         DATA KUNJUNGAN KULINER TAHUN {{$tahun}} BULAN {{ $bulanIndo[(int)$bulan] }} 
                                     @elseif(request()->get('kategori') == 'akomodasi')
                                         DATA KUNJUNGAN AKOMODASI TAHUN {{$tahun}} {{ $bulanIndo[(int)$bulan] }} 
+                                    @elseif(request()->get('kategori') == 'event')
+                                        DATA KUNJUNGAN EVENT TAHUN {{$tahun}} {{ $bulanIndo[(int)$bulan] }} 
                                     @endif
                                 </h2>
                             </th>
@@ -90,16 +93,18 @@
                             <!-- Menampilkan Semua Kategori (Wisata, Kuliner, Akomodasi) -->
                             @forelse ($kunjungan as $data)
                             <tr>
-                                <td>
+                                 <td style="text-align: center; text-transform: uppercase;">
                                     <span>
                                         {{-- Mengakses 'namawisata' langsung dari objek 'item' --}}
-                                        {{ $data['item']->namawisata ?? $data['item']->namakuliner ?? $data['item']->namaakomodasi ?? 'Unknown' }}
+                                        {{ $data['item']->namawisata ?? $data['item']->namakuliner ?? $data['item']->namaakomodasi ?? $data['item']->title ??'Unknown' }}
                                         @if(isset($data['item']->namawisata))
                                             <strong> (Wisata)</strong>
                                         @elseif(isset($data['item']->namakuliner))
                                             <strong> (Kuliner)</strong>
                                         @elseif(isset($data['item']->namaakomodasi))
                                             <strong> (Akomodasi)</strong>
+                                        @elseif(isset($data['item']->title))
+                                            <strong> (Event)</strong>
                                         @endif
                                     </span>
                                 </td>
@@ -133,7 +138,7 @@
                         @elseif(request()->get('kategori') == 'wisata')
                             @forelse ($kunjungan as $wisata)
                                 <tr>
-                                    <td>
+                                     <td style="text-align: center; text-transform: uppercase;">
                                         <p style="text-align: left; text-transform: uppercase;">
                                             <span>{{ $wisata['item']->namawisata ?? 'Nama Wisata Tidak Tersedia' }}</span>
                                         </p>
@@ -159,7 +164,7 @@
                         @elseif(request()->get('kategori') == 'akomodasi')
                             @forelse ($kunjungan as $akomodasi)
                                 <tr>
-                                    <td>
+                                     <td style="text-align: center; text-transform: uppercase;">
                                         <p style="text-align: left; text-transform: uppercase;">
                                             <span>{{ $akomodasi['item']->namaakomodasi ?? 'Nama Wisata Tidak Tersedia' }}</span>
                                         </p>
@@ -185,7 +190,7 @@
                         @elseif(request()->get('kategori') == 'kuliner')
                             @forelse ($kunjungan as $kuliner)
                                 <tr>
-                                    <td>
+                                     <td style="text-align: center; text-transform: uppercase;">
                                         <p style="text-align: left; text-transform: uppercase;">
                                             <span>{{ $kuliner['item']->namakuliner ?? 'Nama Wisata Tidak Tersedia' }}</span>
                                         </p>
@@ -201,6 +206,32 @@
                                     @foreach ($wismannegara as $negara)
                                         <td style="text-align: center; text-transform: uppercase;">{{ $kuliner['wismannegara']->get($negara->id, collect())->sum('jml_wisman_laki') ?: 0 }}</td>
                                         <td style="text-align: center; text-transform: uppercase;">{{ $kuliner['wismannegara']->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0 }}</td>
+                                    @endforeach
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}" class="text-center">No Data Available</td>
+                                </tr>
+                            @endforelse
+                        @elseif(request()->get('kategori') == 'event')
+                            @forelse ($kunjungan as $event)
+                                <tr>
+                                     <td style="text-align: center; text-transform: uppercase;">
+                                        <p style="text-align: left; text-transform: uppercase;">
+                                            <span>{{ $event['item']->title ?? 'Nama Wisata Tidak Tersedia' }}</span>
+                                        </p>
+                                    </td>
+                                    <td style="text-align: center; text-transform: uppercase;">
+                                        {{ $event['jumlah_laki_laki'] + $event['jumlah_perempuan'] + $event['jml_wisman_laki'] + $event['jml_wisman_perempuan'] }}
+                                    </td>
+                                    <!-- Data berdasarkan Kelompok -->
+                                    @foreach ($kelompok as $namaKelompok)
+                                        <td style="text-align: center; text-transform: uppercase;">{{ $event['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') ?: 0 }}</td>
+                                        <td style="text-align: center; text-transform: uppercase;">{{ $event['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') ?: 0 }}</td>
+                                    @endforeach
+                                    @foreach ($wismannegara as $negara)
+                                        <td style="text-align: center; text-transform: uppercase;">{{ $event['wismannegara']->get($negara->id, collect())->sum('jml_wisman_laki') ?: 0 }}</td>
+                                        <td style="text-align: center; text-transform: uppercase;">{{ $event['wismannegara']->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0 }}</td>
                                     @endforeach
                                 </tr>
                             @empty
@@ -359,6 +390,45 @@
                         <th style="text-align: center; text-transform: uppercase;">
                             {{ collect($kunjungan)->sum(fn($akomodasi) => 
                                 collect($akomodasi['wismannegara'])->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0
+                            ) }}
+                        </th>
+                    @endforeach
+
+                     
+                    </tr>
+                @elseif(request()->get('kategori') == 'event')
+                    <!-- Repeat similar changes for other categories -->
+                    <tr>
+                        <th style="text-align: left; text-transform: uppercase;">Total</th>
+                        <th style="text-align: center; text-transform: uppercase;">
+                            {{ collect($kunjungan)->sum(fn($event) => 
+                                $event['jumlah_laki_laki'] + 
+                                $event['jumlah_perempuan'] + 
+                                $event['jml_wisman_laki'] + 
+                                $event['jml_wisman_perempuan']
+                            ) }}
+                        </th>
+                        @foreach ($kelompok as $namaKelompok)
+                            <th style="text-align: center; text-transform: uppercase;">
+                                {{ collect($kunjungan)->sum(fn($event) => 
+                                    collect($event['kelompok'])->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') ?: 0
+                                ) }}
+                            </th>
+                            <th style="text-align: center; text-transform: uppercase;">
+                                {{ collect($kunjungan)->sum(fn($event) => 
+                                    collect($event['kelompok'])->get($namaKelompok->id, collect())->sum('jumlah_perempuan') ?: 0
+                                ) }}
+                            </th>
+                        @endforeach
+                        @foreach ($wismannegara as $negara)
+                        <th style="text-align: center; text-transform: uppercase;">
+                            {{ collect($kunjungan)->sum(fn($event) => 
+                                collect($event['wismannegara'])->get($negara->id, collect())->sum('jml_wisman_laki') ?: 0
+                            ) }}
+                        </th>
+                        <th style="text-align: center; text-transform: uppercase;">
+                            {{ collect($kunjungan)->sum(fn($event) => 
+                                collect($event['wismannegara'])->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0
                             ) }}
                         </th>
                     @endforeach

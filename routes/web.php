@@ -170,6 +170,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::put('/wisata/update/{tanggal_kunjungan}', [AdminKunjunganWisataController::class, 'updatewisnu'])->name('admin.kunjunganwisata.update');
   Route::delete('/kunjunganwisata/{wisata_id}/{tanggal_kunjungan}', [AdminKunjunganWisataController::class, 'deletewisnu'])->name('admin.kunjunganwisata.delete');
 
+
+
+  Route::get('/event/kunjunganevent', [AdminDatakunjunganController::class, 'createwisnuevent'])->name('admin.kunjunganevent.create');
+  Route::post('/event/storekunjunganeventevent', [AdminDatakunjunganController::class, 'storewisnuevent'])->name('admin.kunjunganevent.storewisnuevent');
+  Route::get('/event/indexkunjunganeventpertahun', [AdminDatakunjunganController::class, 'indexkunjunganeventpertahun'])->name('admin.kunjunganevent.indexkunjunganeventpertahun');
+  Route::post('/event/storewisnuindexevent', [AdminDatakunjunganController::class, 'storewisnuindexeven'])->name('admin.kunjunganevent.storewisnuindexeven');
+  Route::get('event/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}/edit', [AdminDatakunjunganController::class, 'editwisnuevent'])->name('admin.kunjunganevent.edit');
+  Route::put('/event/updatervent/{tanggal_kunjungan}', [AdminDatakunjunganController::class, 'updatewisnuevent'])->name('admin.kunjunganevent.update');
+  Route::delete('/kunjunganevent/{event_calendar_id}/{tanggal_kunjungan}', [AdminDatakunjunganController::class, 'deletewisnuevent'])->name('admin.kunjunganevent.delete');
+  
+
   //--- data kunjungan Kuliner ------
  Route::get('indexkunjungankuliner', [AdminKunjunganKulinerController::class, 'indexkunjungankuliner'])->name('admin.kunjungankuliner.index');
  Route::get('/kunjungan-kuliner/{kuliner_id}', [AdminKunjunganKulinerController::class, 'indexeditkunjungankuliner'])->name('admin.kunjungankuliner.indexeditkunjungankuliner');

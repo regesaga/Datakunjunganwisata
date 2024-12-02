@@ -83,82 +83,94 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($events as $event)
-                        @forelse ($kunjungan[$event->id] ?? [] as $tanggal => $dataTanggal)
-                            <tr>
-                                <td>
-                                    <a class="btn btn-info btn-sm" href="{{ route('account.akomodasi.kunjunganevent.edit', ['event_calendar_id' => $hash->encode($event->id),'tanggal_kunjungan' => $tanggal]) }}">
-                                        <i class="fas fa-pencil-alt"></i> Ubah</a>
-                                    <a href="{{ route('account.akomodasi.kunjunganevent.delete', ['event_calendar_id' => $hash->encode($event->id), 'tanggal_kunjungan' => $tanggal]) }}" class="btn btn-danger btn-sm" onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
-                                        <i class="fas fa-trash"></i> Hapus</a>
-                                    <form id="delete-form" action="{{ route('account.akomodasi.kunjunganevent.delete', ['event_calendar_id' => $hash->encode($event->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                </td>
-                
-                                <input type="hidden" id="event_calendar_id" value="{{ $hash->encode($event->id) }}">
-                                <td style="text-align: center; text-transform: uppercase;">{{ $event->title }}</td>
-                                <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
-                
-                                <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
-                                <td style="text-align: center; text-transform: uppercase;">
-                                    @php
-                                        $total = 0;
-                                        foreach ($kelompok as $namaKelompok) {
-                                            $total += isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') : 0;
-                                            $total += isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') : 0;
-                                        }
-                                        foreach ($wismannegara as $negara) {
-                                            $total += isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') : 0;
-                                            $total += isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') : 0;
-                                        }
-                                    @endphp
-                                    {{ $total }}
-                                </td>
-                
-                                @foreach ($kelompok as $namaKelompok)   
-                                    <td>
-                                        {{ isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') : 0 }}
-                                    </td>
-                                    <td>
-                                        {{ isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') : 0 }}
-                                    </td>
-                                @endforeach
-                
-                                @foreach ($wismannegara as $negara)
-                                    <td>
-                                        {{ isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') : 0 }}
-                                    </td>
-                                    <td>
-                                        {{ isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') : 0 }}
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="100%" style="text-align: center;">Tidak ada event yang tersedia.</td>
-                            </tr>
-                        @endforelse
-                    @empty
+                    @if ($events->isEmpty())
                         <tr>
-                            <td colspan="100%" style="text-align: center;">Tidak ada event yang tersedia.</td>
+                            <td colspan="{{ 4 + (count($kelompok) + count($wismannegara)) * 2 }}" style="text-align: center; text-transform: uppercase;">
+                                Tidak ada kunjungan event yang diinput
+                            </td>
                         </tr>
-                    @endforelse
+                    @else
+                        @foreach ($events as $event)
+                            @if (isset($kunjungan[$event->id]) && count($kunjungan[$event->id]) > 0)
+                                @foreach ($kunjungan[$event->id] as $tanggal => $dataTanggal)
+                                    <tr>
+                                        <td style="text-align: center; text-transform: uppercase;">
+                                            <a class="btn btn-info btn-sm" href="{{ route('account.akomodasi.kunjunganevent.edit', ['event_calendar_id' => $hash->encode($event->id), 'tanggal_kunjungan' => $tanggal]) }}">
+                                                <i class="fas fa-pencil-alt"></i> Ubah
+                                            </a>
+                                            <a href="{{ route('account.akomodasi.kunjunganevent.delete', ['event_calendar_id' => $hash->encode($event->id), 'tanggal_kunjungan' => $tanggal]) }}" class="btn btn-danger btn-sm" onclick="event.preventDefault(); if(confirm('Apakah Anda yakin ingin menghapus data kunjungan tanggal {{ $tanggal }}?')) { document.getElementById('delete-form').submit(); }">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </a>
+                                            <form id="delete-form" action="{{ route('account.akomodasi.kunjunganevent.delete', ['event_calendar_id' => $hash->encode($event->id), 'tanggal_kunjungan' => $tanggal]) }}" method="POST" style="display:none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        </td>
+                                        <input type="hidden" id="event_calendar_id" value="{{ $hash->encode($event->id) }}">
+                                        <td style="text-align: center; text-transform: uppercase;">{{ $event->title }}</td>
+                                        <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
+                                        <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
+                                        <td style="text-align: center; text-transform: uppercase;">
+                                            @php
+                                                $total = 0;
+                                                foreach ($kelompok as $namaKelompok) {
+                                                    $total += isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') : 0;
+                                                    $total += isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') : 0;
+                                                }
+                                                foreach ($wismannegara as $negara) {
+                                                    $total += isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') : 0;
+                                                    $total += isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') : 0;
+                                                }
+                                            @endphp
+                                            {{ $total }}
+                                        </td>
+                
+                                        @foreach ($kelompok as $namaKelompok)
+                                            <td style="text-align: center; text-transform: uppercase;">
+                                                {{ isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') : 0 }}
+                                            </td>
+                                            <td style="text-align: center; text-transform: uppercase;">
+                                                {{ isset($dataTanggal['kelompok']) ? $dataTanggal['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') : 0 }}
+                                            </td>
+                                        @endforeach
+                
+                                        @foreach ($wismannegara as $negara)
+                                            <td style="text-align: center; text-transform: uppercase;">
+                                                {{ isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') : 0 }}
+                                            </td>
+                                            <td style="text-align: center; text-transform: uppercase;">
+                                                {{ isset($dataTanggal['wisman_by_negara']) ? $dataTanggal['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') : 0 }}
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="{{ 4 + (count($kelompok) + count($wismannegara)) * 2 }}" style="text-align: center; text-transform: uppercase;">
+                                        Tidak ada kunjungan untuk event: {{ $event->title }}
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    @endif
                 </tbody>
                 
-                {{-- <tfoot>
+                <tfoot>
                     <tr>
                         <th colspan="3" style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($dataTanggal) use ($kelompok, $wismannegara) {
+                            {{ collect($kunjungan)->flatMap(function($eventData) {
+                                return collect($eventData)->flatMap(function($tanggalData) {
+                                    return [$tanggalData];
+                                });
+                            })->sum(function($dataTanggal) use ($kelompok, $wismannegara) {
                                 $total = 0;
-                                // Sum for kelompoks
-                                foreach ($kelompok as $namaKelompok) {
-                                    $total += collect($dataTanggal['kelompok'] ?? [])->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
-                                    $total += collect($dataTanggal['kelompok'] ?? [])->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                                // Total untuk kelompok kunjungan
+                                foreach ($kelompok as $kelompokItem) {
+                                    $total += collect($dataTanggal['kelompok'] ?? [])->get($kelompokItem->id, collect())->sum('jumlah_laki_laki');
+                                    $total += collect($dataTanggal['kelompok'] ?? [])->get($kelompokItem->id, collect())->sum('jumlah_perempuan');
                                 }
-                                // Sum for wismannegara
+                                // Total untuk wismannegara
                                 foreach ($wismannegara as $negara) {
                                     $total += collect($dataTanggal['wisman_by_negara'] ?? [])->get($negara->id, collect())->sum('jml_wisman_laki');
                                     $total += collect($dataTanggal['wisman_by_negara'] ?? [])->get($negara->id, collect())->sum('jml_wisman_perempuan');
@@ -166,34 +178,50 @@
                                 return $total;
                             }) }}
                         </th>
-                        @foreach ($kelompok as $namaKelompok)
+                        @foreach ($kelompok as $kelompokItem)
                             <th style="text-align: center; text-transform: uppercase;">
-                                {{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {
-                                    return collect($dataTanggal['kelompok'] ?? [])->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+                                {{ collect($kunjungan)->flatMap(function($eventData) {
+                                    return collect($eventData)->flatMap(function($tanggalData) {
+                                        return [$tanggalData];
+                                    });
+                                })->sum(function($dataTanggal) use ($kelompokItem) {
+                                    return collect($dataTanggal['kelompok'] ?? [])->get($kelompokItem->id, collect())->sum('jumlah_laki_laki');
                                 }) }}
                             </th>
                             <th style="text-align: center; text-transform: uppercase;">
-                                {{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {
-                                    return collect($dataTanggal['kelompok'] ?? [])->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+                                {{ collect($kunjungan)->flatMap(function($eventData) {
+                                    return collect($eventData)->flatMap(function($tanggalData) {
+                                        return [$tanggalData];
+                                    });
+                                })->sum(function($dataTanggal) use ($kelompokItem) {
+                                    return collect($dataTanggal['kelompok'] ?? [])->get($kelompokItem->id, collect())->sum('jumlah_perempuan');
                                 }) }}
                             </th>
                         @endforeach
                 
                         @foreach ($wismannegara as $negara)
                             <th style="text-align: center; text-transform: uppercase;">
-                                {{ collect($kunjungan)->sum(function($dataTanggal) use ($negara) {
+                                {{ collect($kunjungan)->flatMap(function($eventData) {
+                                    return collect($eventData)->flatMap(function($tanggalData) {
+                                        return [$tanggalData];
+                                    });
+                                })->sum(function($dataTanggal) use ($negara) {
                                     return collect($dataTanggal['wisman_by_negara'] ?? [])->get($negara->id, collect())->sum('jml_wisman_laki');
                                 }) }}
                             </th>
                             <th style="text-align: center; text-transform: uppercase;">
-                                {{ collect($kunjungan)->sum(function($dataTanggal) use ($negara) {
+                                {{ collect($kunjungan)->flatMap(function($eventData) {
+                                    return collect($eventData)->flatMap(function($tanggalData) {
+                                        return [$tanggalData];
+                                    });
+                                })->sum(function($dataTanggal) use ($negara) {
                                     return collect($dataTanggal['wisman_by_negara'] ?? [])->get($negara->id, collect())->sum('jml_wisman_perempuan');
                                 }) }}
                             </th>
                         @endforeach
                     </tr>
                 </tfoot>
-                 --}}
+                
             </table>
             
         </div>

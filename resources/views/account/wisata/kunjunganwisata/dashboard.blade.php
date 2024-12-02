@@ -83,7 +83,7 @@
                                 {{-- <table id="example1" class="table table-striped">
                                             @foreach ($wismannegara as $negara)
                                                 <tr>
-                                                <td> {{ $negara->wismannegara_name }}</td>
+                                                <td  style="text-align: center; text-transform: uppercase;"> {{ $negara->wismannegara_name }}</td>
                                                 <td style="text-align: right;">{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
                                                     return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum(function ($item) {
                                                         return $item['jml_wisman_laki'] + $item['jml_wisman_perempuan'];
@@ -245,17 +245,17 @@
                                     }
                                 @endphp
                                 <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
-                                    <td>{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
 
-                                    <td>
+                                    <td  style="text-align: center; text-transform: uppercase;">
                                         {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                                     </td>
                                     @foreach ($kelompok as $namaKelompok)
-                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                        <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                        <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
                                     @endforeach
-                                    <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
-                                    <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

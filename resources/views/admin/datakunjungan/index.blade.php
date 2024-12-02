@@ -85,7 +85,7 @@
                 </div>
             </div>
                 <div class="row">
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganKuliner'] }}</h3>
@@ -96,7 +96,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganWisata']}}</h3>
@@ -107,11 +107,22 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-6">
+                    <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganAkomodasi']}}</h3>
                                 <p>Pengunjung Akomodasi</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-female"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ $totalKeseluruhan['totalkunjunganEvent']}}</h3>
+                                <p>Pengunjung Even</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-female"></i>
@@ -169,7 +180,7 @@
                                 <table id="example1" class="table table-striped">
                                     @foreach ($negaraData as $data)
                                     <tr>
-                                        <td> {{$data['name'] }}</td>
+                                         <td style="text-align: center; text-transform: uppercase;"> {{$data['name'] }}</td>
                                         <td >{{ ($data['jml_wisman_laki'] ?? 0) + ($data['jml_wisman_perempuan'] ?? 0) }}</td>
                                     </tr>
                                 @endforeach
@@ -281,6 +292,9 @@
         }, {
             name: 'Akomodasi',
             data: @json($totalAkomodasiAll)  // Data total perempuan
+        }, {
+            name: 'Event',
+            data: @json($totalEventAll)  // Data total perempuan
         }],
         chart: {
             type: 'bar',
@@ -421,7 +435,8 @@
         series: [
             {{ $totalKeseluruhan['totalkunjunganWisata'] }},
             {{ $totalKeseluruhan['totalkunjunganKuliner'] }},
-            {{ $totalKeseluruhan['totalkunjunganAkomodasi'] }}
+            {{ $totalKeseluruhan['totalkunjunganAkomodasi'] }},
+            {{ $totalKeseluruhan['totalkunjunganEvent'] }}
         ],
         chart: {
             width: 380,
@@ -430,7 +445,8 @@
         labels: [
             "Wisata",
             "Kuliner",
-            "Akomodasi"
+            "Akomodasi",
+            "Even"
         ],
         plotOptions: {
             pie: {

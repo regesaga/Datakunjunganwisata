@@ -11,7 +11,7 @@
         <!-- Map card -->
         <div class="card">
             <div class="card-header">
-                <form action="{{ route('account.kuliner.kunjungankuliner.dashboard') }}" method="GET" class="mb-4">
+                <form action="{{ route('account.akomodasi.kunjunganakomodasi.dashboard') }}" method="GET" class="mb-4">
                     <div class="row">
                         <div class="col-lg-2">
                             <select id="year" name="year" class="form-control select2" style="width: 100%;">
@@ -159,7 +159,7 @@
                         <table id="example1" class="table table-striped">
                                     @foreach ($wismannegara as $negara)
                                         <tr>
-                                         <td style="text-align: center; text-transform: uppercase;"> {{ $negara->wismannegara_name }}</td>
+                                        <td> {{ $negara->wismannegara_name }}</td>
                                         <td style="text-align: right;">{{ collect($kunjungan)->sum(function($dataBulan) use ($negara) {
                                             return $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum(function ($item) {
                                                 return $item['jml_wisman_laki'] + $item['jml_wisman_perempuan'];
@@ -201,21 +201,21 @@
                         <thead>
                             <tr><th colspan="{{ 3 + (count($kelompok) * 2) + (count($wismannegara) * 2) }}">
                                 <h2 style="text-align: center; text-transform: uppercase;">
-                                    Rekap Data Kunjungan {{$kuliner->namakuliner}} perbulan Tahun {{ $year }}
+                                    Rekap Data Kunjungan {{$akomodasi->namaakomodasi}} perbulan Tahun {{ $year }}
                                 </h2>
                                 </th>
                             </tr>
                             <tr>
                                 <th rowspan="3">Bulan</th>
                                 <th rowspan="3">Total</th>
-                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Kuliner Nusantara</th>
-                                <th colspan="2" style="text-align: center;">Kuliner Mancanegara</th>
+                                <th colspan="{{ count($kelompok) * 2 }}" style="text-align: center;">Akomodasi Nusantara</th>
+                                <th colspan="2" style="text-align: center;">Akomodasi Mancanegara</th>
                             </tr>
                             <tr>
                                 @foreach ($kelompok as $namaKelompok)
                                     <th colspan="2" style="text-align: center;">{{ $namaKelompok->kelompokkunjungan_name }}</th>
                                 @endforeach
-                                <th colspan="2" style="text-align: center;">Total Kuliner Mancanegara</th>
+                                <th colspan="2" style="text-align: center;">Total Akomodasi Mancanegara</th>
                             </tr>
                             <tr>
                                 @foreach ($kelompok as $namaKelompok)
@@ -242,17 +242,17 @@
                                     }
                                 @endphp
                                 <tr class="{{  $isZero ? 'bg-navy color-palette' : '' }}">
-                                     <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
+                                    <td>{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
 
-                                     <td style="text-align: center; text-transform: uppercase;">
+                                    <td>
                                         {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
                                     </td>
                                     @foreach ($kelompok as $namaKelompok)
-                                         <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                         <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
+                                        <td>{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
                                     @endforeach
-                                     <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
-                                     <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                    <td>{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
+                                    <td>{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -602,7 +602,7 @@
             var element = document.getElementById('TabelKunjunganBulan');
             var opt = {
                 margin:       [10, 10, 10, 10],  // Menambahkan margin atas, kanan, bawah, kiri (dalam mm)
-                filename:     'Kunjungan_Kuliner_' + new Date().toISOString() + '.pdf',
+                filename:     'Kunjungan_Akomodasi_' + new Date().toISOString() + '.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 3 },  // Meningkatkan kualitas gambar
                 jsPDF:        { 
@@ -619,8 +619,8 @@
     <script>
         document.getElementById('export-to-excel').addEventListener('click', function () {
             var table = document.getElementById('TabelKunjunganBulan'); // Ambil tabel berdasarkan ID
-            var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Kuliner' }); // Konversi tabel menjadi buku Excel
-            XLSX.writeFile(sheet, 'Kunjungan_Kuliner_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
+            var sheet = XLSX.utils.table_to_book(table, { sheet: 'Kunjungan Akomodasi' }); // Konversi tabel menjadi buku Excel
+            XLSX.writeFile(sheet, 'Kunjungan_Akomodasi_' + new Date().toISOString() + '.xlsx'); // Unduh file Excel
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>

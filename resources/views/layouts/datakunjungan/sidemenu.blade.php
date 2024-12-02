@@ -23,6 +23,26 @@
       </a>
     </li>
     <li class="nav-item">
+      <a href="{{ route('admin.kunjunganevent.create') }}" class="nav-link ? 'active' : '' ">
+          <i class="fas fa-edit nav-icon"></i>
+          <p>
+         Tambah Kunjungan Event
+          </p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{{ route('admin.kunjunganevent.indexkunjunganeventpertahun') }}" class="nav-link ? 'active' : '' ">
+        <i class="nav-icon fas fa-th"></i>
+
+        <p>
+          Index Event
+          
+        </p>
+      </a>
+    
+    </li>
+   
+    <li class="nav-item">
         <a href="{{ route('admin.kelompokkunjungan.index') }}" class="nav-link ? 'active' : '' ">
             <i class="fas fa-edit nav-icon"></i>
 

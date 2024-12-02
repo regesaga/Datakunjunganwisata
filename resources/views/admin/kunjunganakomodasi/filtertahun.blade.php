@@ -15,7 +15,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-outline-info btn-block"><i class="fa fa-search"></i>Terapkan Filter</button>
+                        <button type="submit" class="btn btn-info">Terapkan Filter</button>
                     </div>
                 </div>
             </form>
@@ -39,12 +39,12 @@
                     <tbody>
                         @foreach(range(1, 12) as $month)
                             <tr>
-                                <td>{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
-                                <td>{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
-                                <td>{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
-                                <td>
+                                 <td style="text-align: center; text-transform: uppercase;">{{ DateTime::createFromFormat('!m', $month)->format('F') }}</td>
+                                 <td style="text-align: center; text-transform: uppercase;">{{ $kunjungan[$month]['total_laki_laki'] ?? 0 }}</td>
+                                 <td style="text-align: center; text-transform: uppercase;">{{ $kunjungan[$month]['total_perempuan'] ?? 0 }}</td>
+                                 <td style="text-align: center; text-transform: uppercase;">{{ $kunjungan[$month]['total_wisman_laki'] ?? 0 }}</td>
+                                 <td style="text-align: center; text-transform: uppercase;">{{ $kunjungan[$month]['total_wisman_perempuan'] ?? 0 }}</td>
+                                 <td style="text-align: center; text-transform: uppercase;">
                                     {{ ($kunjungan[$month]['total_laki_laki'] ?? 0) + 
                                        ($kunjungan[$month]['total_perempuan'] ?? 0) + 
                                        ($kunjungan[$month]['total_wisman_laki'] ?? 0) + 
