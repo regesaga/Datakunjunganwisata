@@ -18,11 +18,15 @@ use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\Api\WisatawanAuthApiController;
+use App\Http\Controllers\Api\DataKunjungan\AuthApiController;
+
 /**
  * Wisawatan Section
  */
 
-use App\Http\Controllers\Api\Wisatawan\AuthController;
+
+
 
 $verificationLimiter = config('fortify.limiters.verification', '6.1');
 
@@ -142,4 +146,22 @@ Route::group(['prefix' => 'wisatawan'], function () {
 
 Route::post('/login/google', [WisatawanApiController::class, 'googleLogin']);
 
-     
+// routes/api.php
+Route::post('/datakunjungan/login', [AuthApiController::class, 'login']);
+
+
+Route::middleware(['auth:sanctum', 'role:admin'])->get('/admin-dashboard', function () {
+    return response()->json(['message' => 'Welcome Admin to the Dashboard']);
+});
+
+Route::middleware(['auth:sanctum', 'role:wisata'])->get('/wisata-dashboard', function () {
+    return response()->json(['message' => 'Welcome Wisata to the Dashboard']);
+});
+
+Route::middleware(['auth:sanctum', 'role:kuliner'])->get('/kuliner-dashboard', function () {
+    return response()->json(['message' => 'Welcome Kuliner to the Dashboard']);
+});
+
+Route::middleware(['auth:sanctum', 'role:akomodasi'])->get('/akomodasi-dashboard', function () {
+    return response()->json(['message' => 'Welcome Akomodasi to the Dashboard']);
+});
