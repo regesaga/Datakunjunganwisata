@@ -224,6 +224,17 @@
         </a>
       
       </li>
+
+      <li class="nav-item">
+        <a href="{{ route('account.wisata.kunjunganwisata.realtime') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-tachometer-alt"></i>
+          <p>
+            Realtime
+            
+          </p>
+        </a>
+      
+      </li>
       
       <li class="nav-item">
         <a href="{{ route('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun') }}" class="nav-link ? 'active' : '' ">
@@ -315,6 +326,16 @@
       
       </li>
       <li class="nav-item">
+        <a href="{{ route('account.kuliner.kunjungankuliner.realtime') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-tachometer-alt"></i>
+          <p>
+            Realtime
+            
+          </p>
+        </a>
+      
+      </li>
+      <li class="nav-item">
         <a href="{{ route('account.kuliner.kunjungankuliner.index') }}" class="nav-link ? 'active' : '' ">
           <i class="nav-icon fas fa-th"></i>
 
@@ -398,6 +419,16 @@
           <p>
             Dashboard
             <i class="right fas fa-angle-left"></i>
+          </p>
+        </a>
+      
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('account.akomodasi.kunjunganakomodasi.realtime') }}" class="nav-link ? 'active' : '' ">
+          <i class="nav-icon fas fa-tachometer-alt"></i>
+          <p>
+            Realtime
+            
           </p>
         </a>
       

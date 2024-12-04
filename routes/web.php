@@ -518,6 +518,10 @@ Route::middleware(['auth', 'wisata'])->prefix('wisata')->group(function () {
     Route::get('indexkunjunganwisata', [KunjunganWisataController::class, 'indexkunjunganwisata'])->name('account.wisata.kunjunganwisata.index');
     Route::get('/wisata/indexkunjunganwisatapertahun', [KunjunganWisataController::class, 'indexkunjunganwisatapertahun'])->name('account.wisata.kunjunganwisata.indexkunjunganwisatapertahun');
     Route::get('wisata/dashboard', [KunjunganWisataController::class, 'dashboard'])->name('account.wisata.kunjunganwisata.dashboard');
+    
+    Route::get('wisata/realtime', [KunjunganWisataController::class, 'realtime'])->name('account.wisata.kunjunganwisata.realtime');
+    
+    
     Route::get('wisata/perbulan', [KunjunganWisataController::class, 'filterbulan'])->name('account.wisata.kunjunganwisata.filterbulan');
     Route::get('wisata/wisnuperbulan', [KunjunganWisataController::class, 'filterwisnubulan'])->name('account.wisata.kunjunganwisata.filterwisnubulan');
     Route::get('wisata/wismanperbulan', [KunjunganWisataController::class, 'filterwismanbulan'])->name('account.wisata.kunjunganwisata.filterwismanbulan');
@@ -676,6 +680,9 @@ Route::middleware(['auth', 'kuliner'])->prefix('kuliner')->group(function () {
   Route::get('indexkunjungankuliner', [KunjunganKulinerController::class, 'indexkunjungankuliner'])->name('account.kuliner.kunjungankuliner.index');
   Route::get('/kuliner/indexkunjungankulinerpertahun', [KunjunganKulinerController::class, 'indexkunjungankulinerpertahun'])->name('account.kuliner.kunjungankuliner.indexkunjungankulinerpertahun');
   Route::get('kuliner/dashboard', [KunjunganKulinerController::class, 'dashboard'])->name('account.kuliner.kunjungankuliner.dashboard');
+  Route::get('kuliner/realtime', [KunjunganKulinerController::class, 'realtime'])->name('account.kuliner.kunjungankuliner.realtime');
+  
+  
   Route::get('kuliner/perbulan', [KunjunganKulinerController::class, 'filterbulan'])->name('account.kuliner.kunjungankuliner.filterbulan');
   Route::get('kuliner/wisnuperbulan', [KunjunganKulinerController::class, 'filterwisnubulan'])->name('account.kuliner.kunjungankuliner.filterwisnubulan');
   Route::get('kuliner/wismanperbulan', [KunjunganKulinerController::class, 'filterwismanbulan'])->name('account.kuliner.kunjungankuliner.filterwismanbulan');
@@ -778,6 +785,9 @@ Route::middleware(['auth', 'akomodasi'])->prefix('akomodasi')->group(function ()
   Route::get('indexkunjunganakomodasi', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasi'])->name('account.akomodasi.kunjunganakomodasi.index');
   Route::get('/akomodasi/indexkunjunganakomodasipertahun', [KunjunganAkomodasiController::class, 'indexkunjunganakomodasipertahun'])->name('account.akomodasi.kunjunganakomodasi.indexkunjunganakomodasipertahun');
   Route::get('akomodasi/dashboard', [KunjunganAkomodasiController::class, 'dashboard'])->name('account.akomodasi.kunjunganakomodasi.dashboard');
+  Route::get('akomodasi/realtime', [KunjunganAkomodasiController::class, 'realtime'])->name('account.akomodasi.kunjunganakomodasi.realtime');
+
+
   Route::get('akomodasi/perbulan', [KunjunganAkomodasiController::class, 'filterbulan'])->name('account.akomodasi.kunjunganakomodasi.filterbulan');
   Route::get('akomodasi/wisnuperbulan', [KunjunganAkomodasiController::class, 'filterwisnubulan'])->name('account.akomodasi.kunjunganakomodasi.filterwisnubulan');
   Route::get('akomodasi/wismanperbulan', [KunjunganAkomodasiController::class, 'filterwismanbulan'])->name('account.akomodasi.kunjunganakomodasi.filterwismanbulan');
