@@ -11,6 +11,11 @@ use App\Http\Controllers\Api\PesanKulinerApiController;
 use App\Http\Controllers\Api\AkomodasiApiController;
 use App\Http\Controllers\Api\EvencalenderApiController;
 use App\Http\Controllers\Api\BanerApiController;
+use App\Http\Controllers\Api\DataKunjungan\AuthApiController; 
+use App\Http\Controllers\Api\DataKunjungan\KunjunganAdminController; 
+use App\Http\Controllers\Api\DataKunjungan\KunjunganWisataController; 
+use App\Http\Controllers\Api\DataKunjungan\KunjunganKulinerController; 
+use App\Http\Controllers\Api\DataKunjungan\KunjunganAkomodasiController; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
@@ -18,8 +23,8 @@ use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use App\Http\Controllers\Api\WisatawanAuthApiController;
-use App\Http\Controllers\Api\DataKunjungan\AuthApiController;
+use Illuminate\Support\Facades\Log;
+
 
 /**
  * Wisawatan Section
@@ -146,22 +151,22 @@ Route::group(['prefix' => 'wisatawan'], function () {
 
 Route::post('/login/google', [WisatawanApiController::class, 'googleLogin']);
 
-// routes/api.php
+// Rute untuk login
+
 Route::post('/datakunjungan/login', [AuthApiController::class, 'login']);
 
+// Rute untuk logout (dengan autentikasi menggunakan token API)
+Route::middleware('auth:api')->post('/datakunjungan/logout', [AuthApiController::class, 'logout']);
 
-Route::middleware(['auth:sanctum', 'role:admin'])->get('/admin-dashboard', function () {
-    return response()->json(['message' => 'Welcome Admin to the Dashboard']);
-});
 
-Route::middleware(['auth:sanctum', 'role:wisata'])->get('/wisata-dashboard', function () {
-    return response()->json(['message' => 'Welcome Wisata to the Dashboard']);
-});
 
-Route::middleware(['auth:sanctum', 'role:kuliner'])->get('/kuliner-dashboard', function () {
-    return response()->json(['message' => 'Welcome Kuliner to the Dashboard']);
-});
+Route::middleware(['auth:api', 'role:admin'])->get('/dashboardadmin', [KunjunganAdminController::class, 'dashboard']);
 
-Route::middleware(['auth:sanctum', 'role:akomodasi'])->get('/akomodasi-dashboard', function () {
-    return response()->json(['message' => 'Welcome Akomodasi to the Dashboard']);
-});
+
+Route::middleware(['auth:api', 'role:wisata'])->get('/dashboardwisata', [KunjunganWisataController::class, 'dashboardwisata']);
+
+
+Route::middleware(['auth:api', 'role:kuliner'])->get('/dashboardkuliner', [KunjunganKulinerController::class, 'dashboard']);
+
+
+Route::middleware(['auth:api', 'role:akomodasi'])->get('/dashboardaokodasi', [KunjunganAkomodasiController::class, 'dashboard']);

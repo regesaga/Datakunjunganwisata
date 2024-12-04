@@ -69,7 +69,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+       // 'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,  
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
@@ -82,6 +83,7 @@ class Kernel extends HttpKernel
         'wisatawan.auth' => \App\Http\Middleware\WisatawanAuthMiddleware::class,
         'auth:api' => \Laravel\Passport\Http\Middleware\Authenticate::class,
         'security' => \App\Http\Middleware\SecurityMiddleware::class,
+        
         
         
 
