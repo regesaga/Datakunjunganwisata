@@ -63,48 +63,72 @@ class AuthApiController extends Controller
         // Cek role pengguna dan berikan respons sesuai role
         if ($user->hasRole('admin')) {
             return response()->json([
-                'message' => 'Admin Dashboard',
-                'token' => $token,
-                'role' => $roleName
+                'status' => 'success',
+                'message' => 'Login berhasil',
+                'data' => [
+                    'role' => $roleName,
+                    'token' => $token
+                ]
             ], 200);
         } elseif ($user->hasRole('wisata')) {
             // Cek apakah wisata ada dan namawisata tidak null
             if ($wisata && $wisata->namawisata) {
                 return response()->json([
-                    'message' => 'Wisata Dashboard',
-                    'token' => $token,
-                    'role' => $roleName,
-                    'wisata' => $wisata->namawisata
+                    'status' => 'success',
+                    'message' => 'Login berhasil',
+                    'data' => [
+                        'role' => $roleName,
+                        'token' => $token,
+                        'wisata' => $wisata->namawisata
+                    ]
                 ], 200);
             } else {
-                return response()->json(['message' => 'Wisata profile belum lengkap atau namawisata tidak ditemukan.'], 404);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Wisata profile belum lengkap atau namawisata tidak ditemukan.'
+                ], 404);
             }
         } elseif ($user->hasRole('kuliner')) {
             // Cek apakah kuliner ada dan namakuliner tidak null
             if ($kuliner && $kuliner->namakuliner) {
                 return response()->json([
-                    'message' => 'Kuliner Dashboard',
-                    'token' => $token,
-                    'role' => $roleName,
-                    'kuliner' => $kuliner->namakuliner
+                    'status' => 'success',
+                    'message' => 'Login berhasil',
+                    'data' => [
+                        'role' => $roleName,
+                        'token' => $token,
+                        'kuliner' => $kuliner->namakuliner
+                    ]
                 ], 200);
             } else {
-                return response()->json(['message' => 'Kuliner profile belum lengkap atau namakuliner tidak ditemukan.'], 404);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Kuliner profile belum lengkap atau namakuliner tidak ditemukan.'
+                ], 404);
             }
         } elseif ($user->hasRole('akomodasi')) {
             // Cek apakah akomodasi ada dan namaakomodasi tidak null
             if ($akomodasi && $akomodasi->namaakomodasi) {
                 return response()->json([
-                    'message' => 'Akomodasi Dashboard',
-                    'token' => $token,
-                    'role' => $roleName,
-                    'akomodasi' => $akomodasi->namaakomodasi
+                    'status' => 'success',
+                    'message' => 'Login berhasil',
+                    'data' => [
+                        'role' => $roleName,
+                        'token' => $token,
+                        'akomodasi' => $akomodasi->namaakomodasi
+                    ]
                 ], 200);
             } else {
-                return response()->json(['message' => 'Akomodasi profile belum lengkap atau namaakomodasi tidak ditemukan.'], 404);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Akomodasi profile belum lengkap atau namaakomodasi tidak ditemukan.'
+                ], 404);
             }
         } else {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role tidak dikenali.'
+            ], 404);
         }
     }
     
