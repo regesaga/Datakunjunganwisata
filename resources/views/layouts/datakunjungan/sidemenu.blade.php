@@ -15,6 +15,16 @@
     
     </li>
     <li class="nav-item">
+      <a href="{{ route('admin.datakunjungan.realtime') }}" class="nav-link ? 'active' : '' ">
+        <i class="nav-icon fas fa-tachometer-alt"></i>
+        <p>
+          Realtime
+          
+        </p>
+      </a>
+    
+    </li>
+    <li class="nav-item">
       <a href="{{ route('admin.kunjunganwisata.createwisnu') }}" class="nav-link ? 'active' : '' ">
           <i class="fas fa-edit nav-icon"></i>
 

@@ -154,6 +154,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   Route::get('semua-datakunjunganpertahun', [AdminDatakunjunganController::class, 'semua'])->name('admin.datakunjungan.semua');
   Route::get('semua-datakunjunganperbulan', [AdminDatakunjunganController::class, 'semuabulan'])->name('admin.datakunjungan.semuabulan');
 
+  Route::get('datakunjungan/realtime', [AdminDatakunjunganController::class, 'realtime'])->name('admin.datakunjungan.realtime');
+
 
   Route::post('/wisata/storewisnuindex', [AdminKunjunganWisataController::class, 'storewisnuindex'])->name('admin.kunjunganwisata.storewisnuindex');
 

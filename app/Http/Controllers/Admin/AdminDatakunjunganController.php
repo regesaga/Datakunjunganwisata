@@ -1188,4 +1188,195 @@ public function deletewisnuevent($event_calendar_id, $tanggal_kunjungan)
 }
 
 
+
+
+public function realtime(Request $request)
+{
+    $hash = new Hashids();
+        // Mengambil semua kelompok dan negara untuk ditampilkan di table
+        $kelompok = KelompokKunjungan::all();
+        $wismannegara = WismanNegara::all();
+
+        // Menentukan variabel yang selalu tersedia untuk compact
+        $wisata = null;
+        $akomodasi = null;
+        $kuliner = null;
+        $event = null;
+        $kunjungan = [];
+
+    // Menentukan periode berdasarkan filter yang dipilih
+    $filter = $request->input('filter', 'hari_ini'); // Default filter adalah 'hari_ini'
+
+    if ($filter == 'hari_ini') {
+        $startDate = Carbon::today()->startOfDay();
+        $endDate = Carbon::today()->endOfDay();
+    } elseif ($filter == 'minggu_ini') {
+        $startDate = Carbon::now()->startOfWeek();
+        $endDate = Carbon::now()->endOfWeek();
+    } elseif ($filter == 'bulan_ini') {
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+    } else {
+        // Default ke bulan ini jika tidak ada filter yang cocok
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+    }
+
+    // Rentang tanggal untuk periode yang dipilih
+    $tanggalRentang = \Carbon\CarbonPeriod::create($startDate, '1 day', $endDate);
+
+
+    
+
+
+    // Query untuk kunjungan Wisnu
+    $wisnuKunjungan = DB::table(function ($query) use ($startDate, $endDate) {
+        $query->selectRaw('tanggal_kunjungan, SUM(jumlah_laki_laki) as jumlah_laki_laki, SUM(jumlah_perempuan) as jumlah_perempuan, kelompok_kunjungan_id')
+            ->from('wisnuwisata')
+            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+            ->groupBy('tanggal_kunjungan', 'kelompok_kunjungan_id')
+            ->unionAll(
+                DB::table('wisnuakomodasi')
+                    ->selectRaw('tanggal_kunjungan, SUM(jumlah_laki_laki) as jumlah_laki_laki, SUM(jumlah_perempuan) as jumlah_perempuan, kelompok_kunjungan_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'kelompok_kunjungan_id')
+            )
+            ->unionAll(
+                DB::table('wisnu_event')
+                    ->selectRaw('tanggal_kunjungan, SUM(jumlah_laki_laki) as jumlah_laki_laki, SUM(jumlah_perempuan) as jumlah_perempuan, kelompok_kunjungan_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'kelompok_kunjungan_id')
+            )
+            ->unionAll(
+                DB::table('wisnukuliner')
+                    ->selectRaw('tanggal_kunjungan, SUM(jumlah_laki_laki) as jumlah_laki_laki, SUM(jumlah_perempuan) as jumlah_perempuan, kelompok_kunjungan_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'kelompok_kunjungan_id')
+            );
+    })
+    ->select('tanggal_kunjungan', 'jumlah_laki_laki', 'jumlah_perempuan', 'kelompok_kunjungan_id')
+    ->get()
+    ->groupBy('tanggal_kunjungan');
+
+    // Query untuk kunjungan Wisman
+    $wismanKunjungan = DB::table(function ($query) use ($startDate, $endDate) {
+        $query->selectRaw('tanggal_kunjungan, SUM(jml_wisman_laki) as jml_wisman_laki, SUM(jml_wisman_perempuan) as jml_wisman_perempuan, wismannegara_id')
+            ->from('wismanwisata')
+            ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+            ->groupBy('tanggal_kunjungan', 'wismannegara_id')
+            ->unionAll(
+                DB::table('wismanakomodasi')
+                    ->selectRaw('tanggal_kunjungan, SUM(jml_wisman_laki) as jml_wisman_laki, SUM(jml_wisman_perempuan) as jml_wisman_perempuan, wismannegara_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'wismannegara_id')
+            )
+            ->unionAll(
+                DB::table('wisman_event')
+                    ->selectRaw('tanggal_kunjungan, SUM(jml_wisman_laki) as jml_wisman_laki, SUM(jml_wisman_perempuan) as jml_wisman_perempuan, wismannegara_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'wismannegara_id')
+            )
+            ->unionAll(
+                DB::table('wismankuliner')
+                    ->selectRaw('tanggal_kunjungan, SUM(jml_wisman_laki) as jml_wisman_laki, SUM(jml_wisman_perempuan) as jml_wisman_perempuan, wismannegara_id')
+                    ->whereBetween('tanggal_kunjungan', [$startDate, $endDate])
+                    ->groupBy('tanggal_kunjungan', 'wismannegara_id')
+            );
+    })
+    ->select('tanggal_kunjungan', 'jml_wisman_laki', 'jml_wisman_perempuan', 'wismannegara_id')
+    ->get()
+    ->groupBy('tanggal_kunjungan');
+
+    // Olah data kunjungan
+    foreach ($tanggalRentang as $tanggal) {
+        $tanggalFormat = $tanggal->format('Y-m-d');
+    
+        // Ambil data kunjungan berdasarkan tanggal untuk Wisnu
+        $dataWisnu = $wisnuKunjungan->get($tanggalFormat, collect());
+        $jumlahLakiLaki = $dataWisnu->sum('jumlah_laki_laki');
+        $jumlahPerempuan = $dataWisnu->sum('jumlah_perempuan');
+        $wisnuByKelompok = $dataWisnu->groupBy('kelompok_kunjungan_id');
+    
+        // Ambil data kunjungan berdasarkan tanggal untuk Wisman
+        $dataWisman = $wismanKunjungan->get($tanggalFormat, collect());
+        $jmlWismanLaki = $dataWisman->sum('jml_wisman_laki');
+        $jmlWismanPerempuan = $dataWisman->sum('jml_wisman_perempuan');
+        $wismanByNegara = $dataWisman->groupBy('wismannegara_id');
+    
+        // Hitung total kunjungan per objek berdasarkan tanggal
+        $totalWisata = $this->sumKunjunganrealtime('wisnuwisata', $tanggalFormat, 'jumlah_laki_laki')
+            + $this->sumKunjunganrealtime('wisnuwisata', $tanggalFormat, 'jumlah_perempuan')
+            + $this->sumKunjunganrealtime('wismanwisata', $tanggalFormat, 'jml_wisman_laki')
+            + $this->sumKunjunganrealtime('wismanwisata', $tanggalFormat, 'jml_wisman_perempuan');
+    
+        $totalKuliner = $this->sumKunjunganrealtime('wisnukuliner', $tanggalFormat, 'jumlah_laki_laki')
+            + $this->sumKunjunganrealtime('wisnukuliner', $tanggalFormat, 'jumlah_perempuan')
+            + $this->sumKunjunganrealtime('wismankuliner', $tanggalFormat, 'jml_wisman_laki')
+            + $this->sumKunjunganrealtime('wismankuliner', $tanggalFormat, 'jml_wisman_perempuan');
+    
+        $totalAkomodasi = $this->sumKunjunganrealtime('wisnuakomodasi', $tanggalFormat, 'jumlah_laki_laki')
+            + $this->sumKunjunganrealtime('wisnuakomodasi', $tanggalFormat, 'jumlah_perempuan')
+            + $this->sumKunjunganrealtime('wismanakomodasi', $tanggalFormat, 'jml_wisman_laki')
+            + $this->sumKunjunganrealtime('wismanakomodasi', $tanggalFormat, 'jml_wisman_perempuan');
+    
+        $totalEvent = $this->sumKunjunganrealtime('wisnu_event', $tanggalFormat, 'jumlah_laki_laki')
+            + $this->sumKunjunganrealtime('wisnu_event', $tanggalFormat, 'jumlah_perempuan')
+            + $this->sumKunjunganrealtime('wisman_event', $tanggalFormat, 'jml_wisman_laki')
+            + $this->sumKunjunganrealtime('wisman_event', $tanggalFormat, 'jml_wisman_perempuan');
+    
+        // Menyimpan data kunjungan untuk tanggal ini
+        $kunjungan[$tanggalFormat] = [
+            'totalkunjunganWisata' => $totalWisata ?: 0,
+            'totalkunjunganKuliner' => $totalKuliner ?: 0,
+            'totalkunjunganAkomodasi' => $totalAkomodasi ?: 0,
+            'totalkunjunganEvent' => $totalEvent ?: 0,
+    
+            'jumlah_laki_laki' => $jumlahLakiLaki ?: 0,
+            'jumlah_perempuan' => $jumlahPerempuan ?: 0,
+            'kelompok' => $wisnuByKelompok,
+            'jml_wisman_laki' => $jmlWismanLaki ?: 0,
+            'jml_wisman_perempuan' => $jmlWismanPerempuan ?: 0,
+            'wisman_by_negara' => $wismanByNegara,
+        ];
+    }
+    
+    // Mengurutkan data berdasarkan tanggal
+    $kunjungan = collect($kunjungan)->sortBy(fn ($item, $key) => $key);
+    
+    // Mengambil nilai-nilai yang diperlukan untuk grafik atau tampilan
+    $dates = $kunjungan->keys()->toArray();
+    $jumlahLakiLaki = $kunjungan->pluck('jumlah_laki_laki')->toArray();
+    $jumlahPerempuan = $kunjungan->pluck('jumlah_perempuan')->toArray();
+    $jmlWismanLaki = $kunjungan->pluck('jml_wisman_laki')->toArray();
+    $jmlWismanPerempuan = $kunjungan->pluck('jml_wisman_perempuan')->toArray();
+    
+    $totalWisata = $kunjungan->pluck('totalkunjunganWisata')->toArray();
+    $totalKuliner = $kunjungan->pluck('totalkunjunganKuliner')->toArray();
+    $totalAkomodasi = $kunjungan->pluck('totalkunjunganAkomodasi')->toArray();
+    $totalEvent = $kunjungan->pluck('totalkunjunganEvent')->toArray();
+    
+    // Ambil data tambahan untuk kelompok dan negara
+    $kelompok = KelompokKunjungan::all();
+    $wismannegara = WismanNegara::all();
+    
+    // Kembalikan data ke tampilan
+    return view('admin.datakunjungan.realtime', compact(
+        'kunjungan', 'kelompok', 'wismannegara', 'hash', 'filter', 'startDate', 'endDate',
+        'totalEvent', 'totalAkomodasi', 'totalWisata', 'totalKuliner',
+        'dates', 'jumlahLakiLaki', 'jumlahPerempuan', 'jmlWismanLaki', 'jmlWismanPerempuan',
+        'wisata', 'akomodasi', 'kuliner', 'event'
+    ));
+}
+
+private function sumKunjunganrealtime($table, $tanggal, $column)
+{
+    return DB::table($table)
+        ->select(DB::raw("SUM($column) as total"))
+        ->whereDate('tanggal_kunjungan', $tanggal)
+        ->first()
+        ->total ?? 0;  // Mengembalikan total 0 jika tidak ada data
+}
+
+
+
 }
