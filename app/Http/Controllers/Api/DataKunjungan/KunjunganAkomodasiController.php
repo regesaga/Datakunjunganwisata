@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\DataKunjungan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Models\Evencalender;
 use App\Models\WisnuAkomodasi;
 use App\Models\WisnuEvent;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 
 class KunjunganAkomodasiController extends Controller
 {
-    public function dashboard(Request $request)
+    public function dashboardakomodasi(Request $request)
     {
 
         $company_id = auth()->user()->company->id;
@@ -275,5 +276,96 @@ class KunjunganAkomodasiController extends Controller
             'totalKunjungan' => $totalKunjungan,
             'negaraData' => $negaraData,
         ]);
+    }
+
+    public function createWisnu()
+    {
+        $company_id = auth()->user()->company->id;
+        $kelompok = KelompokKunjungan::all();
+        $akomodasi = Akomodasi::where('company_id', $company_id)
+        ->select(['id', 'namaakomodasi'])  // Pilih hanya kolom yang diperlukan
+        ->without('photos')  // Pastikan 'photos' tidak dimuat
+        ->first();
+        $wismannegara = WismanNegara::all();
+        $tanggal = now()->format('d-m-Y');
+
+        return response()->json([
+            'akomodasi' => $akomodasi,
+            'kelompok' => $kelompok,
+            'wismannegara' => $wismannegara,
+            'tanggal' => $tanggal,
+        ]);
+    }
+
+    // Menyimpan data kunjungan
+    public function storewisnu(Request $request)
+    {
+          // Validasi input
+          $request->validate([
+            'akomodasi_id' => 'required|exists:akomodasis,id',
+            'kelompok_kunjungan_id' => 'required|array',
+            'jumlah_laki_laki' => 'required|array',
+            'jumlah_perempuan' => 'required|array',
+            'tanggal_kunjungan' => 'required|date',
+            'wismannegara_id' => 'nullable|array',
+            'jml_wisman_laki' => 'nullable|array',
+            'jml_wisman_perempuan' => 'nullable|array',
+        ]);
+            // Periksa data yang sudah ada
+            $existingWisnu = WisnuAkomodasi::where('akomodasi_id', $request->akomodasi_id)
+            ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
+            ->first();
+    
+            if ($existingWisnu) {
+            return response()->json([
+                'message' => 'Data kunjungan pada tanggal tersebut sudah ada.',
+            ], 400);
+            }
+    
+        try {
+          
+           
+            // Simpan data WISNU
+            foreach ($request->kelompok_kunjungan_id as  $index => $kelompok) {
+                $jumlah_laki = $request->jumlah_laki_laki[$index] ?? 0;
+                $jumlah_perempuan = $request->jumlah_perempuan[$index] ?? 0;
+    
+                WisnuAkomodasi::create([
+                    'akomodasi_id' => $request->akomodasi_id,
+                    'kelompok_kunjungan_id' => $kelompok,
+                    'jumlah_laki_laki' => $jumlah_laki,
+                    'jumlah_perempuan' => $jumlah_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                ]);
+            }
+    
+            // Simpan data WISMAN jika ada
+            if ($request->filled('wismannegara_id')) {
+                foreach ($request->wismannegara_id as $index => $negara) {
+                    $jml_wisman_laki = $request->jml_wisman_laki[$index] ?? 0;
+                    $jml_wisman_perempuan = $request->jml_wisman_perempuan[$index] ?? 0;
+    
+                    WismanAkomodasi::create([
+                        'akomodasi_id' => $request->akomodasi_id,
+                        'wismannegara_id' => $negara,
+                        'jml_wisman_laki' => $jml_wisman_laki,
+                        'jml_wisman_perempuan' => $jml_wisman_perempuan,
+                        'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                    ]);
+                }
+            }
+    
+            return response()->json([
+                'message' => 'Data kunjungan berhasil disimpan.',
+            ], 201);
+    
+        } catch (\Exception $e) {
+            // Tangani jika terjadi kesalahan lainnya
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ], 500);
+        }
     }
 }

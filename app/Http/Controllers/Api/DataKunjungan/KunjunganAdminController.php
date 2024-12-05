@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Auth;
 
 class KunjunganAdminController extends Controller
 {
-    public function dashboard(Request $request)
+    public function dashboardadmin(Request $request)
     {
 
         $company_id = auth()->user()->company->id;

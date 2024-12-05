@@ -39,26 +39,22 @@ class AuthApiController extends Controller
         if ($user->hasRole('admin')) {
             return response()->json([
                 'message' => 'Admin Dashboard',
-                'token' => $token,
-                'user' => $user
+                'token' => $token
             ], 200);
         } elseif ($user->hasRole('wisata')) {
             return response()->json([
                 'message' => 'Wisata Dashboard',
-                 'token' => $token,
-                'user' => $user
+                 'token' => $token
             ], 200);
         } elseif ($user->hasRole('kuliner')) {
             return response()->json([
                 'message' => 'Kuliner Dashboard',
-                 'token' => $token,
-                'user' => $user
+                 'token' => $token
             ], 200);
         } elseif ($user->hasRole('akomodasi')) {
             return response()->json([
                 'message' => 'Akomodasi Dashboard',
-                 'token' => $token,
-                'user' => $user
+                 'token' => $token
             ], 200);
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -66,7 +62,7 @@ class AuthApiController extends Controller
     }
 
     /**
-     * Logout API
+     * Logout API   
      */
     public function logout(Request $request)
     {

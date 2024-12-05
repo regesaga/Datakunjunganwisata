@@ -160,13 +160,61 @@ Route::middleware('auth:api')->post('/datakunjungan/logout', [AuthApiController:
 
 
 
-Route::middleware(['auth:api', 'role:admin'])->get('/dashboardadmin', [KunjunganAdminController::class, 'dashboard']);
 
 
-Route::middleware(['auth:api', 'role:wisata'])->get('/dashboardwisata', [KunjunganWisataController::class, 'dashboardwisata']);
+Route::group(['middleware' => ['auth:api', 'role:admin']], function () {
 
 
-Route::middleware(['auth:api', 'role:kuliner'])->get('/dashboardkuliner', [KunjunganKulinerController::class, 'dashboard']);
+    Route::get('kunjungan/dashboardadmin', [KunjunganAdminController::class, 'dashboardadmin']);
+    // Route untuk createwisnu (GET)
+
+    Route::get('kunjungan/create-wisnu', [KunjunganAdminController::class, 'createwisnu']);
+
+    // Route untuk storewisnu (POST)
+    Route::post('kunjungan/store-wisnu', [KunjunganAdminController::class, 'storewisnu']);
+});
 
 
-Route::middleware(['auth:api', 'role:akomodasi'])->get('/dashboardaokodasi', [KunjunganAkomodasiController::class, 'dashboard']);
+
+Route::group(['middleware' => ['auth:api', 'role:wisata']], function () {
+
+
+    Route::get('kunjungan/dashboardwisata', [KunjunganWisataController::class, 'dashboardwisata']);
+    // Route untuk createwisnu (GET)
+
+    Route::get('kunjungan/create-wisnuwisata', [KunjunganWisataController::class, 'createwisnu']);
+
+    // Route untuk storewisnu (POST)
+    Route::post('kunjungan/store-wisnuwisata', [KunjunganWisataController::class, 'storewisnu']);
+});
+
+
+Route::group(['middleware' => ['auth:api', 'role:kuliner']], function () {
+
+
+    Route::get('kunjungan/dashboardkuliner', [KunjunganKulinerController::class, 'dashboardkuliner']);
+    // Route untuk createwisnu (GET)
+
+    Route::get('kunjungan/create-wisnukuliner', [KunjunganKulinerController::class, 'createwisnu']);
+
+    // Route untuk storewisnu (POST)
+    Route::post('kunjungan/store-wisnukuliner', [KunjunganKulinerController::class, 'storewisnu']);
+});
+
+
+Route::group(['middleware' => ['auth:api', 'role:akomodasi']], function () {
+
+
+    Route::get('kunjungan/dashboardakomodasi', [KunjunganAkomodasiController::class, 'dashboardakomodasi']);
+    // Route untuk createwisnu (GET)
+
+    Route::get('kunjungan/create-wisnuakomodasi', [KunjunganAkomodasiController::class, 'createwisnu']);
+
+    // Route untuk storewisnu (POST)
+    Route::post('kunjungan/store-wisnuakomodasi', [KunjunganAkomodasiController::class, 'storewisnu']);
+});
+
+
+
+
+
