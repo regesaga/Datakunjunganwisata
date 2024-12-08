@@ -267,14 +267,19 @@ class KunjunganAkomodasiController extends Controller
         }
     
         return response()->json([
-            'bulan' => $bulan,
-            'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok,
-            'kelompokData' => $kelompokData,
-            'wismannegara' => $wismannegara,
-            'totalKeseluruhan' => $totalKeseluruhan,
-            'totalKunjungan' => $totalKunjungan,
-            'negaraData' => $negaraData,
+            // 'bulan' => $bulan,
+            // 'kunjungan' => $kunjungan,
+            // 'kelompok' => $kelompok,
+            // 'kelompokData' => $kelompokData,
+            // 'wismannegara' => $wismannegara,
+            // 'totalKeseluruhan' => $totalKeseluruhan,
+            // 'totalKunjungan' => $totalKunjungan,
+            // 'negaraData' => $negaraData,
+            'data' => [
+                'totalKunjungan' => $totalKunjungan,
+                'totalKeseluruhan' => $totalKeseluruhan,
+                'kelompokData' => $kelompokData,
+            ]
         ]);
     }
 
@@ -290,10 +295,17 @@ class KunjunganAkomodasiController extends Controller
         $tanggal = now()->format('d-m-Y');
 
         return response()->json([
-            'akomodasi' => $akomodasi,
-            'kelompok' => $kelompok,
-            'wismannegara' => $wismannegara,
-            'tanggal' => $tanggal,
+            // 'akomodasi' => $akomodasi,
+            // 'kelompok' => $kelompok,
+            // 'wismannegara' => $wismannegara,
+            // 'tanggal' => $tanggal,
+            'data' => [
+                'akomodasi_id' => $akomodasi->id,
+                'akomodasi' => $akomodasi->namaakomodasi,
+                'kelompok' => $kelompok,
+                'wismannegara' => $wismannegara,
+                'tanggal' => $tanggal,
+            ]
         ]);
     }
 
@@ -302,7 +314,7 @@ class KunjunganAkomodasiController extends Controller
     {
           // Validasi input
           $request->validate([
-            'akomodasi_id' => 'required|exists:akomodasis,id',
+            'akomodasi_id' => 'required|exists:akomodasi,id',
             'kelompok_kunjungan_id' => 'required|array',
             'jumlah_laki_laki' => 'required|array',
             'jumlah_perempuan' => 'required|array',

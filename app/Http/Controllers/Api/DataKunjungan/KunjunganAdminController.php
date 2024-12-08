@@ -179,12 +179,15 @@ class KunjunganAdminController extends Controller
         }
     
         return response()->json([
-            'negaraData' => $wismannegara,
-            'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok,
-            'totalKeseluruhan' => $totalKeseluruhan,
-            'bulan' => $bulan,
-            'totalKunjungan' => $totalKunjungan,
+            // 'negaraData' => $wismannegara,
+            // 'kunjungan' => $kunjungan,
+            // 'kelompok' => $kelompok,
+            // 'totalKeseluruhan' => $totalKeseluruhan,
+            // 'bulan' => $bulan,
+            'data' => [
+                'totalKunjungan' => $totalKunjungan,
+                'totalKeseluruhan' => $totalKeseluruhan,
+            ]
         ]);
     }
     private function sumKunjungan($table, $year, $month, $column, $wisata_id = null)

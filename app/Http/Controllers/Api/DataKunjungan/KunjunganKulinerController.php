@@ -266,14 +266,19 @@ class KunjunganKulinerController extends Controller
         }
     
         return response()->json([
-            'bulan' => $bulan,
-            'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok,
-            'kelompokData' => $kelompokData,
-            'wismannegara' => $wismannegara,
-            'totalKeseluruhan' => $totalKeseluruhan,
-            'totalKunjungan' => $totalKunjungan,
-            'negaraData' => $negaraData,
+            // 'bulan' => $bulan,
+            // 'kunjungan' => $kunjungan,
+            // 'kelompok' => $kelompok,
+            // 'kelompokData' => $kelompokData,
+            // 'wismannegara' => $wismannegara,
+            // 'totalKeseluruhan' => $totalKeseluruhan,
+            // 'totalKunjungan' => $totalKunjungan,
+            // 'negaraData' => $negaraData,
+            'data' => [
+                'totalKunjungan' => $totalKunjungan,
+                'totalKeseluruhan' => $totalKeseluruhan,
+                'kelompokData' => $kelompokData,
+            ]
         ]);
     }
 
@@ -289,10 +294,17 @@ class KunjunganKulinerController extends Controller
         $tanggal = now()->format('d-m-Y');
 
         return response()->json([
-            'kuliner' => $kuliner,
-            'kelompok' => $kelompok,
-            'wismannegara' => $wismannegara,
-            'tanggal' => $tanggal,
+            // 'kuliner' => $kuliner,
+            // 'kelompok' => $kelompok,
+            // 'wismannegara' => $wismannegara,
+            // 'tanggal' => $tanggal,
+            'data' => [
+                'kuliner_id' => $kuliner->id,
+                'kuliner' => $kuliner->namakuliner,
+                'kelompok' => $kelompok,
+                'wismannegara' => $wismannegara,
+                'tanggal' => $tanggal,
+            ]
         ]);
     }
 

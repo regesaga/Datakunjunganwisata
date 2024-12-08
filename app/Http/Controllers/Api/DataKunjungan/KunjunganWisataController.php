@@ -268,14 +268,19 @@ class KunjunganWisataController extends Controller
         }
     
         return response()->json([
-            'bulan' => $bulan,
-            'kunjungan' => $kunjungan,
-            'kelompok' => $kelompok,
-            'kelompokData' => $kelompokData,
-            'wismannegara' => $wismannegara,
-            'totalKeseluruhan' => $totalKeseluruhan,
-            'totalKunjungan' => $totalKunjungan,
-            'negaraData' => $negaraData,
+            // 'bulan' => $bulan,
+            // 'kunjungan' => $kunjungan,
+            // 'kelompok' => $kelompok,
+            // 'kelompokData' => $kelompokData,
+            // 'wismannegara' => $wismannegara,
+            // 'totalKeseluruhan' => $totalKeseluruhan,
+            // 'totalKunjungan' => $totalKunjungan,
+            // 'negaraData' => $negaraData,
+            'data' => [
+                'totalKunjungan' => $totalKunjungan,
+                'totalKeseluruhan' => $totalKeseluruhan,
+                'kelompokData' => $kelompokData,
+            ]
         ]);
     }
 
@@ -301,10 +306,17 @@ class KunjunganWisataController extends Controller
 
     // Kembalikan data dalam format JSON
     return response()->json([
-        'wisata' => $wisata,
-        'kelompok' => $kelompok,
-        'wismannegara' => $wismannegara,
-        'tanggal' => $tanggal,
+        // 'wisata' => $wisata,
+        // 'kelompok' => $kelompok,
+        // 'wismannegara' => $wismannegara,
+        // 'tanggal' => $tanggal,
+        'data' => [
+            'wisata_id' => $wisata->id,
+            'wisata' => $wisata->namawisata,
+            'kelompok' => $kelompok,
+            'wismannegara' => $wismannegara,
+            'tanggal' => $tanggal,
+        ]
     ]);
 }
 
