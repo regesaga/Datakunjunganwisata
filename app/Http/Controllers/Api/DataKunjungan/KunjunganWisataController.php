@@ -391,6 +391,90 @@ public function storewisnu(Request $request)
     }
 }
 
+public function getKunjunganBytgl(Request $request)
+{
+    $company_id = auth()->user()->company->id;
+    $wisata = Wisata::where('company_id', $company_id)->first();
+
+    if (!$wisata) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Wisata tidak ditemukan.',
+        ], 404);
+    }
+
+    $wisata_id = $wisata->id;
+
+    // Ambil semua data Wisnu dan Wisman
+    $wisnuKunjungan = WisnuWisata::where('wisata_id', $wisata_id)
+        ->get()
+        ->groupBy(function ($date) {
+            return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
+        });
+
+    $wismanKunjungan = WismanWisata::where('wisata_id', $wisata_id)
+        ->get()
+        ->groupBy(function ($date) {
+            return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
+        });
+
+    // Ambil hanya kolom yang diperlukan dari KelompokKunjungan
+    $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
+
+    // Ambil hanya kolom yang diperlukan dari WismanNegara
+    $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
+
+    $result = [];
+
+    foreach ($wisnuKunjungan as $tanggal => $wisnuData) {
+        $tanggalKunjungan = [
+            'tanggal_kunjungan' => $tanggal,
+            'wisata_id' => $wisata_id,
+            'nama_wisata' => $wisata->namawisata,
+            'kelompok_kunjungan' => [],
+            'wisman_by_negara' => [],
+            'total_kunjungan' => 0, // Menyimpan total kunjungan
+        ];
+
+        // Hitung jumlah kunjungan dari Wisnu dan tampilkan nama kelompok
+        foreach ($wisnuData as $data) {
+            $kelompokData = $kelompok->firstWhere('id', $data->kelompok_kunjungan_id); // Cari nama kelompok
+            $tanggalKunjungan['kelompok_kunjungan'][] = [
+                'kelompok_kunjungan_id' => $data->kelompok_kunjungan_id,
+                'nama_kelompok' => $kelompokData ? $kelompokData->kelompokkunjungan_name : 'Nama Kelompok Tidak Ditemukan', // Nama kelompok
+                'jumlah_laki_laki' => $data->jumlah_laki_laki,
+                'jumlah_perempuan' => $data->jumlah_perempuan,
+            ];
+            // Tambahkan jumlah kunjungan untuk kelompok wisnu
+            $tanggalKunjungan['total_kunjungan'] += $data->jumlah_laki_laki + $data->jumlah_perempuan;
+        }
+
+        // Hitung jumlah kunjungan dari Wisman dan tampilkan nama negara
+        if (isset($wismanKunjungan[$tanggal])) {
+            foreach ($wismanKunjungan[$tanggal] as $data) {
+                $negaraData = $wismannegara->firstWhere('id', $data->wismannegara_id); // Cari nama negara
+                $tanggalKunjungan['wisman_by_negara'][] = [
+                    'wismannegara_id' => $data->wismannegara_id,
+                    'nama_negara' => $negaraData ? $negaraData->wismannegara_name : 'Nama Negara Tidak Ditemukan', // Nama negara
+                    'jml_wisman_laki' => $data->jml_wisman_laki,
+                    'jml_wisman_perempuan' => $data->jml_wisman_perempuan,
+                ];
+                // Tambahkan jumlah kunjungan untuk wisman
+                $tanggalKunjungan['total_kunjungan'] += $data->jml_wisman_laki + $data->jml_wisman_perempuan;
+            }
+        }
+
+        // Menambahkan tanggal kunjungan ke hasil
+        $result[] = $tanggalKunjungan;
+    }
+
+    return response()->json([
+        'messages' => 'Data KunjunganWisata',
+        'success' => true, 
+        'data' => $result,
+    ]);
+}
+
 
 
 

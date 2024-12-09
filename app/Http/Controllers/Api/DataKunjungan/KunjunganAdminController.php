@@ -203,4 +203,237 @@ class KunjunganAdminController extends Controller
     return $query->sum($column);
 }
 
+
+    public function getKunjunganBytgl()
+    {
+        // Ambil semua data berdasarkan tanggal dan kategori
+        $data = collect();
+
+        // Data untuk Wisnu (domestik)
+        $wisnuKunjungan = DB::table(function ($query) {
+            $query->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, jumlah_laki_laki, jumlah_perempuan')
+                ->from('wisnuwisata')
+                ->unionAll(
+                    DB::table('wisnuakomodasi')
+                        ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, jumlah_laki_laki, jumlah_perempuan')
+                )
+                ->unionAll(
+                    DB::table('wisnu_event')
+                        ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, jumlah_laki_laki, jumlah_perempuan')
+                )
+                ->unionAll(
+                    DB::table('wisnukuliner')
+                        ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, jumlah_laki_laki, jumlah_perempuan')
+                );
+        })->get();
+
+        // Data untuk Wisman (internasional)
+        $wismanKunjungan = DB::table(function ($query) {
+            $query->selectRaw('tanggal_kunjungan, wismannegara_id, jml_wisman_laki, jml_wisman_perempuan')
+                ->from('wismanwisata')
+                ->unionAll(
+                    DB::table('wismanakomodasi')
+                        ->selectRaw('tanggal_kunjungan, wismannegara_id, jml_wisman_laki, jml_wisman_perempuan')
+                )
+                ->unionAll(
+                    DB::table('wisman_event')
+                        ->selectRaw('tanggal_kunjungan, wismannegara_id, jml_wisman_laki, jml_wisman_perempuan')
+                )
+                ->unionAll(
+                    DB::table('wismankuliner')
+                        ->selectRaw('tanggal_kunjungan, wismannegara_id, jml_wisman_laki, jml_wisman_perempuan')
+                );
+        })->get();
+
+        // Kelompok Kunjungan
+        $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
+        // Wisman Negara
+        $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
+
+        // Mengolah data Wisnu dan Wisman untuk setiap tanggal
+        foreach ($wisnuKunjungan->groupBy('tanggal_kunjungan') as $tanggal => $wisnuItems) {
+            $tanggalData = [
+                'tanggal_kunjungan' => $tanggal,
+                'kelompok_kunjungan' => [],
+                'wisman_by_negara' => [],
+                'total_kunjungan' => 0
+            ];
+
+            // Proses Kelompok Kunjungan untuk Wisnu
+            foreach ($wisnuItems->groupBy('kelompok_kunjungan_id') as $kelompokId => $wisnuGroup) {
+                $kelompokData = $kelompok->firstWhere('id', $kelompokId);
+                $jumlahLakiLaki = $wisnuGroup->sum('jumlah_laki_laki');
+                $jumlahPerempuan = $wisnuGroup->sum('jumlah_perempuan');
+
+                $tanggalData['kelompok_kunjungan'][] = [
+                    'kelompok_kunjungan_id' => $kelompokId,
+                    'nama_kelompok' => $kelompokData ? $kelompokData->kelompokkunjungan_name : 'Tidak Ditemukan',
+                    'jumlah_laki_laki' => $jumlahLakiLaki,
+                    'jumlah_perempuan' => $jumlahPerempuan
+                ];
+
+                $tanggalData['total_kunjungan'] += ($jumlahLakiLaki + $jumlahPerempuan);
+            }
+
+            // Menambahkan data Wisman berdasarkan negara
+            foreach ($wismanKunjungan->where('tanggal_kunjungan', $tanggal)->groupBy('wismannegara_id') as $negaraId => $wismanGroup) {
+                $negaraData = $wismannegara->firstWhere('id', $negaraId);
+                $jumlahLakiLaki = $wismanGroup->sum('jml_wisman_laki');
+                $jumlahPerempuan = $wismanGroup->sum('jml_wisman_perempuan');
+
+                $tanggalData['wisman_by_negara'][] = [
+                    'wismannegara_id' => $negaraId,
+                    'nama_negara' => $negaraData ? $negaraData->wismannegara_name : 'Tidak Ditemukan',
+                    'jml_wisman_laki' => $jumlahLakiLaki,
+                    'jml_wisman_perempuan' => $jumlahPerempuan
+                ];
+
+                $tanggalData['total_kunjungan'] += ($jumlahLakiLaki + $jumlahPerempuan);
+            }
+
+            $data->push($tanggalData);
+        }
+
+        return response()->json([
+            'messages' => 'Data Kunjungan Semua',
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    // public function getKunjunganBytglpisah()
+    // {
+    //     // Ambil semua data berdasarkan tanggal dan kategori
+    //     $data = collect();
+    
+    //     // Data untuk Wisnu (domestik)
+    //     $wisnuKunjungan = DB::table(function ($query) {
+    //         $query->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, kelompok_kunjungan_name, jumlah_laki_laki, jumlah_perempuan')
+    //             ->from('wisnuwisata')
+    //             ->unionAll(
+    //                 DB::table('wisnuakomodasi')
+    //                     ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, kelompok_kunjungan_name, jumlah_laki_laki, jumlah_perempuan')
+    //             )
+    //             ->unionAll(
+    //                 DB::table('wisnu_event')
+    //                     ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, kelompok_kunjungan_name, jumlah_laki_laki, jumlah_perempuan')
+    //             )
+    //             ->unionAll(
+    //                 DB::table('wisnukuliner')
+    //                     ->selectRaw('tanggal_kunjungan, kelompok_kunjungan_id, kelompok_kunjungan_name, jumlah_laki_laki, jumlah_perempuan')
+    //             );
+    //     })->get();
+    
+    //     // Data untuk Wisman (internasional)
+    //     $wismanKunjungan = DB::table(function ($query) {
+    //         $query->selectRaw('tanggal_kunjungan, wismannegara_id, wismannegara_name, jml_wisman_laki, jml_wisman_perempuan')
+    //             ->from('wismanwisata')
+    //             ->unionAll(
+    //                 DB::table('wismanakomodasi')
+    //                     ->selectRaw('tanggal_kunjungan, wismannegara_id, wismannegara_name, jml_wisman_laki, jml_wisman_perempuan')
+    //             )
+    //             ->unionAll(
+    //                 DB::table('wisman_event')
+    //                     ->selectRaw('tanggal_kunjungan, wismannegara_id, wismannegara_name, jml_wisman_laki, jml_wisman_perempuan')
+    //             )
+    //             ->unionAll(
+    //                 DB::table('wismankuliner')
+    //                     ->selectRaw('tanggal_kunjungan, wismannegara_id, wismannegara_name, jml_wisman_laki, jml_wisman_perempuan')
+    //             );
+    //     })->get();
+    
+    //     // Kelompok Kunjungan
+    //     $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
+    //     // Wisman Negara
+    //     $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
+    
+    //     // Daftar kategori kunjungan yang ingin diproses
+    //     $kategoriKunjungan = [
+    //         'akomodasi' => ['wisnuakomodasi'], 
+    //         'kuliner' => ['wisnukuliner'],
+    //         'wisata' => ['wisnuwisata'],
+    //         'event' => ['wisnu_event']
+    //     ];
+    
+    //     // Mengolah data Wisnu dan Wisman untuk setiap tanggal
+    //     foreach ($wisnuKunjungan->groupBy('tanggal_kunjungan') as $tanggal => $wisnuItems) {
+    //         // Data berdasarkan jenis kunjungan
+    //         $jenisKunjunganData = [];
+    
+    //         // Loop melalui setiap kategori kunjungan
+    //         foreach ($kategoriKunjungan as $jenis => $kategoriTables) {
+    //             // Ambil data berdasarkan kategori
+    //             $items = $wisnuItems->filter(function ($item) use ($kategoriTables) {
+    //                 return in_array($item->kelompok_kunjungan_name, $kategoriTables);
+    //             });
+    
+    //             // Jika ada data untuk kategori ini
+    //             if ($items->isNotEmpty()) {
+    //                 // Menghasilkan data kunjungan berdasarkan jenis
+    //                 $jenisKunjunganData[] = $this->generateKunjunganData($jenis, $items, $tanggal, $kelompok, $wismanKunjungan, $wismannegara);
+    //             }
+    //         }
+    
+    //         // Menambahkan data ke koleksi
+    //         foreach ($jenisKunjunganData as $jenisData) {
+    //             $data->push($jenisData);
+    //         }
+    //     }
+    
+    //     return response()->json([
+    //         'messages' => 'Data Kunjungan Semua',
+    //         'success' => true,
+    //         'data' => $data
+    //     ]);
+    // }
+    
+    // private function generateKunjunganData($jenis, $items, $tanggal, $kelompok, $wismanKunjungan, $wismannegara)
+    // {
+    //     $jenisKunjunganData = [
+    //         'tanggal_kunjungan' => $tanggal,
+    //         'jeniskunjungan' => $jenis,
+    //         'nama_' . $jenis => '', // Bisa diganti dengan data sesuai kebutuhan
+    //         'kelompok_kunjungan' => [],
+    //         'wisman_by_negara' => [],
+    //         'total_kunjungan' => 0
+    //     ];
+    
+    //     // Proses Kelompok Kunjungan
+    //     foreach ($items->groupBy('kelompok_kunjungan_name') as $kelompokName => $group) {
+    //         $kelompokData = $kelompok->firstWhere('kelompokkunjungan_name', $kelompokName);
+    //         $jumlahLakiLaki = $group->sum('jumlah_laki_laki');
+    //         $jumlahPerempuan = $group->sum('jumlah_perempuan');
+    
+    //         $jenisKunjunganData['kelompok_kunjungan'][] = [
+    //             'kelompok_kunjungan_name' => $kelompokName,
+    //             'nama_kelompok' => $kelompokData ? $kelompokData->kelompokkunjungan_name : 'Tidak Ditemukan',
+    //             'jumlah_laki_laki' => $jumlahLakiLaki,
+    //             'jumlah_perempuan' => $jumlahPerempuan
+    //         ];
+    
+    //         $jenisKunjunganData['total_kunjungan'] += ($jumlahLakiLaki + $jumlahPerempuan);
+    //     }
+    
+    //     // Menambahkan data Wisman berdasarkan negara
+    //     foreach ($wismanKunjungan->where('tanggal_kunjungan', $tanggal)->groupBy('wismannegara_name') as $negaraName => $wismanGroup) {
+    //         $negaraData = $wismannegara->firstWhere('wismannegara_name', $negaraName);
+    //         $jumlahLakiLaki = $wismanGroup->sum('jml_wisman_laki');
+    //         $jumlahPerempuan = $wismanGroup->sum('jml_wisman_perempuan');
+    
+    //         $jenisKunjunganData['wisman_by_negara'][] = [
+    //             'wismannegara_name' => $negaraName,
+    //             'nama_negara' => $negaraData ? $negaraData->wismannegara_name : 'Tidak Ditemukan',
+    //             'jml_wisman_laki' => $jumlahLakiLaki,
+    //             'jml_wisman_perempuan' => $jumlahPerempuan
+    //         ];
+    
+    //         $jenisKunjunganData['total_kunjungan'] += ($jumlahLakiLaki + $jumlahPerempuan);
+    //     }
+    
+    //     return $jenisKunjunganData;
+    // }
+    
+
+
+
 }

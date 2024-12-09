@@ -168,6 +168,9 @@ Route::group(['middleware' => ['auth:api', 'role:admin']], function () {
     Route::get('kunjungan/dashboardadmin', [KunjunganAdminController::class, 'dashboardadmin']);
     // Route untuk createwisnu (GET)
 
+    Route::get('kunjunganadmin/getAll', [KunjunganAdminController::class, 'getKunjunganBytgl']);
+
+
     Route::get('kunjungan/create-wisnu', [KunjunganAdminController::class, 'createwisnu']);
 
     // Route untuk storewisnu (POST)
@@ -180,6 +183,9 @@ Route::group(['middleware' => ['auth:api', 'role:wisata']], function () {
 
 
     Route::get('kunjungan/dashboardwisata', [KunjunganWisataController::class, 'dashboardwisata']);
+
+    Route::get('kunjunganwisata/getAll', [KunjunganWisataController::class, 'getKunjunganBytgl']);
+
     // Route untuk createwisnu (GET)
 
     Route::get('kunjungan/create-wisnuwisata', [KunjunganWisataController::class, 'createwisnu']);
@@ -194,7 +200,7 @@ Route::group(['middleware' => ['auth:api', 'role:kuliner']], function () {
 
     Route::get('kunjungan/dashboardkuliner', [KunjunganKulinerController::class, 'dashboardkuliner']);
     // Route untuk createwisnu (GET)
-
+    Route::get('kunjungankuliner/getAll', [KunjunganKulinerController::class, 'getKunjunganBytgl']);
     Route::get('kunjungan/create-wisnukuliner', [KunjunganKulinerController::class, 'createwisnu']);
 
     // Route untuk storewisnu (POST)
@@ -207,6 +213,8 @@ Route::group(['middleware' => ['auth:api', 'role:akomodasi']], function () {
 
     Route::get('kunjungan/dashboardakomodasi', [KunjunganAkomodasiController::class, 'dashboardakomodasi']);
     // Route untuk createwisnu (GET)
+    Route::get('kunjunganakomodasi/getAll', [KunjunganAkomodasiController::class, 'getKunjunganBytgl']);
+
 
     Route::get('kunjungan/create-wisnuakomodasi', [KunjunganAkomodasiController::class, 'createwisnu']);
 
