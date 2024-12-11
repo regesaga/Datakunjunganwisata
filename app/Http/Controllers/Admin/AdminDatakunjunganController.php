@@ -12,6 +12,8 @@ use App\Models\Akomodasi;
 use App\Models\Wisata;
 use App\Models\Evencalender;
 use App\Models\Kuliner;
+use App\Models\User;
+use App\Models\Company;
 use App\Models\WisnuEvent;
 use App\Models\WismanEvent;
 use App\Models\WismanAkomodasi;
@@ -40,11 +42,16 @@ class AdminDatakunjunganController extends Controller
             $kuliner = Kuliner::all(); // Mendapatkan kuliner terkait
             $akomodasi = Akomodasi::all(); // Mendapatkan akomodasi terkait
             $events = Evencalender::all();
+            $company = Company::pluck('id');
             // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
             $year = $request->input('year', date('Y'));
             // Buat array untuk menyimpan data kunjungan per bulan
             $kunjungan = [];
-        
+            $companyIds = Company::pluck('id'); // Ambil semua ID perusahaan
+            $jumlah_userwisata = Wisata::whereIn('company_id', $companyIds)->count();
+            $jumlah_userkuliner = Kuliner::whereIn('company_id', $companyIds)->count();
+            $jumlah_userakomodasi = Akomodasi::whereIn('company_id', $companyIds)->count();
+
             for ($month = 1; $month <= 12; $month++) {
                 $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-01-01")->startOfYear();
                 $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-12-31")->endOfYear();
@@ -260,7 +267,7 @@ class AdminDatakunjunganController extends Controller
                         
                     }
 
-            return view('admin.datakunjungan.index', compact('negaraData',
+            return view('admin.datakunjungan.index', compact('negaraData','jumlah_userwisata','jumlah_userakomodasi','jumlah_userkuliner',
                 'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll','totalEventAll'
             ));
         }

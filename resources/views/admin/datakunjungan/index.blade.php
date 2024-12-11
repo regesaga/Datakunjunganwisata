@@ -5,6 +5,43 @@
 <section class="content-header">
     <div class="container-fluid">
         <!-- Tabel Data Kunjungan Per Bulan -->
+        <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>{{ $jumlah_userwisata }}</h3>
+                                    <p>Operator wisata</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>{{ $jumlah_userkuliner }}</h3>
+                                    <p>Operator Kuliner</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>{{ $jumlah_userakomodasi}}</h3>
+                                    <p>Operator Akomodasi</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
         <div class="card">
             <div class="card-header">
                 <form action="{{ route('admin.datakunjungan.index') }}" method="GET" class="mb-4">
@@ -22,6 +59,8 @@
                     </div>
                 </form>
             </div>
+           
+
             <div class="card-header border-0">
                 <h3 class="card-title">
                     <i class="fas fa-users mr-1"></i>
