@@ -18,6 +18,7 @@ use App\Models\Wisata;
 use App\Models\WisnuKuliner;
 use App\Models\WismanKuliner;
 use App\Models\Kuliner;
+use App\Models\Company;
 use RealRashid\SweetAlert\Facades\Alert;
 use Symfony\Component\Routing\Annotation\Route;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,10 @@ class KunjunganAdminController extends Controller
         $kuliner = Kuliner::all(); // Mendapatkan kuliner terkait
         $akomodasi = Akomodasi::all(); // Mendapatkan akomodasi terkait
         $events = Evencalender::all();
+        $company = Company::pluck('id');
+        $jumlah_userwisata = Wisata::whereIn('company_id', $company)->count();
+        $jumlah_userkuliner = Kuliner::whereIn('company_id', $company)->count();
+        $jumlah_userakomodasi = Akomodasi::whereIn('company_id', $company)->count();
         
         // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
         $year = $request->input('year', date('Y'));
@@ -184,9 +189,14 @@ class KunjunganAdminController extends Controller
             // 'kelompok' => $kelompok,
             // 'totalKeseluruhan' => $totalKeseluruhan,
             // 'bulan' => $bulan,
+           
             'data' => [
+                'operatorwisata' => $jumlah_userwisata,
+                'operatorkuliner' => $jumlah_userkuliner,
+                'operatorakomodasi' => $jumlah_userakomodasi,
                 'totalKunjungan' => $totalKunjungan,
                 'totalKeseluruhan' => $totalKeseluruhan,
+               
             ]
         ]);
     }
