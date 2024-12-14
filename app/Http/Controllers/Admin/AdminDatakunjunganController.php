@@ -277,29 +277,29 @@ class AdminDatakunjunganController extends Controller
    $semuakunjungan = [];
 
    foreach ($targetKunjungan as $target) {
-       $bulan = $target->bulan;
+       $bulann = $target->bulan;
 
        // Total kunjungan per bulan dari berbagai tabel
-       $totalKunjungan = WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
-                         WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
-                         WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_laki') +
-                         WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
-                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
-                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
-                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
-                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
-                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
-                         WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
-                         WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan');
+       $totalKunjungan = WisnuWisata::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuWisata::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanWisata::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_laki') +
+                         WismanWisata::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanEvent::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanEvent::whereMonth('tanggal_kunjungan', $bulann)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan');
 
        // Menambahkan data perbandingan target dan realisasi kunjungan
        $semuakunjungan[] = [
-           'bulan' => $bulan,
+           'bulann' => $bulann,
            'target' => $target->target_kunjungan_wisata,
            'realisasi' => $totalKunjungan,
            'selisih' => $totalKunjungan - $target->target_kunjungan_wisata
@@ -308,7 +308,7 @@ class AdminDatakunjunganController extends Controller
 
 
             return view('admin.datakunjungan.index', compact('negaraData','jumlah_userwisata','jumlah_userakomodasi','jumlah_userkuliner','semuakunjungan',
-               'bulan','kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll','totalEventAll'
+               'bulann','kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll','totalEventAll'
             )); 
 
     }

@@ -98,7 +98,7 @@
                                 <p>Total Pengunjung</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-woman"> <i class="ion ion-man"> </i></i>
+                                <i class="ion ion-stats-bars">  </i>
                             </div>
                         </div>
                     </div>
@@ -114,13 +114,8 @@
                         </div>
                     </div>
                 </div>
-                <figure class="highcharts-figure">
                     <div id="Totalkunjungan"></div>
     
-                </figure>
-
-
-                <div id="chart"></div>
                  <!-- Donut Chart -->
             <div class="row">
                 <div class="col">
@@ -129,35 +124,35 @@
             </div>
                 <div class="row">
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
+                        <div class="small-box bg-warning">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganKuliner'] }}</h3>
                                 <p>Pengunjung Kuliner</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-male"></i>
+                                <i class="ion ion-coffee"></i>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
+                        <div class="small-box bg-primary">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganWisata']}}</h3>
                                 <p>Pengunjung Wisata</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-woman"> <i class="ion ion-man"> </i></i>
+                                <i class="ion ion-image"> </i>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
-                        <div class="small-box bg-info">
+                        <div class="small-box bg-success">
                             <div class="inner">
                                 <h3>{{ $totalKeseluruhan['totalkunjunganAkomodasi']}}</h3>
                                 <p>Pengunjung Akomodasi</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-female"></i>
+                                <i class="ion ion-home"></i>
                             </div>
                         </div>
                     </div>
@@ -168,13 +163,20 @@
                                 <p>Pengunjung Even</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-female"></i>
+                                <i class="ion ion-easel"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="chartkunjungan"></div>
+                <div class="row">
+<div class="col">
+    <div id="chart"></div>
+</div>
+<div class="col">
+    <div id="chartkunjungan"></div>
 
+</div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="small-box bg-warning">
@@ -183,7 +185,7 @@
                                 <p>Jumlah Pengunjung Nusantara</p>
                             </div>
                             <div class="icon">
-                                <i class="ion ion-bag"></i>
+                                <i class="ion ion-pie-graph"></i>
                             </div>
                         </div>
                     </div>
@@ -217,46 +219,31 @@
                                     <p>Jumlah Pengunjung Mancanegara</p>
                                 </div>
                                 <div class="icon">
-                                <i class="ion ion-person-add"></i>
+                                <i class="ion ion-earth"></i>
                                 </div>
-
-                                <table id="example1" class="table table-striped">
-                                    @foreach ($negaraData as $data)
-                                    <tr>
-                                         <td style="text-align: center; text-transform: uppercase;"> {{$data['name'] }}</td>
-                                        <td >{{ ($data['jml_wisman_laki'] ?? 0) + ($data['jml_wisman_perempuan'] ?? 0) }}</td>
-                                    </tr>
-                                @endforeach
-                        
-                                </table>
-                                
                             </div>
+
+                            <div id="chartbar"></div>
                         </div>
                     </div>
-                    <div id="chartbar"></div>
             </div>
            
         </div>
 
            </div>
 </section>
-@section('scripts')
 <!-- DataTables  & Plugins -->
 
 @section('scripts')
 <!-- Highcharts JS -->
 <script src="{{ asset('datakunjungan/Highcharts.js') }}"></script>
-<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script>
     // Mengambil data dari controller
     const semuakunjungan = @json($semuakunjungan);
 
     // Ekstrak data bulan, target, dan realisasi dari data yang dikirim
-    const bulan = semuakunjungan.map(item => item.bulan);
+    const bulan = semuakunjungan.map(item => item.bulann);
     const target = semuakunjungan.map(item => item.target);
     const realisasi = semuakunjungan.map(item => item.realisasi);
 
@@ -286,11 +273,9 @@
             type: 'line'
         },
         title: {
-            text: 'Trends Kunjungan'
+            text: 'Agregat Target dan Realisasi Kunjungan'
         },
-        subtitle: {
-            text: 'Data Kunjungan dari Hasil Input'
-        },
+        
         xAxis: {
             categories: allBulan, // Menampilkan bulan dari Januari sampai Desember
         },
@@ -319,255 +304,212 @@
 
 @endsection
 
-@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <script>
-    var options = {
-        series: [{
-            data: [
-                @foreach($negaraData as $data)
-                    {{ $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }},
-                @endforeach
-            ]
-        }],
-        chart: {
-            type: 'bar',
-            height: 150
-        },
-        plotOptions: {
-            bar: {
-                barHeight: '100%',
-                distributed: true,
-                horizontal: true,
-                dataLabels: {
-                    position: 'bottom'
-                }
-            }
-        },
-        colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
-            '#f48024', '#69d2e7'
-        ],
-        dataLabels: {
-            enabled: true,
-            textAnchor: 'start',
-            style: {
-                colors: ['#fff']
+    document.addEventListener('DOMContentLoaded', function () {
+        // Data yang diambil dari server menggunakan Blade templating
+        var categories = [
+            @foreach($negaraData as $data)
+                '{{ $data['name'] }}',
+            @endforeach
+        ];
+        
+        var seriesData = [
+            @foreach($negaraData as $data)
+                {{ $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }},
+            @endforeach
+        ];
+
+        // Konfigurasi Highcharts
+        Highcharts.chart('chartbar', {
+            chart: {
+                type: 'bar', // Tipe chart batang horizontal
+                height: 400
             },
-            formatter: function (val, opt) {
-                return opt.w.globals.labels[opt.dataPointIndex] + ":  " + val;
+            title: {
+                text: 'Mancanegara', // Judul grafik
+                align: 'center'
             },
-            offsetX: 0,
-            dropShadow: {
-                enabled: true
-            }
-        },
-        stroke: {
-            width: 1,
-            colors: ['#fff']
-        },
-        xaxis: {
-            categories: [
-                @foreach($negaraData as $data)
-                    '{{ $data['name'] }}',
-                @endforeach
-            ],
-        },
-        yaxis: {
-            labels: {
-                show: false
-            }
-        },
-        title: {
-            align: 'center',
-            floating: true
-        },
-        subtitle: {
-            align: 'center',
-        },
-        tooltip: {
-            theme: 'dark',
-            x: {
-                show: false
-            },
-            y: {
+            xAxis: {
+                categories: categories, // Nama negara
                 title: {
-                    formatter: function () {
-                        return ''
+                    text: 'Negara'
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Jumlah Kunjungan',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            tooltip: {
+                valueSuffix: ' kunjungan'
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true // Tampilkan nilai di atas batang
                     }
                 }
-            }
-        }
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chartbar"), options);
-    chart.render();
-</script>
-<script>
-    var options = {
-        series: [{
-            name: 'Wisata',
-            data: @json($totalWisataAll)  // Data total 
-        }, {
-            name: 'Kuliner',
-            data: @json($totalKulinerAll)  // Data total laki-laki
-        }, {
-            name: 'Akomodasi',
-            data: @json($totalAkomodasiAll)  // Data total perempuan
-        }, {
-            name: 'Event',
-            data: @json($totalEventAll)  // Data total perempuan
-        }],
-        chart: {
-            type: 'bar',
-            height: 350
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                endingShape: 'rounded'
             },
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-        },
-        xaxis: {
-            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
-        },
-        yaxis: {
-            title: {
-                text: 'Jumlah Kunjungan'
-            }
-        },
-        fill: {
-            opacity: 1
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    return val;
-                }
-            }
-        }
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chartkunjungan"), options);
-    chart.render();
-</script>
-<script>
-    var options = {
-        series: [{
-            name: 'Laki-Laki',
-            data: @json($totalKunjunganLaki)  // Data total kunjungan
-        }, {
-            name: 'Total Kunjungan',
-            data: @json($totalKunjungan)  // Data total laki-laki
-        }, {
-            name: 'Perempuan',
-            data: @json($totalKunjunganPerempuan)  // Data total perempuan
-        }],
-        chart: {
-            type: 'bar',
-            height: 350
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                endingShape: 'rounded'
+            series: [{
+                name: 'Total Kunjungan',
+                data: seriesData,
+                colorByPoint: true // Pewarnaan otomatis setiap batang
+            }],
+            credits: {
+                enabled: false // Hilangkan branding Highcharts
             },
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-        },
-        xaxis: {
-            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
-        },
-        yaxis: {
-            title: {
-                text: 'Jumlah Kunjungan'
+            legend: {
+                enabled: false // Hilangkan legenda (opsional jika tidak diperlukan)
             }
-        },
-        fill: {
-            opacity: 1
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    return val;
-                }
-            }
-        }
-    };
-
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+        });
+    });
 </script>
 
-
-
-
 <script>
-    var options = {
-        series: [
-            {{ $totalKeseluruhan['totalkunjunganWisata'] }},
-            {{ $totalKeseluruhan['totalkunjunganKuliner'] }},
-            {{ $totalKeseluruhan['totalkunjunganAkomodasi'] }},
-            {{ $totalKeseluruhan['totalkunjunganEvent'] }}
-        ],
-        chart: {
-            width: 380,
-            type: 'donut',
-        },
-        labels: [
-            "Wisata",
-            "Kuliner",
-            "Akomodasi",
-            "Even"
-        ],
-        plotOptions: {
-            pie: {
-                startAngle: -90,
-                endAngle: 270
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        fill: {
-            type: 'gradient',
-        },
-        legend: {
-            formatter: function(val, opts) {
-                return val + " - " + opts.w.globals.series[opts.seriesIndex];
-            }
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
+        document.addEventListener('DOMContentLoaded', function () {
+            var categories = @json($bulan);
+            // Data bulan yang dikirim dari Laravel
+
+            // Debug hasil konversi
+            console.log('Nama bulan:', categories);
+
+            // Data series yang dikirim dari Laravel
+            var series = [
+                {
+                    name: 'Wisata',
+                    data: @json($totalWisataAll) // Contoh: [10, 20, 30, ...]
                 },
-                legend: {
-                    position: 'bottom'
+                {
+                    name: 'Kuliner',
+                    data: @json($totalKulinerAll)
+                },
+                {
+                    name: 'Akomodasi',
+                    data: @json($totalAkomodasiAll)
+                },
+                {
+                    name: 'Event',
+                    data: @json($totalEventAll)
                 }
-            }
-        }]
-    };
+            ];
 
-    var chart = new ApexCharts(document.querySelector("#donut-chart"), options);
-    chart.render();
+            // Debug data series
+            console.log('Data series:', series);
+
+            // Membuat grafik dengan Highcharts
+            Highcharts.chart('chartkunjungan', {
+                chart: {
+                    type: 'column',
+                    height: 400
+                },
+                title: {
+                    text: 'Jumlah Kunjungan Berdasarkan Kategori'
+                },
+                xAxis: {
+                    categories: categories, // Nama bulan hasil konversi
+                    title: {
+                        text: 'Bulan'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Jumlah Kunjungan'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    valueSuffix: ' kunjungan'
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: series, // Data yang ditampilkan pada grafik
+                credits: {
+                    enabled: false
+                }
+            });
+        });
+    </script>
+
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Data dari server
+        var totalKunjunganLaki = @json($totalKunjunganLaki);
+        var totalKunjunganPerempuan = @json($totalKunjunganPerempuan);
+        var categories = @json($bulan); // Nama bulan
+
+        // Konfigurasi Highcharts
+        Highcharts.chart('chart', {
+            chart: {
+                type: 'column', // Grafik kolom vertikal
+                height: 400,
+                options3d: {
+                    enabled: true, // Aktifkan efek 3D
+                    alpha: 15,
+                    beta: 15,
+                    depth: 50,
+                    viewDistance: 25
+                }
+            },
+            title: {
+                text: 'Jumlah Kunjungan Berdasarkan Jeniskelamin' // Judul grafik
+            },
+            xAxis: {
+                categories: categories, // Nama bulan
+                title: {
+                    text: 'Bulan' // Label sumbu X
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Jumlah Kunjungan' // Label sumbu Y
+                }
+            },
+            tooltip: {
+                shared: true,
+                valueSuffix: ' kunjungan' // Menambahkan suffix pada tooltip
+            },
+            plotOptions: {
+                column: {
+                    depth: 25, // Kedalaman kolom untuk efek 3D
+                    stacking: 'normal', // Data ditampilkan dalam satu batang (stacked)
+                    dataLabels: {
+                        enabled: true // Tampilkan nilai pada batang
+                    }
+                }
+            },
+            series: [
+                {
+                    name: 'Laki-Laki',
+                    data: totalKunjunganLaki, // Data laki-laki
+                    color: '#007bff' // Warna khusus untuk kategori ini
+                },
+                {
+                    name: 'Perempuan',
+                    data: totalKunjunganPerempuan, // Data perempuan
+                    color: '#ff4081' // Warna khusus untuk kategori ini
+                }
+            ],
+            credits: {
+                enabled: false // Hilangkan branding Highcharts
+            }
+        });
+    });
 </script>
+
 
 @endsection

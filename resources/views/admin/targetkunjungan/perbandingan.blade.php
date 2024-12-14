@@ -24,6 +24,8 @@
 
         <!-- Table -->
         <div class="card mt-4">
+            <div id="Totalkunjungan"></div>
+
             <table id="example1" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -100,4 +102,71 @@
         }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
     });
 </script>
+<!-- Highcharts JS -->
+<script src="{{ asset('datakunjungan/Highcharts.js') }}"></script>
+
+<script>
+    // Mengambil data dari controller
+    const kunjungan = @json($kunjungan);
+
+    // Ekstrak data bulan, target, dan realisasi dari data yang dikirim
+    const bulan = kunjungan.map(item => item.bulan);
+    const target = kunjungan.map(item => item.target);
+    const realisasi = kunjungan.map(item => item.realisasi);
+
+    // Daftar nama bulan
+    const bulanNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    // Membuat array bulan dengan nilai dari 1 hingga 12
+    const allBulan = bulanNames.slice(0, 12);
+
+    // Mengisi data target dan realisasi sesuai dengan bulan yang tersedia
+    const targetKunjungan = new Array(12).fill(0); // Inisialisasi dengan 0
+    const realisasiKunjungan = new Array(12).fill(0); // Inisialisasi dengan 0
+
+    // Menyesuaikan target dan realisasi berdasarkan bulan
+    bulan.forEach((b, index) => {
+        const bulanIndex = b - 1; // Sesuaikan dengan index bulan (bulan 1 = index 0)
+        targetKunjungan[bulanIndex] = target[index]; 
+        realisasiKunjungan[bulanIndex] = realisasi[index];
+    });
+
+    // Membuat chart dengan Highcharts
+    Highcharts.chart('Totalkunjungan', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Agregat Target dan Realisasi Kunjungan'
+        },
+        
+        xAxis: {
+            categories: allBulan, // Menampilkan bulan dari Januari sampai Desember
+        },
+        yAxis: {
+            title: {
+                text: 'Jumlah Kunjungan'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Target Kunjungan',
+            data: targetKunjungan // Menampilkan data target
+        }, {
+            name: 'Realisasi Kunjungan',
+            data: realisasiKunjungan // Menampilkan data realisasi
+        }]
+    });
+</script>
+
 @endsection

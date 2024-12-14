@@ -19,6 +19,7 @@ use App\Models\WisnuKuliner;
 use App\Models\WismanKuliner;
 use App\Models\Kuliner;
 use App\Models\Company;
+use App\Models\TargetKunjungan;
 use RealRashid\SweetAlert\Facades\Alert;
 use Symfony\Component\Routing\Annotation\Route;
 use Illuminate\Support\Facades\DB;
@@ -183,6 +184,42 @@ class KunjunganAdminController extends Controller
                                 $dataBulan['total_wisman_laki'] + $dataBulan['total_wisman_perempuan'];  // Total kunjungan
         }
     
+        $targetKunjungan = TargetKunjungan::getTargetPerYear($year);
+
+        $semuakunjungan = [];
+
+        foreach ($targetKunjungan as $target) {
+            $bulan = $target->bulan;
+
+            // Total kunjungan per bulan dari berbagai tabel
+            $totalKunjungan = 
+                WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_laki') +
+                WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan');
+
+            // Menyimpan data ke dalam array
+            $semuakunjungan[] = [
+                'bulan' => $bulan,
+                'target' => $target->target_kunjungan_wisata,
+                'realisasi' => $totalKunjungan,
+                'selisih' => $totalKunjungan - $target->target_kunjungan_wisata,
+            ];
+        }
+
+       
         return response()->json([
             // 'negaraData' => $wismannegara,
             // 'kunjungan' => $kunjungan,
@@ -196,6 +233,7 @@ class KunjunganAdminController extends Controller
                 'operatorakomodasi' => $jumlah_userakomodasi,
                 'totalKunjungan' => $totalKunjungan,
                 'totalKeseluruhan' => $totalKeseluruhan,
+                'target' => $semuakunjungan
                
             ]
         ]);
