@@ -48,6 +48,7 @@ use App\Http\Controllers\Admin\CategoryRoomsController;
 use App\Http\Controllers\Admin\CategoryKulinerController;
 use App\Http\Controllers\Admin\SektorEkrafController;
 use App\Http\Controllers\Admin\DataWisatawanController;
+use App\Http\Controllers\Admin\TargetKunjunganController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LocationController;
@@ -131,6 +132,15 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
   // tambahkan rute lain untuk admin di sini0
+
+Route::get('/target/create', [TargetKunjunganController::class, 'create'])->name('admin.targetkunjungan.create');
+Route::post('/target/store', [TargetKunjunganController::class, 'storetarget'])->name('admin.targetkunjungan.storetarget');
+Route::get('targetkunjungan', [TargetKunjunganController::class, 'index'])->name('admin.targetkunjungan.index');
+Route::get('targetkunjungan/{id}/edit', [TargetKunjunganController::class, 'edit'])->name('admin.targetkunjungan.edit');
+Route::put('targetkunjungan/{id}', [TargetKunjunganController::class, 'update'])->name('admin.targetkunjungan.update');
+Route::post('/targetkunjungan/bulan-tersedia', [TargetKunjunganController::class, 'getBulanTersedia'])->name('admin.targetkunjungan.bulanTersedia');
+Route::get('/perbandingan', [TargetKunjunganController::class, 'perbandingan'])->name('admin.targetkunjungan.perbandingan');
+
   Route::get('get_allkelompokkunjungan', [KelompokKunjunganController::class, 'getAllkelompokKunjungan'])->name('admin.kelompokkunjungan.index');
   Route::get('create_kelompokkunjungan', [KelompokKunjunganController::class, 'createkelompokKunjungan'])->name('admin.kelompokkunjungan.create');
   Route::post('storekelompokkunjungan', [KelompokKunjunganController::class, 'storekelompokKunjungan'])->name('admin.kelompokkunjungan.storekelompokkunjungan');

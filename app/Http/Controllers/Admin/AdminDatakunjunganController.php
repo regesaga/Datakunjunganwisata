@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 use App\Models\KelompokKunjungan;
 use App\Models\WismanNegara;
+use App\Models\TargetKunjungan;
 use AApp\Models\CategoryAkomodasi;
 use App\Models\CategoryWisata;
 use App\Models\CategoryKuliner;
@@ -45,6 +46,8 @@ class AdminDatakunjunganController extends Controller
             $company = Company::pluck('id');
             // Ambil tahun dari request atau gunakan tahun saat ini jika tidak ada input
             $year = $request->input('year', date('Y'));
+            
+            $targetKunjungan = TargetKunjungan::getTargetPerYear($year);
             // Buat array untuk menyimpan data kunjungan per bulan
             $kunjungan = [];
             $companyIds = Company::pluck('id'); // Ambil semua ID perusahaan
@@ -267,12 +270,48 @@ class AdminDatakunjunganController extends Controller
                         
                     }
 
-            return view('admin.datakunjungan.index', compact('negaraData','jumlah_userwisata','jumlah_userakomodasi','jumlah_userkuliner',
-                'kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll','totalEventAll'
-            ));
-        }
+   // Ambil data target kunjungan per bulan untuk tahun yang diminta
+   $targetKunjungan = TargetKunjungan::getTargetPerYear($year);
+
+   // Array untuk menampung data kunjungan
+   $semuakunjungan = [];
+
+   foreach ($targetKunjungan as $target) {
+       $bulan = $target->bulan;
+
+       // Total kunjungan per bulan dari berbagai tabel
+       $totalKunjungan = WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_laki') +
+                         WismanWisata::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanKuliner::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanAkomodasi::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_laki_laki') +
+                         WisnuEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jumlah_perempuan') +
+                         WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan') +
+                         WismanEvent::whereMonth('tanggal_kunjungan', $bulan)->whereYear('tanggal_kunjungan', $year)->sum('jml_wisman_perempuan');
+
+       // Menambahkan data perbandingan target dan realisasi kunjungan
+       $semuakunjungan[] = [
+           'bulan' => $bulan,
+           'target' => $target->target_kunjungan_wisata,
+           'realisasi' => $totalKunjungan,
+           'selisih' => $totalKunjungan - $target->target_kunjungan_wisata
+       ];
+   }
 
 
+            return view('admin.datakunjungan.index', compact('negaraData','jumlah_userwisata','jumlah_userakomodasi','jumlah_userkuliner','semuakunjungan',
+               'bulan','kunjungan', 'kelompok','kelompokData','wismannegara', 'wisata', 'hash', 'year', 'totalKeseluruhan','bulan', 'totalKunjungan','totalKunjunganLaki','totalKunjunganPerempuan','totalWisataAll','totalKulinerAll','totalAkomodasiAll','totalEventAll'
+            )); 
+
+    }
 /**
  * Helper function to calculate total visits.
  */

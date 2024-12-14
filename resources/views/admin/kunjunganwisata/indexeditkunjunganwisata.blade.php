@@ -32,16 +32,21 @@
                 <label for="tahun" class="form-label">Tahun</label>
                 <select id="tahun" name="tahun" class="form-control select2" style="width: 100%;">
                     @for($y = date('Y'); $y >= 2020; $y--)
-                        <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        <option value="{{ $y }}" {{ isset($tahun) && $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
                     @endfor
                 </select>
             </div>
             <div class="col-lg-4">
-                <label for="bulan" class="form-label">Bulan</label>
-                <select id="bulan" name="bulan" class="form-control select2">
-                    @foreach(range(1, 12) as $m)
-                        <option value="{{ $m }}" {{ request('bulan') == $m ? 'selected' : '' }}>
-                            {{ $bulanIndo[$m] }}
+                <select name="bulan" class="form-control" required>
+                    @foreach([1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'] as $bulan => $namaBulan)
+                        <option value="{{ $bulan }}" 
+                                @if(!empty($bulanTersedia) && in_array($bulan, $bulanTersedia)) 
+                                    disabled 
+                                @endif>
+                            {{ $namaBulan }} 
+                            @if(!empty($bulanTersedia) && in_array($bulan, $bulanTersedia)) 
+                                (Sudah ada) 
+                            @endif
                         </option>
                     @endforeach
                 </select>

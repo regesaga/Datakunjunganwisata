@@ -25,11 +25,19 @@
     
     </li>
     <li class="nav-item">
-      <a href="{{ route('admin.kunjunganwisata.createwisnu') }}" class="nav-link ? 'active' : '' ">
+      <a href="{{ route('admin.targetkunjungan.index') }}" class="nav-link ? 'active' : '' ">
           <i class="fas fa-edit nav-icon"></i>
 
           </i>
-         Tambah Data
+         Tambah Target
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{{ route('admin.targetkunjungan.perbandingan') }}" class="nav-link ? 'active' : '' ">
+          <i class="fas fa-edit nav-icon"></i>
+
+          </i>
+         Realisasi
       </a>
     </li>
     <li class="nav-item">

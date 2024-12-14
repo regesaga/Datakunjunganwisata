@@ -34,4 +34,10 @@ public function wismanNegara()
 {
     return $this->belongsToMany(WismanNegara::class, 'wisman_negara_wisman_akomodasi', 'wisman_akomodasi_id', 'wismannegara_id');
 }
+
+public static function getKunjunganPerYear($tahun)
+    {
+        return self::whereYear('tanggal_kunjungan', $tahun)->get();
+    }
+    
 }

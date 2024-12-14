@@ -27,5 +27,12 @@ class WisnuWisata extends Model
         return $this->belongsTo(KelompokKunjungan::class, 'kelompok_kunjungan_id');
     }
 
+    public static function getKunjunganPerMonthAndYear($tahun, $bulan)
+    {
+        return self::whereYear('tanggal_kunjungan', $tahun)
+            ->whereMonth('tanggal_kunjungan', $bulan)
+            ->sum(DB::raw('jumlah_laki_laki + jumlah_perempuan'));
+    }
+    
 }
 

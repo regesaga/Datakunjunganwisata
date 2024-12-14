@@ -114,7 +114,11 @@
                         </div>
                     </div>
                 </div>
-            <div id="charttrend"></div>
+                <figure class="highcharts-figure">
+                    <div id="Totalkunjungan"></div>
+    
+                </figure>
+
 
                 <div id="chart"></div>
                  <!-- Donut Chart -->
@@ -238,6 +242,85 @@
 </section>
 @section('scripts')
 <!-- DataTables  & Plugins -->
+
+@section('scripts')
+<!-- Highcharts JS -->
+<script src="{{ asset('datakunjungan/Highcharts.js') }}"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script>
+    // Mengambil data dari controller
+    const semuakunjungan = @json($semuakunjungan);
+
+    // Ekstrak data bulan, target, dan realisasi dari data yang dikirim
+    const bulan = semuakunjungan.map(item => item.bulan);
+    const target = semuakunjungan.map(item => item.target);
+    const realisasi = semuakunjungan.map(item => item.realisasi);
+
+    // Daftar nama bulan
+    const bulanNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    // Membuat array bulan dengan nilai dari 1 hingga 12
+    const allBulan = bulanNames.slice(0, 12);
+
+    // Mengisi data target dan realisasi sesuai dengan bulan yang tersedia
+    const targetKunjungan = new Array(12).fill(0); // Inisialisasi dengan 0
+    const realisasiKunjungan = new Array(12).fill(0); // Inisialisasi dengan 0
+
+    // Menyesuaikan target dan realisasi berdasarkan bulan
+    bulan.forEach((b, index) => {
+        const bulanIndex = b - 1; // Sesuaikan dengan index bulan (bulan 1 = index 0)
+        targetKunjungan[bulanIndex] = target[index]; 
+        realisasiKunjungan[bulanIndex] = realisasi[index];
+    });
+
+    // Membuat chart dengan Highcharts
+    Highcharts.chart('Totalkunjungan', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Trends Kunjungan'
+        },
+        subtitle: {
+            text: 'Data Kunjungan dari Hasil Input'
+        },
+        xAxis: {
+            categories: allBulan, // Menampilkan bulan dari Januari sampai Desember
+        },
+        yAxis: {
+            title: {
+                text: 'Jumlah Kunjungan'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Target Kunjungan',
+            data: targetKunjungan // Menampilkan data target
+        }, {
+            name: 'Realisasi Kunjungan',
+            data: realisasiKunjungan // Menampilkan data realisasi
+        }]
+    });
+</script>
+
+@endsection
+
+@endsection
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     var options = {
@@ -432,43 +515,9 @@
     chart.render();
 </script>
 
-<script>
-    var options = {
-        series: [{
-            name: 'Total Kunjungan',
-            data: @json($totalKunjungan) // Replace with your PHP variable for data
-        }],
-        chart: {
-            height: 350,
-            type: 'line',
-            zoom: {
-                enabled: false
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'straight'
-        },
-        title: {
-            text: 'Trends Kunjungan berdasarkan Bulan',
-            align: 'left'
-        },
-        grid: {
-            row: {
-                colors: ['#f3f3f3', 'transparent'], // Alternating row colors
-                opacity: 0.5
-            }
-        },
-        xaxis: {
-            categories: @json($bulan),  // Menggunakan nama bulan untuk kategori
-        }
-    };
 
-    var chart = new ApexCharts(document.querySelector("#charttrend"), options);
-    chart.render();
-</script>
+
+
 <script>
     var options = {
         series: [
@@ -521,5 +570,4 @@
     chart.render();
 </script>
 
-@endsection
 @endsection
