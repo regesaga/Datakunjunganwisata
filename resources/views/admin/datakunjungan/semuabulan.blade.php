@@ -109,26 +109,29 @@
                                     </span>
                                 </td>
                                 <td style="text-align: center; text-transform: uppercase;">
-                                    {{ $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }}
+                                    {{ number_format($data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'], 0, ',', '.') }}
+
                                 </td>
-                                <!-- Data berdasarkan Kelompok -->
-                                @foreach ($kelompok as $namaKelompok)
-                                    <td style="text-align: center; text-transform: uppercase;">
-                                        {{ $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') ?: 0 }}
-                                    </td>
-                                    <td style="text-align: center; text-transform: uppercase;">
-                                        {{ $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') ?: 0 }}
-                                    </td>
-                                @endforeach
-                                <!-- Data berdasarkan Negara Wisman -->
-                                @foreach ($wismannegara as $negara)
-                                    <td style="text-align: center; text-transform: uppercase;">
-                                        {{ $data['wismannegara']->get($negara->id, collect())->sum('jml_wisman_laki') ?: 0 }}
-                                    </td>
-                                    <td style="text-align: center; text-transform: uppercase;">
-                                        {{ $data['wismannegara']->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0 }}
-                                    </td>
-                                @endforeach
+                               <!-- Data berdasarkan Kelompok -->
+@foreach ($kelompok as $namaKelompok)
+<td style="text-align: center; text-transform: uppercase;">
+    {{ number_format($data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') ?: 0, 0, ',', '.') }}
+</td>
+<td style="text-align: center; text-transform: uppercase;">
+    {{ number_format($data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') ?: 0, 0, ',', '.') }}
+</td>
+@endforeach
+
+<!-- Data berdasarkan Negara Wisman -->
+@foreach ($wismannegara as $negara)
+<td style="text-align: center; text-transform: uppercase;">
+    {{ number_format($data['wismannegara']->get($negara->id, collect())->sum('jml_wisman_laki') ?: 0, 0, ',', '.') }}
+</td>
+<td style="text-align: center; text-transform: uppercase;">
+    {{ number_format($data['wismannegara']->get($negara->id, collect())->sum('jml_wisman_perempuan') ?: 0, 0, ',', '.') }}
+</td>
+@endforeach
+
                             </tr>
                             @empty
                             <tr>

@@ -51,8 +51,9 @@
                     <!-- small box -->
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
-                                    $totalKeseluruhan['total_perempuan']  }}</h3>
+                                
+                     <h3>{{ number_format($totalKeseluruhan['total_laki_laki'] + $totalKeseluruhan['total_perempuan'], 0, ',', '.') }}</h3>
+
                                 <p>Nusantara</p>
                             
                             </div>
@@ -68,10 +69,7 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3> {{ 
-                                    $totalKeseluruhan['total_wisman_laki'] + 
-                                    $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
-                    
+                     <h3>{{ number_format($totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}</h3>
                                 <p>Mancanegara</p>
                             </div>
                             <div class="icon">
@@ -100,10 +98,13 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3> {{ $totalKeseluruhan['total_laki_laki'] + 
+                               <h3>{{ number_format(
+                                    $totalKeseluruhan['total_laki_laki'] + 
                                     $totalKeseluruhan['total_perempuan'] + 
                                     $totalKeseluruhan['total_wisman_laki'] + 
-                                    $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
+                                    $totalKeseluruhan['total_wisman_perempuan'], 
+                                    0, ',', '.')
+                                }}</h3>
                     
                                 <p>Total Pengunjung</p>
                             </div>
@@ -125,7 +126,7 @@
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
-                        <h3>{{  $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'] }}</h3>
+                        <h3>{{ number_format($totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'], 0, ',', '.') }}</h3>
             
                         <p>Pengunjung Laki Laki</p>
                         </div>
@@ -141,7 +142,7 @@
                     <!-- small box -->
                     <div class="small-box bg-info">
                         <div class="inner">
-                        <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] +$totalKeseluruhan['total_perempuan'] }}</h3>
+                            <h3>{{ number_format($totalKeseluruhan['total_wisman_perempuan'] + $totalKeseluruhan['total_perempuan'], 0, ',', '.') }}</h3>
             
                         <p>Pengunjung Perempuan</p>
                         </div>
@@ -155,7 +156,8 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhanEven['total_pengunjung'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhanEven['total_pengunjung'], 0, ',', '.') }}</h3>
+
                                 <p>Even</p>
                             </div>
                             <div class="icon">
@@ -248,14 +250,31 @@
                                     <td  style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
 
                                     <td  style="text-align: center; text-transform: uppercase;">
-                                        {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
+                                        <h3>{{ number_format(
+    $dataBulan['jumlah_laki_laki'] + 
+    $dataBulan['jumlah_perempuan'] + 
+    $dataBulan['jml_wisman_laki'] + 
+    $dataBulan['jml_wisman_perempuan'], 
+    0, ',', '.')
+}}</h3>
+
                                     </td>
                                     @foreach ($kelompok as $namaKelompok)
-                                        <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                        <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                        <td  style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki'), 
+    0, ',', '.')
+}}
+</td>
+                                        <td  style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan'), 
+    0, ',', '.')
+}}
+</td>
                                     @endforeach
-                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
-                                    <td  style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ number_format($dataBulan['jml_wisman_laki'] ?: 0, 0, ',', '.') }}
+</td>
+                                    <td  style="text-align: center; text-transform: uppercase;">{{ number_format($dataBulan['jml_wisman_perempuan'] ?: 0, 0, ',', '.') }}
+</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -264,20 +283,25 @@
                             <tr>
                                 <th>Total Keseluruhan</th>
                                 <th>
-                                    {{ collect($kunjungan)->sum(function($dataBulan) {
-                                        return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
-                                    }) }}
+                                   {{ number_format(collect($kunjungan)->sum(function($dataBulan) {
+    return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
+}), 0, ',', '.') }}
+
                                 </th>
                                 @foreach ($kelompok as $namaKelompok)
-                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
-                                    }) }}</th>
-                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
-                                    }) }}</th>
+                                    <th>{{ number_format(collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+}), 0, ',', '.') }}
+</th>
+                                    <th>{{ number_format(collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+}), 0, ',', '.') }}
+</th>
                                 @endforeach
-                                <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
+                                <th>{{ number_format($totalKeseluruhan['total_wisman_laki'], 0, ',', '.') }}
+</th>
+                                <th>{{ number_format($totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}
+</th>
                             </tr>
                         </tfoot>
                     </table>

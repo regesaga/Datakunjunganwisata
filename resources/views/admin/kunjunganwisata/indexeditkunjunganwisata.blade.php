@@ -127,7 +127,8 @@
                             <input type="hidden" id="wisata_id" value="{{ $hash->encode($wisata->first()->id) }}">
                             <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
                             <td  style="text-align: center; text-transform: uppercase;">
-                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                                {{ number_format($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'], 0, ',', '.') }}
+
                             </td>
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             
@@ -156,9 +157,10 @@
                         <th  style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
                         <th  style="text-align: center; text-transform: uppercase;"></th>
                         <th  style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($dataTanggal) {
-                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
-                            }) }}
+                           {{ number_format(collect($kunjungan)->sum(function($dataTanggal) {
+    return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
+}), 0, ',', '.') }}
+
                         </th>
                         @foreach ($kelompok as $namaKelompok)
                             <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {

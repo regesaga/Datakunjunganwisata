@@ -80,7 +80,8 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_laki_laki'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Laki Laki</p>
                             </div>
                             <div class="icon">
@@ -91,10 +92,11 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['total_laki_laki'] + 
-                                    $totalKeseluruhan['total_perempuan'] + 
-                                    $totalKeseluruhan['total_wisman_laki'] + 
-                                    $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['total_laki_laki'] + 
+                 $totalKeseluruhan['total_perempuan'] + 
+                 $totalKeseluruhan['total_wisman_laki'] + 
+                 $totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}
+</h3>
                                 <p>Total Pengunjung</p>
                             </div>
                             <div class="icon">
@@ -105,7 +107,8 @@
                     <div class="col-lg-4 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['total_wisman_perempuan'] + $totalKeseluruhan['total_perempuan'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['total_wisman_perempuan'] + $totalKeseluruhan['total_perempuan'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Perempuan</p>
                             </div>
                             <div class="icon">
@@ -126,7 +129,8 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['totalkunjunganKuliner'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['totalkunjunganKuliner'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Kuliner</p>
                             </div>
                             <div class="icon">
@@ -137,7 +141,8 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-primary">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['totalkunjunganWisata']}}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['totalkunjunganWisata'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Wisata</p>
                             </div>
                             <div class="icon">
@@ -148,7 +153,8 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['totalkunjunganAkomodasi']}}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['totalkunjunganAkomodasi'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Akomodasi</p>
                             </div>
                             <div class="icon">
@@ -159,7 +165,8 @@
                     <div class="col-lg-3 col-6">
                         <div class="small-box bg-info">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['totalkunjunganEvent']}}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['totalkunjunganEvent'], 0, ',', '.') }}
+</h3>
                                 <p>Pengunjung Even</p>
                             </div>
                             <div class="icon">
@@ -181,7 +188,8 @@
                     <div class="col">
                         <div class="small-box bg-warning">
                             <div class="inner">
-                                <h3>{{ $totalKeseluruhan['total_laki_laki'] + $totalKeseluruhan['total_perempuan'] }}</h3>
+                                <h3>{{ number_format($totalKeseluruhan['total_laki_laki'] + $totalKeseluruhan['total_perempuan'], 0, ',', '.') }}
+</h3>
                                 <p>Jumlah Pengunjung Nusantara</p>
                             </div>
                             <div class="icon">
@@ -212,9 +220,8 @@
                         <div class="col">
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3> {{ 
-                                        $totalKeseluruhan['total_wisman_laki'] + 
-                                        $totalKeseluruhan['total_wisman_perempuan'] }}</h3>
+                                    <h3> {{ number_format($totalKeseluruhan['total_wisman_laki'] + $totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}
+</h3>
                         
                                     <p>Jumlah Pengunjung Mancanegara</p>
                                 </div>

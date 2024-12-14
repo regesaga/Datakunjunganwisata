@@ -113,7 +113,8 @@
                                
                                 </a>
                                 <td style="text-align: center; text-transform: uppercase;">
-                                    {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                                    {{ number_format($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'], 0, ',', '.') }}
+
                                 </td>
                                 <!-- Data berdasarkan Kelompok -->
                                 @foreach ($kelompok as $namaKelompok)

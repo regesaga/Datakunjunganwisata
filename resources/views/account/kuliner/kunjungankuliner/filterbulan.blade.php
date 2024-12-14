@@ -60,7 +60,8 @@
                                 <td>{{ $data['jumlah_perempuan'] }}</td>
                                 <td>{{ $data['jml_wisman_laki'] }}</td>
                                 <td>{{ $data['jml_wisman_perempuan'] }}</td>
-                                <td>{{ $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }}</td>
+                                <td>{{ number_format($data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'], 0, ',', '.') }}
+</td>
                             </tr>
                         @empty
                             <tr>

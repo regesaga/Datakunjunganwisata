@@ -245,14 +245,31 @@
                                      <td style="text-align: center; text-transform: uppercase;">{{ \Carbon\Carbon::createFromFormat('!m', $month)->locale('id')->isoFormat('MMMM') }}</td>
 
                                      <td style="text-align: center; text-transform: uppercase;">
-                                        {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
+                                        <h3>{{ number_format(
+    $dataBulan['jumlah_laki_laki'] + 
+    $dataBulan['jumlah_perempuan'] + 
+    $dataBulan['jml_wisman_laki'] + 
+    $dataBulan['jml_wisman_perempuan'], 
+    0, ',', '.')
+}}</h3>
+
                                     </td>
                                     @foreach ($kelompok as $namaKelompok)
-                                         <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                         <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                         <td style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki'), 
+    0, ',', '.')
+}}
+</td>
+                                         <td style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan'), 
+    0, ',', '.')
+}}
+</td>
                                     @endforeach
-                                     <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_laki'] ?: 0 }}</td>
-                                     <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['jml_wisman_perempuan'] ?: 0 }}</td>
+                                     <td style="text-align: center; text-transform: uppercase;">{{ number_format($dataBulan['jml_wisman_laki'] ?: 0, 0, ',', '.') }}
+</td>
+                                     <td style="text-align: center; text-transform: uppercase;">{{ number_format($dataBulan['jml_wisman_perempuan'] ?: 0, 0, ',', '.') }}
+</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -261,20 +278,25 @@
                             <tr>
                                 <th>Total Keseluruhan</th>
                                 <th>
-                                    {{ collect($kunjungan)->sum(function($dataBulan) {
-                                        return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
-                                    }) }}
+                                   {{ number_format(collect($kunjungan)->sum(function($dataBulan) {
+    return $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'];
+}), 0, ',', '.') }}
+
                                 </th>
                                 @foreach ($kelompok as $namaKelompok)
-                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
-                                    }) }}</th>
-                                    <th>{{ collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
-                                        return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
-                                    }) }}</th>
+                                    <th>{{ number_format(collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+}), 0, ',', '.') }}
+</th>
+                                    <th>{{ number_format(collect($kunjungan)->sum(function($dataBulan) use ($namaKelompok) {
+    return $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+}), 0, ',', '.') }}
+</th>
                                 @endforeach
-                                <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                                <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
+                                <th>{{ number_format($totalKeseluruhan['total_wisman_laki'], 0, ',', '.') }}
+</th>
+                                <th>{{ number_format($totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}
+</th>
                             </tr>
                         </tfoot>
                     </table>

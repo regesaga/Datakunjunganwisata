@@ -118,7 +118,8 @@
 
                             <input type="hidden" id="tanggal_kunjungan" value="{{ $tanggal }}">
                             <td  style="text-align: center; text-transform: uppercase;">
-                                {{ $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'] }}
+                                {{ number_format($dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'], 0, ',', '.') }}
+
                             </td>
                             @foreach ($kelompok as $namaKelompok)
                             <td class="editable" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
@@ -145,9 +146,10 @@
                         <th style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
                         <th></th>
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($dataTanggal) {
-                                return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
-                            }) }}
+                           {{ number_format(collect($kunjungan)->sum(function($dataTanggal) {
+    return $dataTanggal['jumlah_laki_laki'] + $dataTanggal['jumlah_perempuan'] + $dataTanggal['jml_wisman_laki'] + $dataTanggal['jml_wisman_perempuan'];
+}), 0, ',', '.') }}
+
                         </th>
                         @foreach ($kelompok as $namaKelompok)
                             <th  style="text-align: center; text-transform: uppercase;">{{ collect($kunjungan)->sum(function($dataTanggal) use ($namaKelompok) {

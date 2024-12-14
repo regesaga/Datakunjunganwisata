@@ -95,24 +95,29 @@
                             {{ \Carbon\Carbon::parse($tanggal)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
                         </td>
                         <td style="text-align: center; text-transform: uppercase;">
-                            {{ $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'] }}
+                            {{ number_format($data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'], 0, ',', '.') }}
+
                         </td>
         
                         @foreach ($kelompok as $namaKelompok)
                             <td  style="text-align: center; text-transform: uppercase;" data-field="jumlah_laki_laki{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                {{ $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}
+                                {{ number_format($data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki'), 0, ',', '.') }}
+
                             </td>
                             <td  style="text-align: center; text-transform: uppercase;" data-field="jumlah_perempuan{{ $namaKelompok->id }}" data-tanggal="{{ $tanggal }}" data-kelompok="{{ $namaKelompok->id }}">
-                                {{ $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}
+                                {{ number_format($data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan'), 0, ',', '.') }}
+
                             </td>
                         @endforeach
         
                         @foreach ($wismannegara as $negara)
                             <td  style="text-align: center; text-transform: uppercase;" data-field="jml_wisman_laki{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                {{ $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}
+                               {{ number_format($data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki'), 0, ',', '.') }}
+
                             </td>
                             <td  style="text-align: center; text-transform: uppercase;" data-field="jml_wisman_perempuan{{ $negara->id }}" data-tanggal="{{ $tanggal }}" data-negara="{{ $negara->id }}">
-                                {{ $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan') }}
+                               {{ number_format($data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan'), 0, ',', '.') }}
+
                             </td>
                         @endforeach
                     </tr>
@@ -123,34 +128,39 @@
                 <tr>
                     <th style="text-align: center; text-transform: uppercase;">Total Keseluruhan</th>
                     <th style="text-align: center; text-transform: uppercase;">
-                        {{ collect($kunjungan)->sum(function($data) {
+                        {{ number_format(collect($kunjungan)->sum(function($data) {
                             return $data['jumlah_laki_laki'] + $data['jumlah_perempuan'] + $data['jml_wisman_laki'] + $data['jml_wisman_perempuan'];
-                        }) }}
+                        }), 0, ',', '.') }}
+
                     </th>
         
                     @foreach ($kelompok as $namaKelompok)
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($data) use ($namaKelompok) {
-                                return $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
-                            }) }}
+{{ number_format(collect($kunjungan)->sum(function($data) use ($namaKelompok) {
+    return $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki');
+}), 0, ',', '.') }}
+
                         </th>
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($data) use ($namaKelompok) {
-                                return $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
-                            }) }}
+{{ number_format(collect($kunjungan)->sum(function($data) use ($namaKelompok) {
+    return $data['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan');
+}), 0, ',', '.') }}
+
                         </th>
                     @endforeach
         
                     @foreach ($wismannegara as $negara)
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($data) use ($negara) {
-                                return $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
-                            }) }}
+                           {{ number_format(collect($kunjungan)->sum(function($data) use ($negara) {
+    return $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki');
+}), 0, ',', '.') }}
+
                         </th>
                         <th style="text-align: center; text-transform: uppercase;">
-                            {{ collect($kunjungan)->sum(function($data) use ($negara) {
-                                return $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
-                            }) }}
+                           {{ number_format(collect($kunjungan)->sum(function($data) use ($negara) {
+    return $data['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_perempuan');
+}), 0, ',', '.') }}
+
                         </th>
                     @endforeach
                 </tr>

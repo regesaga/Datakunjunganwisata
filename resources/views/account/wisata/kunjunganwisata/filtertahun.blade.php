@@ -67,8 +67,10 @@
                             <th>Total Keseluruhan</th>
                             <th>{{ $totalKeseluruhan['total_laki_laki'] }}</th>
                             <th>{{ $totalKeseluruhan['total_perempuan'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_wisman_laki'] }}</th>
-                            <th>{{ $totalKeseluruhan['total_wisman_perempuan'] }}</th>
+                            <th>{{ number_format($totalKeseluruhan['total_wisman_laki'], 0, ',', '.') }}
+</th>
+                            <th>{{ number_format($totalKeseluruhan['total_wisman_perempuan'], 0, ',', '.') }}
+</th>
                             <th>
                                 {{ $totalKeseluruhan['total_laki_laki'] + 
                                    $totalKeseluruhan['total_perempuan'] + 

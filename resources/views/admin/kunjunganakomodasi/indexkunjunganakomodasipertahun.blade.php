@@ -113,11 +113,26 @@
                             
 
                             <td style="text-align: center; text-transform: uppercase;">
-                                {{ $dataBulan['jumlah_laki_laki'] + $dataBulan['jumlah_perempuan'] + $dataBulan['jml_wisman_laki'] + $dataBulan['jml_wisman_perempuan'] }}
+                                <h3>{{ number_format(
+    $dataBulan['jumlah_laki_laki'] + 
+    $dataBulan['jumlah_perempuan'] + 
+    $dataBulan['jml_wisman_laki'] + 
+    $dataBulan['jml_wisman_perempuan'], 
+    0, ',', '.')
+}}</h3>
+
                             </td>
                             @foreach ($kelompok as $namaKelompok)
-                                <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki') }}</td>
-                                <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan') }}</td>
+                                <td style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_laki_laki'), 
+    0, ',', '.')
+}}
+</td>
+                                <td style="text-align: center; text-transform: uppercase;">{{ number_format(
+    $dataBulan['kelompok']->get($namaKelompok->id, collect())->sum('jumlah_perempuan'), 
+    0, ',', '.')
+}}
+</td>
                             @endforeach
                             @foreach ($wismannegara as $negara)
                                 <td style="text-align: center; text-transform: uppercase;">{{ $dataBulan['wisman_by_negara']->get($negara->id, collect())->sum('jml_wisman_laki') }}</td>
