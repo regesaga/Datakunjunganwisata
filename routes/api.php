@@ -192,6 +192,12 @@ Route::group(['middleware' => ['auth:api', 'role:wisata']], function () {
 
     // Route untuk storewisnu (POST)
     Route::post('kunjungan/store-wisnuwisata', [KunjunganWisataController::class, 'storewisnu']);
+
+        Route::get('kunjunganwisata/edit/{wisata_id}/{tanggal_kunjungan}', [KunjunganWisataController::class, 'editWisnuApi']);
+    
+        Route::put('kunjunganwisata/update/{tanggal_kunjungan}', [KunjunganWisataController::class, 'updateWisnuApi']);
+
+
 });
 
 
@@ -205,6 +211,10 @@ Route::group(['middleware' => ['auth:api', 'role:kuliner']], function () {
 
     // Route untuk storewisnu (POST)
     Route::post('kunjungan/store-wisnukuliner', [KunjunganKulinerController::class, 'storewisnu']);
+
+    Route::get('kunjungankuliner/edit/{kuliner_id}/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'editWisnuApi']);
+    
+    Route::put('kunjungankuliner/update/{tanggal_kunjungan}', [KunjunganKulinerController::class, 'updateWisnuApi']);
 });
 
 
@@ -220,6 +230,10 @@ Route::group(['middleware' => ['auth:api', 'role:akomodasi']], function () {
 
     // Route untuk storewisnu (POST)
     Route::post('kunjungan/store-wisnuakomodasi', [KunjunganAkomodasiController::class, 'storewisnu']);
+
+    Route::get('kunjunganakomodasi/edit/{akomodasi_id}/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'editWisnuApi']);
+    
+    Route::put('kunjunganakomodasi/update/{tanggal_kunjungan}', [KunjunganAkomodasiController::class, 'updateWisnuApi']);
 });
 
 

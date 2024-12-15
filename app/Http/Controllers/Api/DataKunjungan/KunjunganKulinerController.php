@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\DataKunjungan;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\Evencalender;
 use App\Models\WisnuKuliner;
@@ -23,7 +24,8 @@ class KunjunganKulinerController extends Controller
 {
     public function dashboardkuliner(Request $request)
     {
-
+        
+           
         $company_id = auth()->user()->company->id;
         $kuliner = Kuliner::where('company_id', $company_id)->first(); // Mendapatkan kuliner terkait
         $hash = new Hashids();
@@ -283,185 +285,374 @@ class KunjunganKulinerController extends Controller
     }
 
     public function createWisnu()
-    {
-        $company_id = auth()->user()->company->id;
-        $kelompok = KelompokKunjungan::all();
-        $kuliner = Kuliner::where('company_id', $company_id)
-        ->select(['id', 'namakuliner'])  // Pilih hanya kolom yang diperlukan
-        ->without('photos')  // Pastikan 'photos' tidak dimuat
+{
+    $company_id = auth()->user()->company->id;
+
+    // Ambil hanya kolom yang diperlukan dari model Kuliner
+       // Ambil hanya kolom yang diperlukan dari model Kuliner
+       $kuliner = Kuliner::where('company_id', $company_id)
+       ->select(['id', 'namakuliner'])  // Pilih hanya kolom yang diperlukan
+       ->without('photos')  // Pastikan 'photos' tidak dimuat
+       ->first();
+
+    // Ambil hanya kolom yang diperlukan dari KelompokKunjungan
+    $kelompok = KelompokKunjungan::all();
+
+    // Ambil hanya kolom yang diperlukan dari WismanNegara
+    $wismannegara = WismanNegara::all();
+
+    // Mendapatkan tanggal saat ini
+    $tanggal = now()->format('d-m-Y');
+
+    // Kembalikan data dalam format JSON
+    return response()->json([
+        // 'kuliner' => $kuliner,
+        // 'kelompok' => $kelompok,
+        // 'wismannegara' => $wismannegara,
+        // 'tanggal' => $tanggal,
+        'data' => [
+            'kuliner_id' => $kuliner->id,
+            'kuliner' => $kuliner->namakuliner,
+            'kelompok' => $kelompok,
+            'wismannegara' => $wismannegara,
+            'tanggal' => $tanggal,
+        ]
+    ]);
+}
+
+public function storewisnu(Request $request)
+{
+      // Validasi input
+      $request->validate([
+        'kuliner_id' => 'required|exists:kuliners,id',
+        'kelompok_kunjungan_id' => 'required|array',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'tanggal_kunjungan' => 'required|date',
+        'wismannegara_id' => 'nullable|array',
+        'jml_wisman_laki' => 'nullable|array',
+        'jml_wisman_perempuan' => 'nullable|array',
+    ]);
+        // Periksa data yang sudah ada
+        $existingWisnu = WisnuKuliner::where('kuliner_id', $request->kuliner_id)
+        ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
         ->first();
-        $wismannegara = WismanNegara::all();
-        $tanggal = now()->format('d-m-Y');
 
+        if ($existingWisnu) {
         return response()->json([
-            // 'kuliner' => $kuliner,
-            // 'kelompok' => $kelompok,
-            // 'wismannegara' => $wismannegara,
-            // 'tanggal' => $tanggal,
-            'data' => [
-                'kuliner_id' => $kuliner->id,
-                'kuliner' => $kuliner->namakuliner,
-                'kelompok' => $kelompok,
-                'wismannegara' => $wismannegara,
-                'tanggal' => $tanggal,
-            ]
-        ]);
-    }
+            'message' => 'Data kunjungan pada tanggal tersebut sudah ada.',
+        ], 400);
+        }
 
-    // Menyimpan data kunjungan
-    public function storewisnu(Request $request)
-    {
-          // Validasi input
-          $request->validate([
-            'kuliner_id' => 'required|exists:kuliners,id',
-            'kelompok_kunjungan_id' => 'required|array',
-            'jumlah_laki_laki' => 'required|array',
-            'jumlah_perempuan' => 'required|array',
-            'tanggal_kunjungan' => 'required|date',
-            'wismannegara_id' => 'nullable|array',
-            'jml_wisman_laki' => 'nullable|array',
-            'jml_wisman_perempuan' => 'nullable|array',
-        ]);
-            // Periksa data yang sudah ada
-            $existingWisnu = WisnuKuliner::where('kuliner_id', $request->kuliner_id)
-            ->where('tanggal_kunjungan', $request->tanggal_kunjungan)
-            ->first();
-    
-            if ($existingWisnu) {
-            return response()->json([
-                'message' => 'Data kunjungan pada tanggal tersebut sudah ada.',
-            ], 400);
-            }
-    
-        try {
-          
-           
-            // Simpan data WISNU
-            foreach ($request->kelompok_kunjungan_id as  $index => $kelompok) {
-                $jumlah_laki = $request->jumlah_laki_laki[$index] ?? 0;
-                $jumlah_perempuan = $request->jumlah_perempuan[$index] ?? 0;
-    
-                WisnuKuliner::create([
+    try {
+      
+       
+        // Simpan data WISNU
+        foreach ($request->kelompok_kunjungan_id as  $index => $kelompok) {
+            $jumlah_laki = $request->jumlah_laki_laki[$index] ?? 0;
+            $jumlah_perempuan = $request->jumlah_perempuan[$index] ?? 0;
+
+            WisnuKuliner::create([
+                'kuliner_id' => $request->kuliner_id,
+                'kelompok_kunjungan_id' => $kelompok,
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            ]);
+        }
+
+        // Simpan data WISMAN jika ada
+        if ($request->filled('wismannegara_id')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                $jml_wisman_laki = $request->jml_wisman_laki[$index] ?? 0;
+                $jml_wisman_perempuan = $request->jml_wisman_perempuan[$index] ?? 0;
+
+                WismanKuliner::create([
                     'kuliner_id' => $request->kuliner_id,
-                    'kelompok_kunjungan_id' => $kelompok,
-                    'jumlah_laki_laki' => $jumlah_laki,
-                    'jumlah_perempuan' => $jumlah_perempuan,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jml_wisman_laki,
+                    'jml_wisman_perempuan' => $jml_wisman_perempuan,
                     'tanggal_kunjungan' => $request->tanggal_kunjungan,
                 ]);
             }
-    
-            // Simpan data WISMAN jika ada
-            if ($request->filled('wismannegara_id')) {
-                foreach ($request->wismannegara_id as $index => $negara) {
-                    $jml_wisman_laki = $request->jml_wisman_laki[$index] ?? 0;
-                    $jml_wisman_perempuan = $request->jml_wisman_perempuan[$index] ?? 0;
-    
-                    WismanKuliner::create([
-                        'kuliner_id' => $request->kuliner_id,
-                        'wismannegara_id' => $negara,
-                        'jml_wisman_laki' => $jml_wisman_laki,
-                        'jml_wisman_perempuan' => $jml_wisman_perempuan,
-                        'tanggal_kunjungan' => $request->tanggal_kunjungan,
-                    ]);
-                }
-            }
-    
-            return response()->json([
-                'message' => 'Data kunjungan berhasil disimpan.',
-            ], 201);
-    
-        } catch (\Exception $e) {
-            // Tangani jika terjadi kesalahan lainnya
-            return response()->json([
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ], 500);
         }
+
+        return response()->json([
+            'message' => 'Data kunjungan berhasil disimpan.',
+        ], 201);
+
+    } catch (\Exception $e) {
+        // Tangani jika terjadi kesalahan lainnya
+        return response()->json([
+            'message' => 'Terjadi kesalahan saat menyimpan data.',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ], 500);
+    }
+}
+
+public function getKunjunganBytgl(Request $request)
+{
+    $company_id = auth()->user()->company->id;
+    $kuliner = Kuliner::where('company_id', $company_id)->first();
+
+    if (!$kuliner) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Kuliner tidak ditemukan.',
+        ], 404);
     }
 
+    $kuliner_id = $kuliner->id;
 
-    public function getKunjunganBytgl(Request $request)
-        {
-            $company_id = auth()->user()->company->id;
-            $kuliner = Kuliner::where('company_id', $company_id)->first();
+    // Ambil semua data Wisnu dan Wisman
+    $wisnuKunjungan = WisnuKuliner::where('kuliner_id', $kuliner_id)
+        ->get()
+        ->groupBy(function ($date) {
+            return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
+        });
 
-            if (!$kuliner) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Kuliner tidak ditemukan.',
-                ], 404);
-            }
+    $wismanKunjungan = WismanKuliner::where('kuliner_id', $kuliner_id)
+        ->get()
+        ->groupBy(function ($date) {
+            return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
+        });
 
-            $kuliner_id = $kuliner->id;
+    // Ambil hanya kolom yang diperlukan dari KelompokKunjungan
+    $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
 
-            // Ambil semua data Wisnu dan Wisman
-            $wisnuKunjungan = WisnuKuliner::where('kuliner_id', $kuliner_id)
-                ->get()
-                ->groupBy(function ($date) {
-                    return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
-                });
+    // Ambil hanya kolom yang diperlukan dari WismanNegara
+    $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
 
-            $wismanKunjungan = WismanKuliner::where('kuliner_id', $kuliner_id)
-                ->get()
-                ->groupBy(function ($date) {
-                    return \Carbon\Carbon::parse($date->tanggal_kunjungan)->format('Y-m-d'); // Format date
-                });
+    $result = [];
 
-            // Ambil hanya kolom yang diperlukan dari KelompokKunjungan
-            $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
+    foreach ($wisnuKunjungan as $tanggal => $wisnuData) {
+        $tanggalKunjungan = [
+            'tanggal_kunjungan' => $tanggal,
+            'kuliner_id' => $kuliner_id,
+            'nama_kuliner' => $kuliner->namakuliner,
+            'kelompok_kunjungan' => [],
+            'wisman_by_negara' => [],
+            'total_kunjungan' => 0, // Menyimpan total kunjungan
+        ];
 
-            // Ambil hanya kolom yang diperlukan dari WismanNegara
-            $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
+        // Hitung jumlah kunjungan dari Wisnu dan tampilkan nama kelompok
+        foreach ($wisnuData as $data) {
+            $kelompokData = $kelompok->firstWhere('id', $data->kelompok_kunjungan_id); // Cari nama kelompok
+            $tanggalKunjungan['kelompok_kunjungan'][] = [
+                'kelompok_kunjungan_id' => $data->kelompok_kunjungan_id,
+                'nama_kelompok' => $kelompokData ? $kelompokData->kelompokkunjungan_name : 'Nama Kelompok Tidak Ditemukan', // Nama kelompok
+                'jumlah_laki_laki' => $data->jumlah_laki_laki,
+                'jumlah_perempuan' => $data->jumlah_perempuan,
+            ];
+            // Tambahkan jumlah kunjungan untuk kelompok wisnu
+            $tanggalKunjungan['total_kunjungan'] += $data->jumlah_laki_laki + $data->jumlah_perempuan;
+        }
 
-            $result = [];
-
-            foreach ($wisnuKunjungan as $tanggal => $wisnuData) {
-                $tanggalKunjungan = [
-                    'tanggal_kunjungan' => $tanggal,
-                    'kuliner_id' => $kuliner_id,
-                    'nama_kuliner' => $kuliner->namakuliner,
-                    'kelompok_kunjungan' => [],
-                    'wisman_by_negara' => [],
-                    'total_kunjungan' => 0, // Menyimpan total kunjungan
+        // Hitung jumlah kunjungan dari Wisman dan tampilkan nama negara
+        if (isset($wismanKunjungan[$tanggal])) {
+            foreach ($wismanKunjungan[$tanggal] as $data) {
+                $negaraData = $wismannegara->firstWhere('id', $data->wismannegara_id); // Cari nama negara
+                $tanggalKunjungan['wisman_by_negara'][] = [
+                    'wismannegara_id' => $data->wismannegara_id,
+                    'nama_negara' => $negaraData ? $negaraData->wismannegara_name : 'Nama Negara Tidak Ditemukan', // Nama negara
+                    'jml_wisman_laki' => $data->jml_wisman_laki,
+                    'jml_wisman_perempuan' => $data->jml_wisman_perempuan,
                 ];
+                // Tambahkan jumlah kunjungan untuk wisman
+                $tanggalKunjungan['total_kunjungan'] += $data->jml_wisman_laki + $data->jml_wisman_perempuan;
+            }
+        }
 
-                // Hitung jumlah kunjungan dari Wisnu dan tampilkan nama kelompok
-                foreach ($wisnuData as $data) {
-                    $kelompokData = $kelompok->firstWhere('id', $data->kelompok_kunjungan_id); // Cari nama kelompok
-                    $tanggalKunjungan['kelompok_kunjungan'][] = [
-                        'kelompok_kunjungan_id' => $data->kelompok_kunjungan_id,
-                        'nama_kelompok' => $kelompokData ? $kelompokData->kelompokkunjungan_name : 'Nama Kelompok Tidak Ditemukan', // Nama kelompok
-                        'jumlah_laki_laki' => $data->jumlah_laki_laki,
-                        'jumlah_perempuan' => $data->jumlah_perempuan,
-                    ];
-                    // Tambahkan jumlah kunjungan untuk kelompok wisnu
-                    $tanggalKunjungan['total_kunjungan'] += $data->jumlah_laki_laki + $data->jumlah_perempuan;
-                }
+        // Menambahkan tanggal kunjungan ke hasil
+        $result[] = $tanggalKunjungan;
+    }
 
-                // Hitung jumlah kunjungan dari Wisman dan tampilkan nama negara
-                if (isset($wismanKunjungan[$tanggal])) {
-                    foreach ($wismanKunjungan[$tanggal] as $data) {
-                        $negaraData = $wismannegara->firstWhere('id', $data->wismannegara_id); // Cari nama negara
-                        $tanggalKunjungan['wisman_by_negara'][] = [
-                            'wismannegara_id' => $data->wismannegara_id,
-                            'nama_negara' => $negaraData ? $negaraData->wismannegara_name : 'Nama Negara Tidak Ditemukan', // Nama negara
-                            'jml_wisman_laki' => $data->jml_wisman_laki,
-                            'jml_wisman_perempuan' => $data->jml_wisman_perempuan,
-                        ];
-                        // Tambahkan jumlah kunjungan untuk wisman
-                        $tanggalKunjungan['total_kunjungan'] += $data->jml_wisman_laki + $data->jml_wisman_perempuan;
-                    }
-                }
+    return response()->json([
+        'messages' => 'Data KunjunganKuliner',
+        'success' => true, 
+        'data' => $result,
+    ]);
+}
 
-                // Menambahkan tanggal kunjungan ke hasil
-                $result[] = $tanggalKunjungan;
+
+public function editWisnuApi($kuliner_id, $tanggal_kunjungan)
+{
+    // Langsung menggunakan kuliner_id tanpa decode
+    if (!$kuliner_id) {
+        return response()->json(['error' => 'Kuliner ID tidak valid.'], 404);
+    }
+
+    $company_id = auth()->user()->company->id;
+    $kuliner = Kuliner::where('company_id', $company_id)->first();
+    
+    // Ambil hanya kolom yang diperlukan dari KelompokKunjungan
+    $kelompok = KelompokKunjungan::select('id', 'kelompokkunjungan_name')->get();
+
+    // Ambil hanya kolom yang diperlukan dari WismanNegara
+    $wismannegara = WismanNegara::select('id', 'wismannegara_name')->get();
+
+    // Ambil data Wisnu dan Wisman berdasarkan kuliner_id dan tanggal_kunjungan
+    $wisnuData = WisnuKuliner::where('kuliner_id', $kuliner_id)
+        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+        ->with('kelompokkunjungan')
+        ->get();
+
+    $wismanData = WismanKuliner::where('kuliner_id', $kuliner_id)
+        ->where('tanggal_kunjungan', $tanggal_kunjungan)
+        ->with('wismannegara')  // Pastikan relasi 'wismannegara' dimuat
+        ->get();
+
+    // Aggregate data untuk WISMAN
+    $aggregatedWismanData = $wismanData->groupBy('wismannegara_id')->map(function($group) use ($wismannegara) {
+        // Cari nama negara berdasarkan 'wismannegara_id'
+        $negaraData = $wismannegara->firstWhere('id', $group->first()->wismannegara_id);
+
+        return [
+            'wismannegara_id' => $group->first()->wismannegara_id,
+            'wismannegara_name' => $negaraData ? $negaraData->wismannegara_name : null, // Pastikan akses dengan benar
+            'jml_wisman_laki' => $group->sum('jml_wisman_laki'),
+            'jml_wisman_perempuan' => $group->sum('jml_wisman_perempuan'),
+        ];
+    });
+
+    // Aggregate data untuk WISNU
+    $aggregatedWisnuData = $wisnuData->groupBy('kelompok_kunjungan_id')->map(function($group) {
+        return [
+            'kelompok_kunjungan_id' => $group->first()->kelompok_kunjungan_id,
+            'kelompok_kunjungan_name' => optional($group->first()->kelompokkunjungan)->kelompokkunjungan_name,
+            'jumlah_laki_laki' => $group->sum('jumlah_laki_laki'),
+            'jumlah_perempuan' => $group->sum('jumlah_perempuan'),
+        ];
+    });
+
+    // Ambil data kelompok dan negara kuliner
+    return response()->json([
+        'data' => [
+            'kuliner_id' => $kuliner->id,
+            'kuliner' => $kuliner->namakuliner,
+            'tanggal_kunjungan' => $tanggal_kunjungan,
+            'wisnuData' => $aggregatedWisnuData,
+            'wismanData' => $aggregatedWismanData,
+        ]
+    ]);
+}
+
+
+public function updateWisnuApi(Request $request, $tanggal_kunjungan)
+{
+    // Validasi input
+    $request->validate([
+        'kuliner_id' => 'required|integer|exists:kuliners,id',
+        'tanggal_kunjungan' => 'required|date',
+        'jumlah_laki_laki' => 'required|array',
+        'jumlah_perempuan' => 'required|array',
+        'jumlah_laki_laki.*' => 'required|integer|min:0',
+        'jumlah_perempuan.*' => 'required|integer|min:0',
+        'kelompok_kunjungan_id' => 'required|array', // Menambahkan validasi untuk kelompok_kunjungan_id
+        'kelompok_kunjungan_id.*' => 'required|integer|exists:kelompokkunjungan,id', // Validasi ID kelompok_kunjungan
+        'wismannegara_id' => 'array',
+        'jml_wisman_laki' => 'array',
+        'jml_wisman_perempuan' => 'array',
+        'jml_wisman_laki.*' => 'integer|min:0',
+        'jml_wisman_perempuan.*' => 'integer|min:0',
+    ]);
+
+    $kuliner_id = $request->kuliner_id;
+
+    // Mulai transaksi
+    DB::beginTransaction();
+    Log::info('Starting updateWisnuApi method', ['tanggal_kunjungan' => $tanggal_kunjungan, 'kuliner_id' => $kuliner_id]);
+
+    try {
+        // Hapus data sebelumnya berdasarkan kuliner_id dan tanggal_kunjungan
+        $deletedWisnu = WisnuKuliner::where('kuliner_id', $kuliner_id)
+                                     ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                     ->delete();
+
+        $deletedWisman = WismanKuliner::where('kuliner_id', $kuliner_id)
+                                       ->where('tanggal_kunjungan', $tanggal_kunjungan)
+                                       ->delete();
+
+        Log::info('Previous WISNU and WISMAN data deleted', [
+            'deleted_wisnu_count' => $deletedWisnu,
+            'deleted_wisman_count' => $deletedWisman,
+        ]);
+
+        // Loop untuk data WISNU
+        foreach ($request->kelompok_kunjungan_id as $index => $kelompok) {
+            $jumlah_laki = $request->jumlah_laki_laki[$index];
+            $jumlah_perempuan = $request->jumlah_perempuan[$index];
+
+            // Pastikan kelompok_kunjungan_id valid
+            $kelompokExists = KelompokKunjungan::find($kelompok);
+            if (!$kelompokExists) {
+                return response()->json(['error' => 'Kelompok kunjungan dengan ID ' . $kelompok . ' tidak ditemukan.'], 400);
             }
 
-            return response()->json([
-                'messages' => 'Data KunjunganKuliner',
-                'success' => true, 
-                'data' => $result,
+            WisnuKuliner::create([
+                'kuliner_id' => $kuliner_id,
+                'kelompok_kunjungan_id' => $kelompok,
+                'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                'jumlah_laki_laki' => $jumlah_laki,
+                'jumlah_perempuan' => $jumlah_perempuan,
+                'updated_at' => now(),
             ]);
         }
+
+        // Loop untuk data WISMAN (Kulinerwan Mancanegara) hanya jika data tersedia
+        if ($request->filled('wismannegara_id') && $request->filled('jml_wisman_laki') && $request->filled('jml_wisman_perempuan')) {
+            foreach ($request->wismannegara_id as $index => $negara) {
+                // Pastikan wismannegara_id valid
+                $wismanExists = WismanNegara::find($negara);
+                if (!$wismanExists) {
+                    return response()->json(['error' => 'Kulinerwan Mancanegara dengan ID ' . $negara . ' tidak ditemukan.'], 400);
+                }
+
+                $jumlah_wisman_laki = $request->jml_wisman_laki[$index];
+                $jumlah_wisman_perempuan = $request->jml_wisman_perempuan[$index];
+
+                WismanKuliner::create([
+                    'kuliner_id' => $kuliner_id,
+                    'wismannegara_id' => $negara,
+                    'jml_wisman_laki' => $jumlah_wisman_laki,
+                    'jml_wisman_perempuan' => $jumlah_wisman_perempuan,
+                    'tanggal_kunjungan' => $request->tanggal_kunjungan,
+                ]);
+            }
+        }
+
+        // Commit transaksi
+        DB::commit();
+
+        // Kembalikan response sukses dalam format JSON
+        return response()->json(['success' => 'Data kunjungan berhasil diperbarui.'], 200);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        // Mencatat detail kesalahan dengan data yang akan disimpan
+        Log::error('Failed to save kunjungan to database.', [
+            'error_message' => $e->getMessage(),
+            'request_data' => $request->all(),
+            'trace' => $e->getTraceAsString(),
+            'kuliner_id' => $kuliner_id,
+            'tanggal_kunjungan' => $request->tanggal_kunjungan,
+            'jumlah_laki_laki' => $request->jumlah_laki_laki,
+            'jumlah_perempuan' => $request->jumlah_perempuan,
+            'wismannegara_id' => $request->wismannegara_id,
+            'jml_wisman_laki' => $request->jml_wisman_laki,
+            'jml_wisman_perempuan' => $request->jml_wisman_perempuan,
+        ]);
+
+        // Kembalikan response error dalam format JSON
+        return response()->json(['error' => 'Gagal menyimpan data kunjungan. Silakan coba lagi. Kesalahan: ' . $e->getMessage()], 500);
+    }
+}
+
+
+
+
+
+
 }

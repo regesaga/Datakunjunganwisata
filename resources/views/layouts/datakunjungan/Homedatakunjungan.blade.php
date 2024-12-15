@@ -39,7 +39,7 @@
         <!-- Sidebar user panel (optional) -->
         
         <!-- Sidebar Menu -->
-        @include('layouts.datakunjungan.sidemenu')
+        @include('layouts.datakunjungan.sidemenuhome')
         <!-- /.sidebar-menu -->
       </div>
       <!-- /.sidebar -->

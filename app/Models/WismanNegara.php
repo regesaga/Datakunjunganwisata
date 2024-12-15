@@ -29,5 +29,9 @@ public function wismanKuliner()
     return $this->belongsToMany(WismanKuliner::class, 'wisman_negara_wisman_kuliner', 'wismannegara_id', 'wisman_kuliner_id');
 }
 
+public function wismanAkomodasi()
+{
+    return $this->belongsToMany(WismanAkomodasi::class, 'wisman_negara_wisman_akomodasi', 'wismannegara_id', 'wisman_akomodasi_id');
+}
 
 }
