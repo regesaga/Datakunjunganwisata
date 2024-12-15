@@ -324,7 +324,7 @@ public function storewisnu(Request $request)
 {
       // Validasi input
       $request->validate([
-        'akomodasi_id' => 'required|exists:akomodasis,id',
+        'akomodasi_id' => 'required|exists:akomodasi,id',
         'kelompok_kunjungan_id' => 'required|array',
         'jumlah_laki_laki' => 'required|array',
         'jumlah_perempuan' => 'required|array',
@@ -543,7 +543,7 @@ public function updateWisnuApi(Request $request, $tanggal_kunjungan)
 {
     // Validasi input
     $request->validate([
-        'akomodasi_id' => 'required|integer|exists:akomodasis,id',
+        'akomodasi_id' => 'required|integer|exists:akomodasi,id',
         'tanggal_kunjungan' => 'required|date',
         'jumlah_laki_laki' => 'required|array',
         'jumlah_perempuan' => 'required|array',
