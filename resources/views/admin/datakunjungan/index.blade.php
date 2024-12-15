@@ -204,7 +204,13 @@
                             <!-- small box -->
                             <div class="small-box bg-warning">
                                 <div class="inner">
-                                    <h3>{{ ($data['jumlah_laki_laki'] ?? 0) + ($data['jumlah_perempuan'] ?? 0) }}</h3> <!-- Total jumlah -->
+                                    <h3>{{ number_format(
+    ($data['jumlah_laki_laki'] ?? 0) + ($data['jumlah_perempuan'] ?? 0), 
+    0, 
+    ',', 
+    '.'
+) }}
+</h3> <!-- Total jumlah -->
                                     <p>{{$data['name'] }}</p> <!-- Nama kelompok jika ada -->
                                 </div>
                                 <div class="icon">

@@ -1,11 +1,11 @@
-@extends('layouts.datakunjungan.datakunjungan')
+@extends('layouts.datakunjungan.Homedatakunjungan')
 
 @section('content')
 
     <section class="content-header">
         <div class="container-fluid">
             <!-- Form Filter Tahun dan Wisata -->
-            <form action="{{ route('admin.datakunjungan.semuabulan') }}" method="GET">
+            <form action="{{ route('rekapsemuabulan') }}" method="GET">
                 <div class="row">
                     <div class="col-lg-3">
                         <label for="kategori">Kategori</label>

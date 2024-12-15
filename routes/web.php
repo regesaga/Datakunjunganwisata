@@ -67,7 +67,13 @@ Route::post('/log-location', [LocationController::class, 'logLocation']);
 //youtube
 Route::get('/wth/logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/HomeDataKunjungan', [AdminDatakunjunganController::class, 'HomeDataKunjungan'])->name('HomeDataKunjungan');
 Route::get('/Partnership', [HomeController::class, 'partnership'])->name('kemitraan');
+Route::get('semua-datakunjunganpertahun', [AdminDatakunjunganController::class, 'rekapsemua'])->name('rekapsemua');
+  Route::get('semua-datakunjunganperbulan', [AdminDatakunjunganController::class, 'rekapsemuabulan'])->name('rekapsemuabulan');
+
+  Route::get('Datakunjungan/realtime', [AdminDatakunjunganController::class, 'realtimes'])->name('realtimes');
+
 
 Route::middleware('throttle:10,1')->group(function () {
   Route::get('/destinasi', [HomeController::class, 'destinasi'])->name('website.destinasi');
